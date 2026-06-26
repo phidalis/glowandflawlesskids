@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Testimonials — Glow & Flowless Kids Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;--dark:#1a1a1a;--text:#2d2d2d;--subtext:#666;--font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:hidden;}
+#nav1{background:var(--pink);padding:7px 0;}
+#nav1 marquee{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+#nav2{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;}
+#nav2 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+#nav2 .search-wrap{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:24px;padding:7px 16px;border:1px solid #f0d8e8;cursor:pointer;}
+#nav2 .search-wrap input{border:none;background:transparent;font-family:var(--font-body);font-size:0.82rem;outline:none;width:160px;}
+#nav2 .search-wrap i{color:#b06080;}
+#nav2 .logo{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--dark);text-decoration:none;}
+#nav2 .logo span{color:#d4608a;}
+#nav2 .nav2-right{display:flex;align-items:center;gap:14px;}
+#nav2 .nav2-right a{color:var(--text);font-size:0.82rem;text-decoration:none;font-weight:500;}
+#nav2 .cart-btn{background:var(--pink);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:#7a3050;cursor:pointer;}
+#nav3{background:var(--dark);}
+#nav3 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:center;gap:4px;}
+#nav3 a{color:#e8e8e8;text-decoration:none;font-size:0.82rem;font-weight:500;padding:12px 16px;display:block;transition:background 0.2s;position:relative;white-space:nowrap;}
+#nav3 a:hover,#nav3 a.active{color:#fff;background:rgba(255,255,255,0.08);}
+#nav3 a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--pink);}
+#nav4{background:var(--lavender);padding:7px 0;text-align:center;}
+#nav4 p{font-size:0.78rem;font-weight:500;color:#5a4080;}
+.page-wrapper{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+.page-header{background:linear-gradient(135deg,var(--lavender) 0%,var(--pink) 100%);padding:48px 0 36px;text-align:center;}
+.page-header h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:#5a2060;margin-bottom:8px;}
+.page-header p{color:#8a4070;font-size:0.92rem;}
+
+/* Stats bar */
+.stats-bar{background:var(--cream);padding:28px 0;}
+.stats-inner{display:flex;gap:0;justify-content:center;}
+.stat{flex:1;text-align:center;padding:0 20px;border-right:1px solid #e8d8e8;max-width:220px;}
+.stat:last-child{border-right:none;}
+.stat .num{font-family:var(--font-display);font-size:2rem;font-weight:700;color:#d4608a;}
+.stat .lbl{font-size:0.78rem;color:var(--subtext);font-weight:500;margin-top:2px;}
+
+/* Reviews grid */
+.reviews-section{padding:60px 0;}
+.section-title{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.section-sub{font-size:0.88rem;color:var(--subtext);margin-bottom:32px;}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.filter-btn{background:var(--cream);border:none;border-radius:24px;padding:7px 18px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:var(--subtext);cursor:pointer;transition:all 0.2s;}
+.filter-btn.active{background:var(--dark);color:#fff;}
+.filter-btn:hover:not(.active){background:var(--pink);color:#7a3050;}
+
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.review-card{background:var(--cream);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;transition:transform 0.2s;}
+.review-card:hover{transform:translateY(-3px);}
+.review-card .stars{display:flex;gap:3px;}
+.review-card .stars i{color:#f59e0b;font-size:0.85rem;}
+.review-card .stars i.empty{color:#e0d8d0;}
+.review-card .review-text{font-size:0.87rem;line-height:1.7;color:var(--text);font-style:italic;}
+.review-card .reviewer{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.review-card .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#fff;flex-shrink:0;}
+.review-card .r-name{font-size:0.82rem;font-weight:600;color:var(--dark);}
+.review-card .r-meta{font-size:0.74rem;color:var(--subtext);}
+.review-card.featured{background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 100%);grid-column:span 1;}
+
+/* No reviews */
+.no-reviews{text-align:center;padding:60px 20px;color:var(--subtext);}
+.no-reviews i{font-size:2.5rem;color:#e0d0e0;margin-bottom:14px;display:block;}
+
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,#f0e8f0 25%,#e8d8e8 50%,#f0e8f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:16px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Write review */
+.write-review{background:var(--dark);padding:64px 0;}
+.write-review .wr-inner{max-width:640px;margin:0 auto;text-align:center;}
+.write-review h2{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:8px;}
+.write-review p{color:#aaa;font-size:0.9rem;margin-bottom:32px;}
+.review-form{background:rgba(255,255,255,0.05);border-radius:20px;padding:32px;text-align:left;}
+.rf-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.rf-group label{font-size:0.8rem;font-weight:600;color:#ccc;}
+.rf-group input,.rf-group textarea,.rf-group select{border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.87rem;color:#fff;background:rgba(255,255,255,0.07);outline:none;transition:border 0.2s;}
+.rf-group input:focus,.rf-group textarea:focus{border-color:var(--pink);}
+.rf-group textarea{resize:vertical;min-height:100px;}
+/* Star picker */
+.star-picker{display:flex;gap:6px;}
+.star-picker i{font-size:1.6rem;color:#555;cursor:pointer;transition:color 0.15s;}
+.star-picker i.lit{color:#f59e0b;}
+.rf-submit{width:100%;background:var(--pink);color:#7a3050;border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:4px;transition:all 0.2s;}
+.rf-submit:hover{background:#ffc8d8;}
+.rf-submit:disabled{opacity:0.6;cursor:not-allowed;}
+#review-form-msg{margin-top:10px;font-size:0.83rem;padding:10px;border-radius:8px;display:none;text-align:center;}
+#review-form-msg.success{background:var(--mint);color:#2d6a4a;display:block;}
+#review-form-msg.error{background:#ffe8e8;color:#a03030;display:block;}
+
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);color:#ccc;padding:56px 0 24px;}
+footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
+footer .f-brand .logo span{color:var(--pink);}
+footer .f-brand p{font-size:0.83rem;line-height:1.7;color:#999;max-width:240px;}
+footer .f-brand .socials{display:flex;gap:10px;margin-top:18px;}
+footer .f-brand .socials a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+footer .f-brand .socials a:hover{background:var(--pink);color:#7a3050;}
+footer .f-col h4{font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:16px;}
+footer .f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+footer .f-col ul li a{font-size:0.82rem;color:#999;text-decoration:none;transition:color 0.2s;}
+footer .f-col ul li a:hover{color:var(--pink);}
+footer .f-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer .f-bottom p{font-size:0.75rem;color:#666;}
+footer .f-bottom .payment{display:flex;gap:8px;}
+footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #333;padding:3px 8px;border-radius:4px;}
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+#search-overlay.open{display:flex;}
+#search-box{background:#fff;border-radius:16px;padding:28px 24px;width:90%;max-width:560px;}
+#search-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+#search-box .si{display:flex;gap:10px;}
+#search-box input{flex:1;border:1px solid #e0d8e8;border-radius:10px;padding:12px 16px;font-family:var(--font-body);font-size:0.92rem;outline:none;}
+#search-box button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;}
+#search-close{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;}
+@media(max-width:900px){
+  .page-wrapper{padding:0 18px;}
+  #nav2 .inner{padding:0 18px;}
+  #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+  #nav3 a{padding:12px 10px;font-size:0.75rem;}
+  .reviews-grid{grid-template-columns:1fr 1fr;}
+  .stats-inner{flex-wrap:wrap;}
+  .stat{min-width:120px;border-right:none;border-bottom:1px solid #e8d8e8;padding:12px 20px;}
+  footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:600px){
+  #nav2 .logo{font-size:1.35rem;}
+  #nav2 .search-wrap input{width:80px;}
+  .reviews-grid{grid-template-columns:1fr;}
+  footer .footer-grid{grid-template-columns:1fr;}
+  #nav2 .lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="nav1"><marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee></div>
+
+<nav id="nav2">
+  <div class="inner">
+    <div class="search-wrap" onclick="document.getElementById('search-overlay').classList.add('open')">
+      <i class="fas fa-search"></i><input type="text" placeholder="Search products..." readonly/>
+    </div>
+    <a href="index.html" class="logo">Glow &amp; <span>Flowless</span></a>
+    <div class="nav2-right">
+      <a href="customer.html"><i class="fas fa-user"></i> <span class="lbl">Account</span></a>
+      <button class="cart-btn"><i class="fas fa-shopping-bag"></i> Cart (0)</button>
+    </div>
+  </div>
+</nav>
+
+<nav id="nav3">
+  <div class="inner">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="customer.html">Customer Cabinet</a>
+    <a href="policyedu.html">Policy &amp; Education</a>
+    <a href="reviews.html" class="active">Testimonials</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+</nav>
+
+<div id="nav4"><p id="nav4-msg">Real parents, real results — see what families are saying</p></div>
+
+<div id="search-overlay">
+  <div id="search-box">
+    <button id="search-close" onclick="document.getElementById('search-overlay').classList.remove('open')"><i class="fas fa-times"></i></button>
+    <h3>Search Products</h3>
+    <div class="si">
+      <input type="text" placeholder="Search products..." id="search-input"/>
+      <button onclick="window.location.href='products.html?search='+document.getElementById('search-input').value">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>What Parents Are Saying</h1>
+  <p>Trusted by thousands of Kenyan families — here are their stories</p>
+</div>
+
+<div class="stats-bar">
+  <div class="page-wrapper"><div class="stats-inner">
+    <div class="stat"><div class="num" id="stat-count">0</div><div class="lbl">Happy Customers</div></div>
+    <div class="stat"><div class="num" id="stat-avg">5.0</div><div class="lbl">Average Rating</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">Natural Ingredients</div></div>
+    <div class="stat"><div class="num">Kenya</div><div class="lbl">Proudly Made In</div></div>
+  </div></div>
+</div>
+
+<section class="reviews-section">
+  <div class="page-wrapper">
+    <h2 class="section-title">Customer Reviews</h2>
+    <p class="section-sub">Showing approved reviews from verified customers</p>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterReviews(5,this)">5 Stars</button>
+      <button class="filter-btn" onclick="filterReviews(4,this)">4 Stars</button>
+      <button class="filter-btn" onclick="filterReviews(0,this)">All Reviews</button>
+    </div>
+    <div id="reviews-grid" class="reviews-grid">
+      <div class="skeleton" style="height:180px"></div>
+      <div class="skeleton" style="height:180px"></div>
+      <div class="skeleton" style="height:180px"></div>
+      <div class="skeleton" style="height:180px"></div>
+      <div class="skeleton" style="height:180px"></div>
+      <div class="skeleton" style="height:180px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="write-review">
+  <div class="page-wrapper">
+    <div class="wr-inner">
+      <h2>Share Your Experience</h2>
+      <p>Have you tried Glow &amp; Flowless? We would love to hear from you. Your review helps other parents make the right choice for their children.</p>
+      <div class="review-form">
+        <div class="rf-group"><label>Your Name</label><input type="text" id="r-name" placeholder="e.g. Grace Muthoni"/></div>
+        <div class="rf-group"><label>Your Location</label><input type="text" id="r-location" placeholder="e.g. Nairobi, Kenya"/></div>
+        <div class="rf-group"><label>Product Reviewed</label><input type="text" id="r-product" placeholder="e.g. Hair Growth Oil"/></div>
+        <div class="rf-group">
+          <label>Rating</label>
+          <div class="star-picker" id="star-picker">
+            <i class="far fa-star" data-val="1"></i>
+            <i class="far fa-star" data-val="2"></i>
+            <i class="far fa-star" data-val="3"></i>
+            <i class="far fa-star" data-val="4"></i>
+            <i class="far fa-star" data-val="5"></i>
+          </div>
+        </div>
+        <div class="rf-group"><label>Your Review</label><textarea id="r-text" placeholder="Tell us about your experience with our products and your child's hair..."></textarea></div>
+        <button class="rf-submit" id="rf-submit-btn" onclick="submitReview()"><i class="fas fa-star"></i> Submit Review</button>
+        <div id="review-form-msg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="page-wrapper">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="logo">Glow &amp; <span>Flowless</span></div>
+        <p>Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-tiktok"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="f-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="f-col"><h4>Customer</h4><ul><li><a href="customer.html">My Account</a></li><li><a href="customer.html">My Orders</a></li><li><a href="policyedu.html">Policy &amp; Education</a></li></ul></div>
+      <div class="f-col"><h4>Contact</h4><ul><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a>Nairobi, Kenya</a></li></ul></div>
+    </div>
+    <div class="f-bottom">
+      <p>&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <div class="payment"><span>M-PESA</span><span>Visa</span><span>Mastercard</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const avatarColors=['#d4608a','#5a80d4','#4a9a6a','#9a5ab0','#d4805a','#5ab0c8'];
+let selectedRating=0;
+let allReviews=[];
+
+document.querySelectorAll('#star-picker i').forEach(star=>{
+  star.addEventListener('mouseover',()=>{const v=+star.dataset.val;document.querySelectorAll('#star-picker i').forEach((s,i)=>{s.className=i<v?'fas fa-star lit':'far fa-star';});});
+  star.addEventListener('click',()=>{selectedRating=+star.dataset.val;});
+  star.addEventListener('mouseout',()=>{document.querySelectorAll('#star-picker i').forEach((s,i)=>{s.className=i<selectedRating?'fas fa-star lit':'far fa-star';});});
+});
+
+function starsHTML(rating){
+  let h='';for(let i=1;i<=5;i++)h+=`<i class="fas fa-star${i<=rating?'':' empty'}"></i>`;return h;
+}
+function avatarColor(name){return avatarColors[name.charCodeAt(0)%avatarColors.length];}
+function initial(name){return name?name[0].toUpperCase():'?';}
+
+function renderReviews(list){
+  const grid=document.getElementById('reviews-grid');
+  if(list.length===0){grid.innerHTML='<div class="no-reviews" style="grid-column:1/-1"><i class="fas fa-star"></i><p>No reviews in this category yet. Be the first!</p></div>';return;}
+  grid.innerHTML=list.map(r=>`<div class="review-card"><div class="stars">${starsHTML(r.rating||5)}</div><p class="review-text">"${r.review||''}"</p><div class="reviewer"><div class="avatar" style="background:${avatarColor(r.name||'A')}">${initial(r.name||'A')}</div><div><div class="r-name">${r.name||'Anonymous'}</div><div class="r-meta">${r.location||''} ${r.product?'· '+r.product:''}</div></div></div></div>`).join('');
+}
+
+window.filterReviews=function(stars,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered=stars===0?allReviews:allReviews.filter(r=>(r.rating||5)===stars);
+  renderReviews(filtered);
+}
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,getDocs,addDoc,serverTimestamp,query,where,orderBy}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+try{const s=await getDoc(doc(db,'config','site'));if(s.exists()&&s.data().nav4Msg)document.getElementById('nav4-msg').textContent=s.data().nav4Msg;}catch(e){}
+
+try{
+  const snap=await getDocs(query(collection(db,'reviews'),where('approved','==',true)));
+  allReviews=[];snap.forEach(d=>allReviews.push({id:d.id,...d.data()}));
+  allReviews.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  document.getElementById('stat-count').textContent=allReviews.length+'+'||'0';
+  if(allReviews.length>0){
+    const avg=(allReviews.reduce((s,r)=>s+(r.rating||5),0)/allReviews.length).toFixed(1);
+    document.getElementById('stat-avg').textContent=avg;
+  }
+  renderReviews(allReviews.filter(r=>(r.rating||5)>=5));
+}catch(e){
+  document.getElementById('reviews-grid').innerHTML='<div class="no-reviews" style="grid-column:1/-1"><i class="fas fa-star"></i><p>Reviews are loading. Check back soon.</p></div>';
+}
+
+window.submitReview=async function(){
+  const btn=document.getElementById('rf-submit-btn');
+  const msgEl=document.getElementById('review-form-msg');
+  const name=document.getElementById('r-name').value.trim();
+  const location=document.getElementById('r-location').value.trim();
+  const product=document.getElementById('r-product').value.trim();
+  const review=document.getElementById('r-text').value.trim();
+  if(!name||!review||!selectedRating){
+    msgEl.textContent='Please fill in your name, review and select a star rating.';
+    msgEl.className='error';return;
+  }
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Submitting...';
+  try{
+    await addDoc(collection(db,'reviews'),{name,location,product,review,rating:selectedRating,approved:false,createdAt:serverTimestamp()});
+    msgEl.textContent='Thank you! Your review has been submitted and will appear after approval.';
+    msgEl.className='success';
+    ['r-name','r-location','r-product','r-text'].forEach(id=>document.getElementById(id).value='');
+    selectedRating=0;document.querySelectorAll('#star-picker i').forEach(s=>s.className='far fa-star');
+  }catch(e){
+    msgEl.textContent='Something went wrong. Please try again.';msgEl.className='error';
+  }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-star"></i> Submit Review';
+}
+</script>
+</body>
+</html>

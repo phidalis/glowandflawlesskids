@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Glow & Flowless Kids Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;
+  --white:#FFFFFF;--black:#111111;--dark:#1a1a1a;
+  --text:#2d2d2d;--subtext:#666;
+  --font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:hidden;}
+
+/* ===== NAV 1 - Welcome strip ===== */
+#nav1{background:var(--pink);padding:7px 0;text-align:center;}
+#nav1 p{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+#nav1 marquee{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+
+/* ===== NAV 2 - Logo bar ===== */
+#nav2{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;}
+#nav2 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+#nav2 .search-wrap{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:24px;padding:7px 16px;border:1px solid #f0d8e8;}
+#nav2 .search-wrap input{border:none;background:transparent;font-family:var(--font-body);font-size:0.82rem;color:var(--text);outline:none;width:160px;}
+#nav2 .search-wrap i{color:#b06080;font-size:0.9rem;}
+#nav2 .logo{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--dark);letter-spacing:-0.02em;text-decoration:none;}
+#nav2 .logo span{color:#d4608a;}
+#nav2 .nav2-right{display:flex;align-items:center;gap:14px;}
+#nav2 .nav2-right a{color:var(--text);font-size:0.82rem;text-decoration:none;font-weight:500;transition:color 0.2s;}
+#nav2 .nav2-right a:hover{color:#d4608a;}
+#nav2 .cart-btn{background:var(--pink);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:#7a3050;cursor:pointer;transition:background 0.2s;}
+#nav2 .cart-btn:hover{background:#ffc8d8;}
+
+/* ===== NAV 3 - Links bar ===== */
+#nav3{background:var(--dark);padding:0;}
+#nav3 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:center;gap:4px;}
+#nav3 a{color:#e8e8e8;text-decoration:none;font-size:0.82rem;font-weight:500;padding:12px 16px;display:block;transition:background 0.2s,color 0.2s;letter-spacing:0.02em;position:relative;}
+#nav3 a:hover,#nav3 a.active{color:#fff;background:rgba(255,255,255,0.08);}
+#nav3 a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--pink);}
+
+/* ===== NAV 4 - Promo strip ===== */
+#nav4{background:var(--lavender);padding:7px 0;text-align:center;}
+#nav4 p{font-size:0.78rem;font-weight:500;color:#5a4080;letter-spacing:0.03em;}
+
+/* ===== MAIN WRAPPER ===== */
+.page-wrapper{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+/* ===== HERO ===== */
+#hero{width:100%;height:75vh;min-height:480px;overflow:hidden;position:relative;background:var(--cream);}
+#hero .hero-slides{display:flex;width:300%;height:100%;transition:transform 0.8s cubic-bezier(.4,0,.2,1);}
+#hero .hero-slide{width:33.333%;height:100%;position:relative;overflow:hidden;flex-shrink:0;}
+#hero .hero-slide img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease;display:block;}
+#hero .hero-slide:hover img{transform:scale(1.04);}
+#hero .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.1) 100%);display:flex;align-items:center;padding:0 8%;}
+#hero .hero-content{color:#fff;max-width:560px;}
+#hero .hero-content .eyebrow{font-size:0.75rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--pink);margin-bottom:14px;}
+#hero .hero-content h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.15;margin-bottom:18px;text-shadow:0 2px 12px rgba(0,0,0,0.3);}
+#hero .hero-content p{font-size:1rem;font-weight:300;opacity:0.92;margin-bottom:28px;line-height:1.6;}
+#hero .hero-content .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--pink);color:#7a3050;padding:13px 30px;border-radius:30px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:all 0.25s;box-shadow:0 4px 20px rgba(255,100,150,0.3);}
+#hero .hero-content .hero-cta:hover{background:#fff;color:#d4608a;transform:translateY(-2px);}
+#hero .dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;}
+#hero .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;transition:background 0.3s,transform 0.3s;}
+#hero .dot.active{background:#fff;transform:scale(1.3);}
+#hero .arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background 0.2s;z-index:10;backdrop-filter:blur(4px);}
+#hero .arrow:hover{background:rgba(255,255,255,0.4);}
+#hero .arrow.prev{left:20px;}
+#hero .arrow.next{right:20px;}
+#hero-placeholder{width:100%;height:75vh;min-height:480px;background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 50%,var(--blue) 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:32px;}
+#hero-placeholder h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.4rem);color:#7a3050;font-weight:700;}
+#hero-placeholder p{color:#5a4080;font-size:1rem;max-width:400px;}
+
+/* ===== SHOP CTA ===== */
+#shop-cta{background:var(--mint);padding:32px 0;text-align:center;}
+#shop-cta p{font-size:1rem;font-weight:500;color:#2d6a4a;margin-bottom:14px;}
+#shop-cta a{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:#fff;padding:13px 36px;border-radius:30px;font-weight:600;font-size:0.92rem;text-decoration:none;transition:all 0.25s;}
+#shop-cta a:hover{background:#333;transform:translateY(-2px);}
+
+/* ===== SECTION COMMONS ===== */
+.section{padding:72px 0;}
+.section-eyebrow{font-size:0.72rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#b06080;margin-bottom:10px;}
+.section-title{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.3rem);font-weight:700;color:var(--dark);line-height:1.2;margin-bottom:18px;}
+.section-body{font-size:0.95rem;line-height:1.75;color:var(--subtext);max-width:600px;}
+
+/* ===== WELCOME SECTION ===== */
+#welcome{background:#fff;}
+#welcome .inner{display:flex;align-items:center;gap:60px;}
+#welcome .img-wrap{flex:0 0 45%;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.1);}
+#welcome .img-wrap img{width:100%;height:360px;object-fit:cover;display:block;transition:transform 0.5s;}
+#welcome .img-wrap:hover img{transform:scale(1.04);}
+#welcome .text{flex:1;}
+#welcome-img-placeholder{width:100%;height:360px;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;color:#7a3050;font-size:0.85rem;font-weight:500;}
+
+/* ===== OUR STORY ===== */
+#our-story{background:var(--cream);}
+#our-story .inner{display:flex;align-items:center;gap:60px;flex-direction:row-reverse;}
+#our-story .img-wrap{flex:0 0 45%;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.1);}
+#our-story .img-wrap img{width:100%;height:360px;object-fit:cover;display:block;transition:transform 0.5s;}
+#our-story .img-wrap:hover img{transform:scale(1.04);}
+#our-story .text{flex:1;}
+#story-img-placeholder{width:100%;height:360px;background:linear-gradient(135deg,var(--mint),var(--blue));display:flex;align-items:center;justify-content:center;color:#2d6a4a;font-size:0.85rem;font-weight:500;}
+
+/* ===== WHY PARENTS LOVE US ===== */
+#why-parents{background:#fff;}
+#why-parents .inner{display:flex;align-items:center;gap:60px;}
+#why-parents .img-wrap{flex:0 0 45%;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.1);}
+#why-parents .img-wrap img{width:100%;height:360px;object-fit:cover;display:block;transition:transform 0.5s;}
+#why-parents .img-wrap:hover img{transform:scale(1.04);}
+#why-parents .text{flex:1;}
+#why-img-placeholder{width:100%;height:360px;background:linear-gradient(135deg,var(--blue),var(--lavender));display:flex;align-items:center;justify-content:center;color:#2d5580;font-size:0.85rem;font-weight:500;}
+.reasons{display:flex;flex-direction:column;gap:14px;margin-top:22px;}
+.reason{display:flex;align-items:flex-start;gap:12px;}
+.reason .icon{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.85rem;}
+.reason .icon.pink{background:var(--pink);color:#a03060;}
+.reason .icon.blue{background:var(--blue);color:#2d5580;}
+.reason .icon.mint{background:var(--mint);color:#2d6a4a;}
+.reason .icon.lavender{background:var(--lavender);color:#5a4080;}
+.reason p{font-size:0.88rem;line-height:1.6;color:var(--subtext);}
+.reason strong{color:var(--dark);display:block;font-size:0.9rem;margin-bottom:2px;}
+
+/* ===== LEAVE A REVIEW CTA ===== */
+#review-cta{background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 100%);padding:72px 0;text-align:center;}
+#review-cta h2{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.3rem);color:#5a2040;margin-bottom:14px;}
+#review-cta p{color:#7a4060;font-size:0.95rem;margin-bottom:28px;}
+#review-cta a{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:#fff;padding:13px 36px;border-radius:30px;font-weight:600;font-size:0.92rem;text-decoration:none;transition:all 0.25s;}
+#review-cta a:hover{background:#333;transform:translateY(-2px);}
+
+/* ===== FOOTER ===== */
+footer{background:var(--dark);color:#ccc;padding:56px 0 24px;}
+footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
+footer .f-brand .logo span{color:var(--pink);}
+footer .f-brand p{font-size:0.83rem;line-height:1.7;color:#999;max-width:240px;}
+footer .f-brand .socials{display:flex;gap:10px;margin-top:18px;}
+footer .f-brand .socials a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+footer .f-brand .socials a:hover{background:var(--pink);color:#7a3050;}
+footer .f-col h4{font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:16px;}
+footer .f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+footer .f-col ul li a{font-size:0.82rem;color:#999;text-decoration:none;transition:color 0.2s;}
+footer .f-col ul li a:hover{color:var(--pink);}
+footer .f-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer .f-bottom p{font-size:0.75rem;color:#666;}
+footer .f-bottom .payment{display:flex;gap:8px;align-items:center;}
+footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #333;padding:3px 8px;border-radius:4px;}
+
+/* ===== SEARCH OVERLAY ===== */
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+#search-overlay.open{display:flex;}
+#search-box{background:#fff;border-radius:16px;padding:28px 24px;width:90%;max-width:560px;}
+#search-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+#search-box .search-input-wrap{display:flex;gap:10px;}
+#search-box input{flex:1;border:1px solid #e0d8e8;border-radius:10px;padding:12px 16px;font-family:var(--font-body);font-size:0.92rem;outline:none;}
+#search-box button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;}
+#search-close{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;margin-bottom:8px;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .page-wrapper{padding:0 18px;}
+  #nav2 .inner{padding:0 18px;}
+  #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+  #nav3 a{padding:12px 10px;font-size:0.75rem;white-space:nowrap;}
+  #welcome .inner,#our-story .inner,#why-parents .inner{flex-direction:column;gap:32px;}
+  #welcome .img-wrap,#our-story .img-wrap,#why-parents .img-wrap{flex:none;width:100%;}
+  #our-story .inner{flex-direction:column;}
+  footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+  #hero{height:58vw;min-height:320px;}
+}
+@media(max-width:600px){
+  #nav2 .search-wrap input{width:100px;}
+  #nav2 .logo{font-size:1.35rem;}
+  footer .footer-grid{grid-template-columns:1fr;}
+  footer .f-bottom{flex-direction:column;text-align:center;}
+  #nav2 .nav2-right .lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV 1 -->
+<div id="nav1">
+  <marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee>
+</div>
+
+<!-- NAV 2 -->
+<nav id="nav2">
+  <div class="inner">
+    <div class="search-wrap" onclick="document.getElementById('search-overlay').classList.add('open')" style="cursor:pointer;">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search products..." readonly/>
+    </div>
+    <a href="index.html" class="logo">Glow &amp; <span>Flowless</span></a>
+    <div class="nav2-right">
+      <a href="customer.html"><i class="fas fa-user"></i> <span class="lbl">Account</span></a>
+      <button class="cart-btn"><i class="fas fa-shopping-bag"></i> Cart (0)</button>
+    </div>
+  </div>
+</nav>
+
+<!-- NAV 3 -->
+<nav id="nav3">
+  <div class="inner">
+    <a href="index.html" class="active">Home</a>
+    <a href="products.html">Products</a>
+    <a href="customer.html">Customer Cabinet</a>
+    <a href="policyedu.html">Policy &amp; Education</a>
+    <a href="reviews.html">Testimonials</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+</nav>
+
+<!-- NAV 4 -->
+<div id="nav4">
+  <p id="nav4-msg">Celebrating children's natural beauty — crafted with love in Kenya</p>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay">
+  <div id="search-box">
+    <button id="search-close" onclick="document.getElementById('search-overlay').classList.remove('open')"><i class="fas fa-times"></i></button>
+    <h3>Search Products</h3>
+    <div class="search-input-wrap">
+      <input type="text" placeholder="Search for hair growth, scalp care..." id="search-input"/>
+      <button onclick="doSearch()">Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div id="hero-placeholder" style="display:flex;">
+    <h1>Gentle Care for<br>Beautiful Curls</h1>
+    <p>Premium hair care crafted for Kenya's children</p>
+    <a href="products.html" style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;background:#7a3050;color:#fff;padding:13px 30px;border-radius:30px;font-weight:600;text-decoration:none;">Shop Now <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div id="hero-slides-wrap" style="display:none;position:relative;width:100%;height:100%;">
+    <div class="hero-slides" id="heroSlides"></div>
+    <div class="dots" id="heroDots"></div>
+    <button class="arrow prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="arrow next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</section>
+
+<!-- SHOP CTA -->
+<div id="shop-cta">
+  <p id="shop-cta-text">Discover our full range of gentle hair care for kids</p>
+  <a href="products.html"><i class="fas fa-shopping-bag"></i> Shop All Products</a>
+</div>
+
+<!-- WELCOME SECTION -->
+<section id="welcome" class="section">
+  <div class="page-wrapper">
+    <div class="inner">
+      <div class="img-wrap" id="welcome-img-wrap">
+        <div id="welcome-img-placeholder">Upload Welcome Image via Admin</div>
+      </div>
+      <div class="text">
+        <p class="section-eyebrow" id="welcome-eyebrow">Our Promise</p>
+        <h2 class="section-title" id="welcome-title">Welcome to Glow &amp; Flowless</h2>
+        <p class="section-body" id="welcome-body">We believe every child deserves hair care that is as pure and gentle as they are. At Glow &amp; Flowless, we have carefully crafted a collection of products that nourish, protect, and celebrate the natural beauty of your child's hair. Made with love, tested with care — our products are proudly Kenyan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section id="our-story" class="section">
+  <div class="page-wrapper">
+    <div class="inner">
+      <div class="img-wrap" id="story-img-wrap">
+        <div id="story-img-placeholder">Upload Story Image via Admin</div>
+      </div>
+      <div class="text">
+        <p class="section-eyebrow" id="story-eyebrow">How We Started</p>
+        <h2 class="section-title" id="story-title">Our Story</h2>
+        <p class="section-body" id="story-body">Born from a mother's frustration with harsh, chemical-laden products on the shelves, Glow &amp; Flowless was founded to fill a gap. We saw children's delicate scalps being exposed to products not made for them. So we started from scratch — researching, formulating, and testing until we found what truly works for African children's hair. Today, thousands of Kenyan families trust us.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY PARENTS LOVE US -->
+<section id="why-parents" class="section">
+  <div class="page-wrapper">
+    <div class="inner">
+      <div class="img-wrap" id="why-img-wrap">
+        <div id="why-img-placeholder">Upload Why Parents Image via Admin</div>
+      </div>
+      <div class="text">
+        <p class="section-eyebrow" id="why-eyebrow">Trusted by Families</p>
+        <h2 class="section-title" id="why-title">Why Parents Love Us</h2>
+        <p class="section-body" id="why-body">From nairobi to Mombasa, Kenyan parents trust Glow &amp; Flowless because we put children first — always.</p>
+        <div class="reasons" id="why-reasons">
+          <div class="reason"><div class="icon pink"><i class="fas fa-leaf"></i></div><div><strong>100% Natural Ingredients</strong><p>No sulfates, parabens, or harsh chemicals. Just pure, nourishing goodness.</p></div></div>
+          <div class="reason"><div class="icon blue"><i class="fas fa-flask"></i></div><div><strong>Dermatologist Tested</strong><p>Safe for sensitive scalps — clinically tested and approved for children.</p></div></div>
+          <div class="reason"><div class="icon mint"><i class="fas fa-seedling"></i></div><div><strong>Eco-Friendly Packaging</strong><p>Our packaging is recyclable and responsibly sourced, for a better tomorrow.</p></div></div>
+          <div class="reason"><div class="icon lavender"><i class="fas fa-heart"></i></div><div><strong>Made with Love in Kenya</strong><p>Proudly Kenyan — every product supports local families and suppliers.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAVE A REVIEW CTA -->
+<section id="review-cta">
+  <div class="page-wrapper">
+    <h2>Share Your Experience</h2>
+    <p>Join thousands of happy parents and tell us how Glow &amp; Flowless has made a difference</p>
+    <a href="reviews.html"><i class="fas fa-star"></i> Leave a Review</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="main-footer">
+  <div class="page-wrapper">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="logo">Glow &amp; <span>Flowless</span></div>
+        <p id="footer-desc">Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <div class="socials" id="footer-socials">
+          <a href="#" id="footer-ig"><i class="fab fa-instagram"></i></a>
+          <a href="#" id="footer-fb"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" id="footer-tw"><i class="fab fa-twitter"></i></a>
+          <a href="#" id="footer-tt"><i class="fab fa-tiktok"></i></a>
+          <a href="#" id="footer-wa"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="f-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="reviews.html">Testimonials</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Customer</h4>
+        <ul>
+          <li><a href="customer.html">My Account</a></li>
+          <li><a href="customer.html">My Orders</a></li>
+          <li><a href="policyedu.html">Policy &amp; Education</a></li>
+          <li><a href="policyedu.html">Shipping Policy</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Contact</h4>
+        <ul id="footer-contact">
+          <li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li>
+          <li><a href="tel:+254700000000">+254 700 000 000</a></li>
+          <li><a href="#">Nairobi, Kenya</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <p id="footer-copy">&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <div class="payment">
+        <span>M-PESA</span><span>Visa</span><span>Mastercard</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- FIREBASE + APP SCRIPT -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287",measurementId:"G-TBC0V3ZT8Q"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+async function loadSiteConfig(){
+  try{
+    const snap=await getDoc(doc(db,'config','site'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.nav4Msg)document.getElementById('nav4-msg').textContent=d.nav4Msg;
+      if(d.footerDesc)document.getElementById('footer-desc').textContent=d.footerDesc;
+      if(d.footerCopy)document.getElementById('footer-copy').innerHTML=d.footerCopy;
+      if(d.shopCtaText)document.getElementById('shop-cta-text').textContent=d.shopCtaText;
+      if(d.socialIg)document.getElementById('footer-ig').href=d.socialIg;
+      if(d.socialFb)document.getElementById('footer-fb').href=d.socialFb;
+      if(d.socialTw)document.getElementById('footer-tw').href=d.socialTw;
+      if(d.socialTt)document.getElementById('footer-tt').href=d.socialTt;
+      if(d.socialWa)document.getElementById('footer-wa').href=d.socialWa;
+      if(d.contactEmail){const els=document.querySelectorAll('#footer-contact a[href^="mailto"]');els.forEach(e=>e.href='mailto:'+d.contactEmail);}
+      if(d.contactPhone){const els=document.querySelectorAll('#footer-contact a[href^="tel"]');els.forEach(e=>e.href='tel:'+d.contactPhone);}
+    }
+  }catch(e){console.log('Config load:',e.message);}
+}
+
+async function loadHeroImages(){
+  try{
+    const snap=await getDocs(collection(db,'heroImages'));
+    const images=[];
+    snap.forEach(d=>images.push({...d.data(),id:d.id}));
+    images.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(images.length>0){
+      document.getElementById('hero-placeholder').style.display='none';
+      document.getElementById('hero-slides-wrap').style.display='block';
+      const slidesEl=document.getElementById('heroSlides');
+      const dotsEl=document.getElementById('heroDots');
+      images.forEach((img,i)=>{
+        const slide=document.createElement('div');
+        slide.className='hero-slide';
+        slide.innerHTML=`<img src="${img.url}" alt="${img.alt||'Hero'}"/><div class="hero-overlay"><div class="hero-content"><p class="eyebrow">${img.eyebrow||'Kids Hair Care'}</p><h1>${img.headline||'Glow & Flowless'}</h1><p>${img.subtext||''}</p><a href="products.html" class="hero-cta">Shop Now <i class="fas fa-arrow-right"></i></a></div></div>`;
+        slidesEl.appendChild(slide);
+        const dot=document.createElement('button');
+        dot.className='dot'+(i===0?' active':'');
+        dot.onclick=()=>goSlide(i);
+        dotsEl.appendChild(dot);
+      });
+      startSlider(images.length);
+    }
+  }catch(e){console.log('Hero:',e.message);}
+}
+
+async function loadArticles(){
+  try{
+    const snap=await getDoc(doc(db,'articles','home'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.welcomeTitle)document.getElementById('welcome-title').textContent=d.welcomeTitle;
+      if(d.welcomeBody)document.getElementById('welcome-body').textContent=d.welcomeBody;
+      if(d.welcomeEyebrow)document.getElementById('welcome-eyebrow').textContent=d.welcomeEyebrow;
+      if(d.welcomeImg){
+        document.getElementById('welcome-img-wrap').innerHTML=`<img src="${d.welcomeImg}" alt="Welcome"/>`;
+      }
+      if(d.storyTitle)document.getElementById('story-title').textContent=d.storyTitle;
+      if(d.storyBody)document.getElementById('story-body').textContent=d.storyBody;
+      if(d.storyEyebrow)document.getElementById('story-eyebrow').textContent=d.storyEyebrow;
+      if(d.storyImg){
+        document.getElementById('story-img-wrap').innerHTML=`<img src="${d.storyImg}" alt="Our Story"/>`;
+      }
+      if(d.whyTitle)document.getElementById('why-title').textContent=d.whyTitle;
+      if(d.whyBody)document.getElementById('why-body').textContent=d.whyBody;
+      if(d.whyEyebrow)document.getElementById('why-eyebrow').textContent=d.whyEyebrow;
+      if(d.whyImg){
+        document.getElementById('why-img-wrap').innerHTML=`<img src="${d.whyImg}" alt="Why Parents Love Us"/>`;
+      }
+    }
+  }catch(e){console.log('Articles:',e.message);}
+}
+
+let slideIdx=0;let slideTimer=null;let totalSlides=0;
+function goSlide(i){
+  slideIdx=i;
+  document.getElementById('heroSlides').style.transform=`translateX(-${i*33.333}%)`;
+  document.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('active',idx===i));
+}
+window.changeSlide=function(dir){
+  goSlide((slideIdx+dir+totalSlides)%totalSlides);
+}
+function startSlider(n){
+  totalSlides=n;
+  if(slideTimer)clearInterval(slideTimer);
+  slideTimer=setInterval(()=>goSlide((slideIdx+1)%n),4500);
+}
+window.doSearch=function(){
+  const q=document.getElementById('search-input').value.trim();
+  if(q)window.location.href=`products.html?search=${encodeURIComponent(q)}`;
+}
+
+loadSiteConfig();
+loadHeroImages();
+loadArticles();
+</script>
+</body>
+</html>

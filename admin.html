@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — Glow & Flowless</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;
+  --dark:#1a1a1a;--sidebar:#111;--text:#2d2d2d;--subtext:#666;
+  --font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;
+  --accent:#d4608a;
+}
+html,body{height:100%;font-family:var(--font-body);background:#f5f0f7;color:var(--text);overflow:hidden;}
+
+/* ===== LOGIN ===== */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 100%);display:flex;align-items:center;justify-content:center;z-index:9999;}
+#login-screen.hide{display:none;}
+.login-box{background:#fff;border-radius:24px;padding:48px 40px;width:90%;max-width:400px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.login-box .logo{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.login-box .logo span{color:var(--accent);}
+.login-box p{color:var(--subtext);font-size:0.85rem;margin-bottom:28px;}
+.login-box input{width:100%;border:1px solid #e0d8e8;border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.88rem;outline:none;margin-bottom:12px;transition:border 0.2s;}
+.login-box input:focus{border-color:var(--accent);}
+.login-box button{width:100%;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:600;font-size:0.92rem;cursor:pointer;}
+#login-err{color:#c0303a;font-size:0.8rem;margin-top:8px;display:none;}
+
+/* ===== LAYOUT ===== */
+#app{display:flex;height:100vh;overflow:hidden;}
+#app.hide{display:none;}
+
+/* Sidebar */
+#sidebar{width:220px;background:var(--sidebar);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+#sidebar .sb-logo{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.06);}
+#sidebar .sb-logo span{font-family:var(--font-display);font-size:1.1rem;color:#fff;display:block;}
+#sidebar .sb-logo small{font-size:0.68rem;color:#888;letter-spacing:0.05em;}
+#sidebar nav{flex:1;padding:14px 0;}
+#sidebar nav a{display:flex;align-items:center;gap:11px;padding:10px 20px;color:#aaa;text-decoration:none;font-size:0.8rem;font-weight:500;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;}
+#sidebar nav a:hover{color:#fff;background:rgba(255,255,255,0.06);}
+#sidebar nav a.active{color:#fff;background:rgba(212,96,138,0.15);border-right:3px solid var(--accent);}
+#sidebar nav a i{width:16px;text-align:center;font-size:0.85rem;}
+#sidebar .sb-section{font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#555;padding:14px 20px 6px;}
+#sidebar .sb-logout{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
+#sidebar .sb-logout button{display:flex;align-items:center;gap:10px;color:#888;background:none;border:none;font-family:var(--font-body);font-size:0.8rem;cursor:pointer;transition:color 0.2s;}
+#sidebar .sb-logout button:hover{color:#fff;}
+
+/* Main */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+#topbar{background:#fff;border-bottom:1px solid #ede8f0;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+#topbar h2{font-size:1rem;font-weight:700;color:var(--dark);}
+#topbar .tb-right{display:flex;align-items:center;gap:12px;font-size:0.8rem;color:var(--subtext);}
+#topbar .badge{background:var(--pink);color:#7a3050;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;}
+#content{padding:24px 28px;flex:1;}
+
+/* Panel */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* Cards */
+.dash-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.dash-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;}
+.dash-card .dc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.dash-card .dc-icon.pink{background:var(--pink);color:#a03060;}
+.dash-card .dc-icon.blue{background:var(--blue);color:#2d5580;}
+.dash-card .dc-icon.mint{background:var(--mint);color:#2d6a4a;}
+.dash-card .dc-icon.lavender{background:var(--lavender);color:#5a4080;}
+.dash-card .dc-num{font-size:1.5rem;font-weight:700;color:var(--dark);}
+.dash-card .dc-lbl{font-size:0.72rem;color:var(--subtext);font-weight:500;}
+
+/* Tables */
+.admin-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.admin-card-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0e8f0;}
+.admin-card-head h3{font-size:0.9rem;font-weight:700;color:var(--dark);}
+.btn-sm{background:var(--dark);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:var(--font-body);font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.2s;}
+.btn-sm:hover{background:#333;}
+.btn-sm.pink{background:var(--pink);color:#7a3050;}
+.btn-sm.pink:hover{background:#ffc8d8;}
+.btn-sm.red{background:#fee;color:#c03030;}
+.btn-sm.red:hover{background:#fcc;}
+.btn-sm.green{background:var(--mint);color:#2d6a4a;}
+table{width:100%;border-collapse:collapse;}
+table th{background:var(--cream);font-size:0.72rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--subtext);padding:10px 16px;text-align:left;}
+table td{padding:12px 16px;font-size:0.82rem;border-bottom:1px solid #f8f0f8;vertical-align:middle;}
+table tr:last-child td{border-bottom:none;}
+table tr:hover td{background:#fdf8ff;}
+.tbl-actions{display:flex;gap:6px;}
+.img-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:var(--cream);}
+.img-thumb-placeholder{width:40px;height:40px;border-radius:6px;background:var(--pink);display:flex;align-items:center;justify-content:center;color:#b06080;font-size:0.7rem;}
+.color-dot{width:16px;height:16px;border-radius:50%;display:inline-block;border:2px solid rgba(0,0,0,0.1);}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;}
+.status-badge.new{background:var(--blue);color:#2d5580;}
+.status-badge.approved{background:var(--mint);color:#2d6a4a;}
+.status-badge.pending{background:#fff3cd;color:#856404;}
+
+/* Modal */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+#modal-overlay.open{display:flex;}
+#modal-box{background:#fff;border-radius:20px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;}
+#modal-box .modal-head{padding:20px 24px 16px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between;}
+#modal-box .modal-head h3{font-size:1rem;font-weight:700;}
+#modal-box .modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:#999;}
+#modal-box .modal-body{padding:20px 24px;}
+#modal-box .modal-foot{padding:16px 24px;border-top:1px solid #f0e8f0;display:flex;justify-content:flex-end;gap:10px;}
+
+/* Form */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fg label{font-size:0.78rem;font-weight:600;color:var(--dark);}
+.fg input,.fg select,.fg textarea{border:1px solid #e0d8e8;border-radius:8px;padding:9px 12px;font-family:var(--font-body);font-size:0.85rem;outline:none;transition:border 0.2s;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg textarea{resize:vertical;min-height:80px;}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-divider{font-size:0.72rem;font-weight:600;color:var(--subtext);letter-spacing:0.08em;text-transform:uppercase;margin:12px 0 8px;padding-bottom:6px;border-bottom:1px solid #f0e8f0;}
+
+/* Upload area */
+.upload-zone{border:2px dashed #e0d8e8;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:var(--cream);}
+.upload-zone:hover{border-color:var(--accent);background:#fff8fc;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone i{font-size:1.8rem;color:#c0a0b8;margin-bottom:8px;display:block;}
+.upload-zone p{font-size:0.8rem;color:var(--subtext);}
+.upload-zone .uploading{color:var(--accent);font-weight:600;}
+.upload-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.upload-previews .prev-wrap{position:relative;}
+.upload-previews img{width:64px;height:64px;object-fit:cover;border-radius:8px;display:block;}
+.upload-previews .rm-img{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:#c03030;color:#fff;border:none;cursor:pointer;font-size:0.65rem;display:flex;align-items:center;justify-content:center;}
+
+/* Hero images grid */
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.hero-item{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #f0e8f0;}
+.hero-item img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+.hero-item .hi-placeholder{width:100%;aspect-ratio:16/9;background:var(--cream);display:flex;align-items:center;justify-content:center;color:#c0a0b8;}
+.hero-item .hi-info{padding:10px 12px;}
+.hero-item .hi-info p{font-size:0.78rem;font-weight:600;color:var(--dark);margin-bottom:2px;}
+.hero-item .hi-info small{font-size:0.72rem;color:var(--subtext);}
+.hero-item .hi-actions{display:flex;gap:6px;padding:0 12px 12px;}
+
+/* Notification */
+#notif{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:12px;font-size:0.83rem;font-weight:500;z-index:9000;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+#notif.show{transform:translateY(0);opacity:1;}
+#notif.success{background:#2d6a4a;}
+#notif.error{background:#c03030;}
+
+/* Empty */
+.empty-row td{text-align:center;color:var(--subtext);padding:32px!important;font-size:0.83rem;}
+
+/* Config form */
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.config-section-title{grid-column:1/-1;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--subtext);padding-top:8px;border-top:1px solid #f0e8f0;margin-top:4px;}
+.save-config-btn{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:var(--font-body);font-weight:600;font-size:0.88rem;cursor:pointer;margin-top:12px;}
+.save-config-btn:hover{background:#333;}
+
+/* Article image previews */
+.article-img-preview{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;display:block;margin-top:8px;background:var(--cream);}
+
+/* ===== MOBILE SIDEBAR ===== */
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:800;backdrop-filter:blur(2px);}
+#sidebar-overlay.open{display:block;}
+
+#hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;flex-direction:column;gap:5px;align-items:center;justify-content:center;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all 0.3s;}
+#hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+#hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+#hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+@media(max-width:768px){
+  html,body{overflow:auto;}
+  #app{display:block;height:auto;overflow:visible;}
+  #main{height:100vh;overflow-y:auto;}
+  #content{padding:16px 14px;}
+
+  #sidebar{
+    position:fixed;top:0;left:0;height:100vh;z-index:900;
+    transform:translateX(-100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+    width:240px;overflow-y:auto;
+  }
+  #sidebar.open{transform:translateX(0);}
+
+  #topbar{padding:12px 16px;position:sticky;top:0;z-index:700;background:#fff;}
+  #hamburger{display:flex;}
+  #topbar h2{font-size:0.92rem;}
+  #topbar .tb-right span{display:none;}
+
+  .dash-cards{grid-template-columns:1fr 1fr;gap:10px;}
+  .dash-card{padding:14px;}
+  .dash-card .dc-num{font-size:1.2rem;}
+
+  .config-grid{grid-template-columns:1fr;}
+  .fg-row{grid-template-columns:1fr;}
+  .hero-grid{grid-template-columns:1fr 1fr;}
+
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+  #modal-box{width:100%;max-width:100%;border-radius:20px 20px 0 0;position:fixed;bottom:0;max-height:92vh;}
+  #modal-overlay{align-items:flex-end;padding:0;}
+}
+
+@media(max-width:420px){
+  .dash-cards{grid-template-columns:1fr;}
+  .hero-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="logo">Glow &amp; <span>Flowless</span></div>
+    <p>Admin Dashboard</p>
+    <input type="email" id="l-email" placeholder="Admin email"/>
+    <input type="password" id="l-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Sign In</button>
+    <div id="login-err">Invalid credentials. Please try again.</div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- APP -->
+<div id="app" class="hide">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-logo">
+      <span>Glow &amp; Flowless</span>
+      <small>ADMIN PANEL</small>
+    </div>
+    <nav>
+      <div class="sb-section">Overview</div>
+      <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <div class="sb-section">Content</div>
+      <a onclick="showPanel('hero')" id="nav-hero"><i class="fas fa-images"></i> Hero Images</a>
+      <a onclick="showPanel('articles')" id="nav-articles"><i class="fas fa-newspaper"></i> Home Articles</a>
+      <div class="sb-section">Products</div>
+      <a onclick="showPanel('categories')" id="nav-categories"><i class="fas fa-tags"></i> Categories</a>
+      <a onclick="showPanel('products')" id="nav-products"><i class="fas fa-box-open"></i> Products</a>
+      <div class="sb-section">Engagement</div>
+      <a onclick="showPanel('reviews')" id="nav-reviews"><i class="fas fa-star"></i> Reviews</a>
+      <a onclick="showPanel('contacts')" id="nav-contacts"><i class="fas fa-envelope"></i> Messages</a>
+      <div class="sb-section">Settings</div>
+      <a onclick="showPanel('config')" id="nav-config"><i class="fas fa-cog"></i> Site Config</a>
+      <a onclick="showPanel('policies')" id="nav-policies"><i class="fas fa-shield-alt"></i> Policies</a>
+      <a onclick="showPanel('education')" id="nav-education"><i class="fas fa-book"></i> Education</a>
+      <a onclick="showPanel('faqs')" id="nav-faqs"><i class="fas fa-question-circle"></i> FAQs</a>
+    </nav>
+    <div class="sb-logout">
+      <button onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <h2 id="topbar-title">Dashboard</h2>
+      </div>
+      <div class="tb-right">
+        <span id="admin-email-display"></span>
+        <a href="index.html" target="_blank" style="font-size:0.78rem;color:var(--accent);text-decoration:none;"><i class="fas fa-external-link-alt"></i> View Site</a>
+      </div>
+    </div>
+    <div id="content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="dash-cards">
+          <div class="dash-card"><div class="dc-icon pink"><i class="fas fa-box-open"></i></div><div><div class="dc-num" id="dc-products">-</div><div class="dc-lbl">Products</div></div></div>
+          <div class="dash-card"><div class="dc-icon blue"><i class="fas fa-tags"></i></div><div><div class="dc-num" id="dc-cats">-</div><div class="dc-lbl">Categories</div></div></div>
+          <div class="dash-card"><div class="dc-icon mint"><i class="fas fa-star"></i></div><div><div class="dc-num" id="dc-reviews">-</div><div class="dc-lbl">Reviews</div></div></div>
+          <div class="dash-card"><div class="dc-icon lavender"><i class="fas fa-envelope"></i></div><div><div class="dc-num" id="dc-msgs">-</div><div class="dc-lbl">Messages</div></div></div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Quick Actions</h3></div>
+          <div style="padding:20px;display:flex;flex-wrap:wrap;gap:10px;">
+            <button class="btn-sm" onclick="showPanel('products');showAddProduct()"><i class="fas fa-plus"></i> Add Product</button>
+            <button class="btn-sm" onclick="showPanel('categories');openCatModal()"><i class="fas fa-plus"></i> Add Category</button>
+            <button class="btn-sm pink" onclick="showPanel('hero');openHeroModal()"><i class="fas fa-image"></i> Upload Hero Image</button>
+            <button class="btn-sm green" onclick="showPanel('reviews')"><i class="fas fa-star"></i> Manage Reviews</button>
+            <button class="btn-sm" onclick="showPanel('config')"><i class="fas fa-cog"></i> Site Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO IMAGES -->
+      <div class="panel" id="panel-hero">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>Hero Images</h3>
+            <button class="btn-sm" onclick="openHeroModal()"><i class="fas fa-plus"></i> Add Hero</button>
+          </div>
+          <div style="padding:20px;">
+            <div class="hero-grid" id="hero-grid"><div style="color:var(--subtext);font-size:0.83rem;padding:20px;">Loading hero images...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOME ARTICLES -->
+      <div class="panel" id="panel-articles">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Home Page Articles</h3><button class="btn-sm" onclick="saveArticles()"><i class="fas fa-save"></i> Save All</button></div>
+          <div style="padding:20px;">
+            <div class="form-divider">Welcome Section</div>
+            <div class="fg-row">
+              <div class="fg"><label>Eyebrow Text</label><input id="art-welcome-eyebrow" placeholder="e.g. Our Promise"/></div>
+              <div class="fg"><label>Title</label><input id="art-welcome-title" placeholder="Welcome to Glow & Flowless"/></div>
+            </div>
+            <div class="fg"><label>Article Body</label><textarea id="art-welcome-body" rows="4"></textarea></div>
+            <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-welcome"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'welcome')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Welcome section image</p></div><img id="prev-welcome" class="article-img-preview" style="display:none"/></div>
+
+            <div class="form-divider">Our Story Section</div>
+            <div class="fg-row">
+              <div class="fg"><label>Eyebrow Text</label><input id="art-story-eyebrow" placeholder="e.g. How We Started"/></div>
+              <div class="fg"><label>Title</label><input id="art-story-title" placeholder="Our Story"/></div>
+            </div>
+            <div class="fg"><label>Article Body</label><textarea id="art-story-body" rows="4"></textarea></div>
+            <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-story"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'story')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Our Story section image</p></div><img id="prev-story" class="article-img-preview" style="display:none"/></div>
+
+            <div class="form-divider">Why Parents Love Us</div>
+            <div class="fg-row">
+              <div class="fg"><label>Eyebrow Text</label><input id="art-why-eyebrow" placeholder="e.g. Trusted by Families"/></div>
+              <div class="fg"><label>Title</label><input id="art-why-title" placeholder="Why Parents Love Us"/></div>
+            </div>
+            <div class="fg"><label>Article Body</label><textarea id="art-why-body" rows="4"></textarea></div>
+            <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-why"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'why')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Why Parents section image</p></div><img id="prev-why" class="article-img-preview" style="display:none"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="panel" id="panel-categories">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Product Categories</h3><button class="btn-sm" onclick="openCatModal()"><i class="fas fa-plus"></i> Add Category</button></div>
+          <table>
+            <thead><tr><th>Name</th><th>Color</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="cats-tbody"><tr class="empty-row"><td colspan="4">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="panel" id="panel-products">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>Products</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select id="prod-cat-filter" onchange="loadProducts()" style="border:1px solid #e0d8e8;border-radius:8px;padding:6px 10px;font-family:var(--font-body);font-size:0.78rem;outline:none;">
+                <option value="">All Categories</option>
+              </select>
+              <button class="btn-sm" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price (KES)</th><th>Actions</th></tr></thead>
+            <tbody id="products-tbody"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="panel" id="panel-reviews">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Customer Reviews</h3></div>
+          <table>
+            <thead><tr><th>Name</th><th>Rating</th><th>Review</th><th>Product</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="reviews-tbody"><tr class="empty-row"><td colspan="6">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONTACTS -->
+      <div class="panel" id="panel-contacts">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Contact Messages</h3></div>
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="contacts-tbody"><tr class="empty-row"><td colspan="6">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SITE CONFIG -->
+      <div class="panel" id="panel-config">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Site Configuration</h3></div>
+          <div style="padding:20px;">
+            <div class="config-grid">
+              <div class="config-section-title">Navigation Messages</div>
+              <div class="fg"><label>Nav Bar 4 Message</label><input id="cfg-nav4Msg" placeholder="Promotional message..."/></div>
+              <div class="fg"><label>Shop CTA Text</label><input id="cfg-shopCtaText" placeholder="Discover our full range..."/></div>
+              <div class="config-section-title">Contact Details</div>
+              <div class="fg"><label>Phone Number</label><input id="cfg-contactPhone" placeholder="+254 700 000 000"/></div>
+              <div class="fg"><label>Email Address</label><input id="cfg-contactEmail" placeholder="hello@glowandflowless.co.ke"/></div>
+              <div class="fg"><label>Address</label><input id="cfg-contactAddress" placeholder="Nairobi, Kenya"/></div>
+              <div class="fg"><label>Business Hours</label><input id="cfg-contactHours" placeholder="Mon-Sat 8am-6pm"/></div>
+              <div class="config-section-title">Social Media Links</div>
+              <div class="fg"><label>Instagram URL</label><input id="cfg-socialIg" placeholder="https://instagram.com/..."/></div>
+              <div class="fg"><label>Facebook URL</label><input id="cfg-socialFb" placeholder="https://facebook.com/..."/></div>
+              <div class="fg"><label>Twitter URL</label><input id="cfg-socialTw" placeholder="https://twitter.com/..."/></div>
+              <div class="fg"><label>TikTok URL</label><input id="cfg-socialTt" placeholder="https://tiktok.com/..."/></div>
+              <div class="fg"><label>WhatsApp URL</label><input id="cfg-socialWa" placeholder="https://wa.me/254..."/></div>
+              <div class="config-section-title">Footer</div>
+              <div class="fg"><label>Footer Description</label><textarea id="cfg-footerDesc" rows="2"></textarea></div>
+              <div class="fg"><label>Copyright Text</label><input id="cfg-footerCopy" placeholder="2025 Glow & Flowless..."/></div>
+            </div>
+            <button class="save-config-btn" onclick="saveConfig()"><i class="fas fa-save"></i> Save Configuration</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POLICIES -->
+      <div class="panel" id="panel-policies">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Policies</h3><button class="btn-sm" onclick="openPolicyModal()"><i class="fas fa-plus"></i> Add Policy</button></div>
+          <table>
+            <thead><tr><th>Title</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="policies-tbody"><tr class="empty-row"><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="panel" id="panel-education">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Hair Care Education</h3><button class="btn-sm" onclick="openEduModal()"><i class="fas fa-plus"></i> Add Article</button></div>
+          <table>
+            <thead><tr><th>Image</th><th>Title</th><th>Tag</th><th>Order</th><th>Actions</th></tr></thead>
+          <tbody id="edu-tbody"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FAQS -->
+      <div class="panel" id="panel-faqs">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>FAQs</h3><button class="btn-sm" onclick="openFaqModal()"><i class="fas fa-plus"></i> Add FAQ</button></div>
+          <table>
+            <thead><tr><th>Question</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="faqs-tbody"><tr class="empty-row"><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">Add Item</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<div id="notif"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,collection,getDocs,serverTimestamp,query,orderBy}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+// Cloudinary — unsigned uploads
+const CLOUD_NAME='dzylr1wkd';
+const UPLOAD_PRESET='glowandflawless';
+
+async function uploadToCloudinary(file){
+  const fd=new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',UPLOAD_PRESET);
+  const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:'POST',body:fd});
+  const data=await res.json();
+  if(data.secure_url)return data.secure_url;
+  throw new Error(data.error?.message||'Upload failed');
+}
+
+// Auth
+onAuthStateChanged(auth,user=>{
+  if(user){
+    document.getElementById('login-screen').classList.add('hide');
+    document.getElementById('app').classList.remove('hide');
+    document.getElementById('admin-email-display').textContent=user.email;
+    initAdmin();
+  }else{
+    document.getElementById('login-screen').classList.remove('hide');
+    document.getElementById('app').classList.add('hide');
+  }
+});
+
+window.doLogin=async function(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  const errEl=document.getElementById('login-err');
+  errEl.style.display='none';
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){errEl.style.display='block';}
+}
+window.doLogout=async function(){await signOut(auth);}
+
+// Notification
+function notify(msg,type='success'){
+  const el=document.getElementById('notif');
+  el.textContent=msg;el.className='show '+(type||'');
+  setTimeout(()=>el.className='',3000);
+}
+
+// Panel switching
+// Sidebar mobile controls
+window.toggleSidebar=function(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebar-overlay');
+  const hb=document.getElementById('hamburger');
+  const isOpen=sb.classList.contains('open');
+  if(isOpen){
+    sb.classList.remove('open');
+    ov.classList.remove('open');
+    hb.classList.remove('open');
+  }else{
+    sb.classList.add('open');
+    ov.classList.add('open');
+    hb.classList.add('open');
+  }
+}
+window.closeSidebar=function(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+window.showPanel=function(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#sidebar nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const navEl=document.getElementById('nav-'+id);
+  if(navEl)navEl.classList.add('active');
+  const titles={dashboard:'Dashboard',hero:'Hero Images',articles:'Home Articles',categories:'Categories',products:'Products',reviews:'Reviews',contacts:'Messages',config:'Site Config',policies:'Policies',education:'Education',faqs:'FAQs'};
+  document.getElementById('topbar-title').textContent=titles[id]||id;
+  loaders[id]&&loaders[id]();
+  // Auto-close sidebar on mobile when a section is selected
+  if(window.innerWidth<=768)closeSidebar();
+}
+
+// Modal
+window.closeModal=function(){document.getElementById('modal-overlay').classList.remove('open');}
+function openModal(title,bodyHTML,footHTML){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=bodyHTML;
+  document.getElementById('modal-foot').innerHTML=footHTML;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+// ====== INIT ======
+async function initAdmin(){
+  loadDashboard();
+  loadConfig();
+  loadArticles();
+}
+
+// ====== LOADERS MAP ======
+const loaders={
+  dashboard:()=>loadDashboard(),
+  hero:()=>loadHero(),
+  categories:()=>loadCategories(),
+  products:()=>loadProducts(),
+  reviews:()=>loadReviews(),
+  contacts:()=>loadContacts(),
+  config:()=>loadConfig(),
+  policies:()=>loadPolicies(),
+  education:()=>loadEducation(),
+  faqs:()=>loadFaqs(),
+  articles:()=>loadArticles(),
+};
+
+// ====== DASHBOARD ======
+async function loadDashboard(){
+  try{
+    const[pSnap,cSnap,rSnap,mSnap]=await Promise.all([getDocs(collection(db,'products')),getDocs(collection(db,'categories')),getDocs(collection(db,'reviews')),getDocs(collection(db,'contacts'))]);
+    document.getElementById('dc-products').textContent=pSnap.size;
+    document.getElementById('dc-cats').textContent=cSnap.size;
+    document.getElementById('dc-reviews').textContent=rSnap.size;
+    document.getElementById('dc-msgs').textContent=mSnap.size;
+  }catch(e){}
+}
+
+// ====== HERO IMAGES ======
+async function loadHero(){
+  const grid=document.getElementById('hero-grid');
+  grid.innerHTML='<div style="color:var(--subtext);font-size:0.83rem;">Loading...</div>';
+  try{
+    const snap=await getDocs(collection(db,'heroImages'));
+    const items=[];snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(items.length===0){grid.innerHTML='<div style="color:var(--subtext);font-size:0.83rem;padding:20px;">No hero images yet. Add your first one.</div>';return;}
+    grid.innerHTML=items.map(img=>`<div class="hero-item">
+      ${img.url?`<img src="${img.url}" alt="Hero"/>`:'<div class="hi-placeholder"><i class="fas fa-image fa-2x"></i></div>'}
+      <div class="hi-info"><p>${img.headline||'Hero Image'}</p><small>Order: ${img.order||0}</small></div>
+      <div class="hi-actions">
+        <button class="btn-sm" onclick="openHeroModal('${img.id}')"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn-sm red" onclick="deleteHero('${img.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+  }catch(e){grid.innerHTML='<div style="color:red;font-size:0.83rem;">Error loading.</div>';}
+}
+
+window.openHeroModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'heroImages',id));if(s.exists())data=s.data();}catch(e){}}
+  openModal(id?'Edit Hero Image':'Add Hero Image',`
+    <div class="fg"><label>Headline</label><input id="h-headline" value="${data.headline||''}" placeholder="e.g. Gentle Care for Beautiful Curls"/></div>
+    <div class="fg"><label>Eyebrow Text</label><input id="h-eyebrow" value="${data.eyebrow||''}" placeholder="e.g. Kids Hair Care"/></div>
+    <div class="fg"><label>Sub Text</label><input id="h-subtext" value="${data.subtext||''}" placeholder="Tagline for this slide"/></div>
+    <div class="fg"><label>Display Order</label><input id="h-order" type="number" value="${data.order||0}"/></div>
+    <div class="fg"><label>Image</label>
+      <div class="upload-zone" id="hero-upload-zone">
+        <input type="file" accept="image/*" onchange="handleHeroUpload(this)"/>
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p id="hero-upload-txt">${data.url?'Image uploaded. Click to replace':'Click or drag to upload hero image'}</p>
+      </div>
+      ${data.url?`<img src="${data.url}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;" id="hero-img-prev"/>`:'<img id="hero-img-prev" style="display:none;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;"/>'}
+    </div>
+    <input type="hidden" id="h-url" value="${data.url||''}"/>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveHero('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
+}
+
+window.handleHeroUpload=async function(input){
+  const file=input.files[0];if(!file)return;
+  document.getElementById('hero-upload-txt').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
+  try{
+    const url=await uploadToCloudinary(file);
+    document.getElementById('h-url').value=url;
+    document.getElementById('hero-img-prev').src=url;
+    document.getElementById('hero-img-prev').style.display='block';
+    document.getElementById('hero-upload-txt').textContent='Image uploaded successfully.';
+  }catch(e){document.getElementById('hero-upload-txt').textContent='Upload failed. Check Cloudinary settings.';}
+}
+
+window.saveHero=async function(id){
+  const headline=document.getElementById('h-headline').value.trim();
+  const eyebrow=document.getElementById('h-eyebrow').value.trim();
+  const subtext=document.getElementById('h-subtext').value.trim();
+  const order=+document.getElementById('h-order').value||0;
+  const url=document.getElementById('h-url').value;
+  const data={headline,eyebrow,subtext,order,url,updatedAt:serverTimestamp()};
+  try{
+    if(id){await updateDoc(doc(db,'heroImages',id),data);}
+    else{await addDoc(collection(db,'heroImages'),{...data,createdAt:serverTimestamp()});}
+    notify('Hero image saved.');closeModal();loadHero();
+  }catch(e){notify('Error saving: '+e.message,'error');}
+}
+
+window.deleteHero=async function(id){
+  if(!confirm('Delete this hero image?'))return;
+  try{await deleteDoc(doc(db,'heroImages',id));notify('Deleted.');loadHero();}catch(e){notify('Error.','error');}
+}
+
+// ====== ARTICLES ======
+async function loadArticles(){
+  try{
+    const s=await getDoc(doc(db,'articles','home'));
+    if(s.exists()){
+      const d=s.data();
+      ['welcome','story','why'].forEach(k=>{
+        const eyebrow=document.getElementById('art-'+k+'-eyebrow');
+        const title=document.getElementById('art-'+k+'-title');
+        const body=document.getElementById('art-'+k+'-body');
+        if(eyebrow)eyebrow.value=d[k+'Eyebrow']||'';
+        if(title)title.value=d[k+'Title']||'';
+        if(body)body.value=d[k+'Body']||'';
+        if(d[k+'Img']){const prev=document.getElementById('prev-'+k);if(prev){prev.src=d[k+'Img'];prev.style.display='block';}}
+      });
+    }
+  }catch(e){}
+}
+
+const articleImgUrls={welcome:'',story:'',why:''};
+
+window.uploadArticleImg=async function(input,key){
+  const file=input.files[0];if(!file)return;
+  const zone=document.getElementById('zone-'+key);
+  zone.querySelector('p').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
+  try{
+    const url=await uploadToCloudinary(file);
+    articleImgUrls[key]=url;
+    const prev=document.getElementById('prev-'+key);
+    prev.src=url;prev.style.display='block';
+    zone.querySelector('p').textContent='Image uploaded.';
+  }catch(e){zone.querySelector('p').textContent='Upload failed.';}
+}
+
+window.saveArticles=async function(){
+  try{
+    const existing=(await getDoc(doc(db,'articles','home'))).data()||{};
+    const payload={};
+    ['welcome','story','why'].forEach(k=>{
+      const eyebrowEl=document.getElementById('art-'+k+'-eyebrow');
+      const titleEl=document.getElementById('art-'+k+'-title');
+      const bodyEl=document.getElementById('art-'+k+'-body');
+      payload[k+'Eyebrow']=eyebrowEl?eyebrowEl.value.trim():(existing[k+'Eyebrow']||'');
+      payload[k+'Title']=titleEl?titleEl.value.trim():(existing[k+'Title']||'');
+      payload[k+'Body']=bodyEl?bodyEl.value.trim():(existing[k+'Body']||'');
+      if(articleImgUrls[k])payload[k+'Img']=articleImgUrls[k];
+      else payload[k+'Img']=existing[k+'Img']||'';
+    });
+    await setDoc(doc(db,'articles','home'),{...payload,updatedAt:serverTimestamp()});
+    notify('Articles saved successfully.');
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+
+// ====== CATEGORIES ======
+let cats=[];
+async function loadCategories(){
+  const tbody=document.getElementById('cats-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="4">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'categories'));
+    cats=[];snap.forEach(d=>cats.push({id:d.id,...d.data()}));
+    cats.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(cats.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="4">No categories yet.</td></tr>';return;}
+    tbody.innerHTML=cats.map(c=>`<tr>
+      <td>${c.name}</td>
+      <td><span class="color-dot" style="background:${c.color||'#ccc'}"></span> ${c.color||'-'}</td>
+      <td>${c.order||0}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-sm" onclick="openCatModal('${c.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn-sm red" onclick="deleteCat('${c.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+    // Refresh product filter dropdown
+    const sel=document.getElementById('prod-cat-filter');
+    const cur=sel.value;
+    sel.innerHTML='<option value="">All Categories</option>'+cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    sel.value=cur;
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="4">Error loading.</td></tr>';}
+}
+
+window.openCatModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'categories',id));if(s.exists())data=s.data();}catch(e){}}
+  openModal(id?'Edit Category':'Add Category',`
+    <div class="fg"><label>Category Name</label><input id="cat-name" value="${data.name||''}" placeholder="e.g. Teen Hair Growth System"/></div>
+    <div class="fg"><label>Color (hex)</label><div style="display:flex;gap:10px;align-items:center;"><input id="cat-color" type="color" value="${data.color||'#FFDDE6'}" style="width:44px;height:36px;border:1px solid #e0d8e8;border-radius:8px;padding:2px;cursor:pointer;"/><input id="cat-color-hex" value="${data.color||'#FFDDE6'}" style="flex:1;" placeholder="#FFDDE6"/></div></div>
+    <div class="fg"><label>Display Order</label><input id="cat-order" type="number" value="${data.order||0}"/></div>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveCat('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
+  setTimeout(()=>{
+    const colorInput=document.getElementById('cat-color');
+    const hexInput=document.getElementById('cat-color-hex');
+    colorInput.addEventListener('input',()=>hexInput.value=colorInput.value);
+    hexInput.addEventListener('input',()=>colorInput.value=hexInput.value);
+  },100);
+}
+
+window.saveCat=async function(id){
+  const name=document.getElementById('cat-name').value.trim();
+  const color=document.getElementById('cat-color-hex').value.trim()||'#FFDDE6';
+  const order=+document.getElementById('cat-order').value||0;
+  if(!name){notify('Category name required.','error');return;}
+  try{
+    if(id){await updateDoc(doc(db,'categories',id),{name,color,order,updatedAt:serverTimestamp()});}
+    else{await addDoc(collection(db,'categories'),{name,color,order,createdAt:serverTimestamp()});}
+    notify('Category saved.');closeModal();loadCategories();
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+
+window.deleteCat=async function(id){
+  if(!confirm('Delete this category? Products in it will not be deleted.'))return;
+  try{await deleteDoc(doc(db,'categories',id));notify('Deleted.');loadCategories();}catch(e){notify('Error.','error');}
+}
+
+// ====== PRODUCTS ======
+let productImgUrls=[];
+window.loadProducts=async function(){
+  const tbody=document.getElementById('products-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="5">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'products'));
+    let products=[];snap.forEach(d=>products.push({id:d.id,...d.data()}));
+    const filterCat=document.getElementById('prod-cat-filter').value;
+    if(filterCat)products=products.filter(p=>p.categoryId===filterCat);
+    if(products.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="5">No products yet.</td></tr>';return;}
+    // Ensure cats loaded
+    if(cats.length===0)await loadCategories();
+    tbody.innerHTML=products.map(p=>{
+      const cat=cats.find(c=>c.id===p.categoryId);
+      const img=p.images&&p.images.length>0?`<img src="${p.images[0]}" class="img-thumb" alt="${p.name}"/>`:'<div class="img-thumb-placeholder"><i class="fas fa-image"></i></div>';
+      return`<tr>
+        <td>${img}</td>
+        <td>${p.name||'-'}</td>
+        <td>${cat?cat.name:'-'}</td>
+        <td>${(p.price||0).toLocaleString()}</td>
+        <td><div class="tbl-actions">
+          <button class="btn-sm" onclick="openProductModal('${p.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn-sm red" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Error loading.</td></tr>';}
+}
+
+window.showAddProduct=function(){openProductModal();}
+
+window.openProductModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'products',id));if(s.exists())data=s.data();}catch(e){}}
+  productImgUrls=data.images||[];
+  if(cats.length===0)await loadCategories();
+  const catOptions=cats.map(c=>`<option value="${c.id}"${data.categoryId===c.id?' selected':''}>${c.name}</option>`).join('');
+  const imgsHTML=productImgUrls.map((u,i)=>`<div class="prev-wrap"><img src="${u}" alt="img${i}"/><button class="rm-img" onclick="removeProductImg(${i})"><i class="fas fa-times"></i></button></div>`).join('');
+  openModal(id?'Edit Product':'Add Product',`
+    <div class="fg"><label>Product Name</label><input id="p-name" value="${data.name||''}" placeholder="e.g. Hair Growth Oil 100ml"/></div>
+    <div class="fg-row">
+      <div class="fg"><label>Category</label><select id="p-cat"><option value="">Select category...</option>${catOptions}</select></div>
+      <div class="fg"><label>Price (KES)</label><input id="p-price" type="number" value="${data.price||''}" placeholder="1500"/></div>
+    </div>
+    <div class="fg"><label>Description</label><textarea id="p-desc" rows="4">${data.description||''}</textarea></div>
+    <div class="fg"><label>Product Images</label>
+      <div class="upload-zone"><input type="file" accept="image/*" multiple onchange="handleProductImgs(this)"/><i class="fas fa-cloud-upload-alt"></i><p id="p-upload-txt">Click to upload product images (multiple allowed)</p></div>
+      <div class="upload-previews" id="p-img-previews">${imgsHTML}</div>
+    </div>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveProduct('${id||''}')"><i class="fas fa-save"></i> Save Product</button>`);
+}
+
+window.handleProductImgs=async function(input){
+  const files=Array.from(input.files);
+  document.getElementById('p-upload-txt').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading '+files.length+' image(s)...</span>';
+  try{
+    const urls=await Promise.all(files.map(f=>uploadToCloudinary(f)));
+    productImgUrls=[...productImgUrls,...urls];
+    renderProductImgPreviews();
+    document.getElementById('p-upload-txt').textContent=productImgUrls.length+' image(s) ready.';
+  }catch(e){document.getElementById('p-upload-txt').textContent='Upload failed. Try again.';}
+}
+
+window.removeProductImg=function(idx){
+  productImgUrls.splice(idx,1);renderProductImgPreviews();
+}
+
+function renderProductImgPreviews(){
+  document.getElementById('p-img-previews').innerHTML=productImgUrls.map((u,i)=>`<div class="prev-wrap"><img src="${u}" alt="img${i}"/><button class="rm-img" onclick="removeProductImg(${i})"><i class="fas fa-times"></i></button></div>`).join('');
+}
+
+window.saveProduct=async function(id){
+  const name=document.getElementById('p-name').value.trim();
+  const categoryId=document.getElementById('p-cat').value;
+  const price=+document.getElementById('p-price').value||0;
+  const description=document.getElementById('p-desc').value.trim();
+  if(!name||!categoryId){notify('Name and category required.','error');return;}
+  const data={name,categoryId,price,description,images:productImgUrls,updatedAt:serverTimestamp()};
+  try{
+    if(id){await updateDoc(doc(db,'products',id),data);}
+    else{await addDoc(collection(db,'products'),{...data,createdAt:serverTimestamp()});}
+    notify('Product saved.');closeModal();loadProducts();
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+
+window.deleteProduct=async function(id){
+  if(!confirm('Delete this product?'))return;
+  try{await deleteDoc(doc(db,'products',id));notify('Product deleted.');loadProducts();}catch(e){notify('Error.','error');}
+}
+
+// ====== REVIEWS ======
+async function loadReviews(){
+  const tbody=document.getElementById('reviews-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="6">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'reviews'));
+    const reviews=[];snap.forEach(d=>reviews.push({id:d.id,...d.data()}));
+    reviews.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(reviews.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="6">No reviews yet.</td></tr>';return;}
+    tbody.innerHTML=reviews.map(r=>{
+      const stars='<i class="fas fa-star" style="color:#f59e0b"></i>'.repeat(r.rating||5);
+      const statusBadge=r.approved?'<span class="status-badge approved">Approved</span>':'<span class="status-badge pending">Pending</span>';
+      return`<tr>
+        <td>${r.name||'-'}</td>
+        <td>${stars}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.review||'-'}</td>
+        <td>${r.product||'-'}</td>
+        <td>${statusBadge}</td>
+        <td><div class="tbl-actions">
+          ${!r.approved?`<button class="btn-sm green" onclick="approveReview('${r.id}')"><i class="fas fa-check"></i> Approve</button>`:''}
+          <button class="btn-sm red" onclick="deleteReview('${r.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Error.</td></tr>';}
+}
+
+window.approveReview=async function(id){
+  try{await updateDoc(doc(db,'reviews',id),{approved:true});notify('Review approved.');loadReviews();}catch(e){notify('Error.','error');}
+}
+window.deleteReview=async function(id){
+  if(!confirm('Delete this review?'))return;
+  try{await deleteDoc(doc(db,'reviews',id));notify('Deleted.');loadReviews();}catch(e){notify('Error.','error');}
+}
+
+// ====== CONTACTS ======
+async function loadContacts(){
+  const tbody=document.getElementById('contacts-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="6">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'contacts'));
+    const msgs=[];snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+    msgs.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(msgs.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="6">No messages yet.</td></tr>';return;}
+    tbody.innerHTML=msgs.map(m=>{
+      const statusBadge=m.status==='read'?'<span class="status-badge approved">Read</span>':'<span class="status-badge new">New</span>';
+      return`<tr>
+        <td>${m.fname||''} ${m.lname||''}</td>
+        <td><a href="mailto:${m.email||''}" style="color:var(--accent)">${m.email||'-'}</a></td>
+        <td>${m.subject||'-'}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message||'-'}</td>
+        <td>${statusBadge}</td>
+        <td><div class="tbl-actions">
+          ${m.status!=='read'?`<button class="btn-sm green" onclick="markRead('${m.id}')"><i class="fas fa-check"></i> Mark Read</button>`:''}
+          <button class="btn-sm red" onclick="deleteContact('${m.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Error.</td></tr>';}
+}
+
+window.markRead=async function(id){
+  try{await updateDoc(doc(db,'contacts',id),{status:'read'});notify('Marked as read.');loadContacts();}catch(e){notify('Error.','error');}
+}
+window.deleteContact=async function(id){
+  if(!confirm('Delete this message?'))return;
+  try{await deleteDoc(doc(db,'contacts',id));notify('Deleted.');loadContacts();}catch(e){notify('Error.','error');}
+}
+
+// ====== CONFIG ======
+async function loadConfig(){
+  try{
+    const s=await getDoc(doc(db,'config','site'));
+    if(s.exists()){
+      const d=s.data();
+      const fields=['nav4Msg','shopCtaText','contactPhone','contactEmail','contactAddress','contactHours','socialIg','socialFb','socialTw','socialTt','socialWa','footerDesc','footerCopy'];
+      fields.forEach(k=>{const el=document.getElementById('cfg-'+k);if(el)el.value=d[k]||'';});
+    }
+  }catch(e){}
+}
+
+window.saveConfig=async function(){
+  const fields=['nav4Msg','shopCtaText','contactPhone','contactEmail','contactAddress','contactHours','socialIg','socialFb','socialTw','socialTt','socialWa','footerDesc','footerCopy'];
+  const data={updatedAt:serverTimestamp()};
+  fields.forEach(k=>{const el=document.getElementById('cfg-'+k);if(el)data[k]=el.value.trim();});
+  try{await setDoc(doc(db,'config','site'),data,{merge:true});notify('Configuration saved.');}
+  catch(e){notify('Error: '+e.message,'error');}
+}
+
+// ====== POLICIES ======
+async function loadPolicies(){
+  const tbody=document.getElementById('policies-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="3">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'policies'));
+    const items=[];snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(items.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="3">No policies yet.</td></tr>';return;}
+    tbody.innerHTML=items.map(p=>`<tr>
+      <td>${p.title||'-'}</td>
+      <td>${p.order||0}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-sm" onclick="openPolicyModal('${p.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn-sm red" onclick="deletePolicy('${p.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="3">Error.</td></tr>';}
+}
+
+window.openPolicyModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'policies',id));if(s.exists())data=s.data();}catch(e){}}
+  openModal(id?'Edit Policy':'Add Policy',`
+    <div class="fg"><label>Policy Title</label><input id="pol-title" value="${data.title||''}" placeholder="e.g. Shipping Policy"/></div>
+    <div class="fg"><label>Content (HTML allowed)</label><textarea id="pol-content" rows="8">${data.content||''}</textarea></div>
+    <div class="fg"><label>Display Order</label><input id="pol-order" type="number" value="${data.order||0}"/></div>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="savePolicy('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
+}
+window.savePolicy=async function(id){
+  const title=document.getElementById('pol-title').value.trim();
+  const content=document.getElementById('pol-content').value.trim();
+  const order=+document.getElementById('pol-order').value||0;
+  if(!title){notify('Title required.','error');return;}
+  try{
+    if(id){await updateDoc(doc(db,'policies',id),{title,content,order,updatedAt:serverTimestamp()});}
+    else{await addDoc(collection(db,'policies'),{title,content,order,createdAt:serverTimestamp()});}
+    notify('Policy saved.');closeModal();loadPolicies();
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+window.deletePolicy=async function(id){
+  if(!confirm('Delete this policy?'))return;
+  try{await deleteDoc(doc(db,'policies',id));notify('Deleted.');loadPolicies();}catch(e){notify('Error.','error');}
+}
+
+// ====== EDUCATION ======
+let eduImgUrl='';
+async function loadEducation(){
+  const tbody=document.getElementById('edu-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="5">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'education'));
+    const items=[];snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(items.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="5">No articles yet.</td></tr>';return;}
+    tbody.innerHTML=items.map(e=>{
+      const img=e.image?`<img src="${e.image}" class="img-thumb" alt="edu"/>`:'<div class="img-thumb-placeholder"><i class="fas fa-image"></i></div>';
+      return`<tr>
+        <td>${img}</td>
+        <td>${e.title||'-'}</td>
+        <td>${e.tag||'-'}</td>
+        <td>${e.order||0}</td>
+        <td><div class="tbl-actions">
+          <button class="btn-sm" onclick="openEduModal('${e.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn-sm red" onclick="deleteEdu('${e.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Error.</td></tr>';}
+}
+window.openEduModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'education',id));if(s.exists())data=s.data();}catch(e){}}
+  eduImgUrl=data.image||'';
+  openModal(id?'Edit Education Article':'Add Education Article',`
+    <div class="fg"><label>Title</label><input id="edu-title" value="${data.title||''}" placeholder="e.g. How to Wash Your Child's Hair"/></div>
+    <div class="fg"><label>Tag / Category</label><input id="edu-tag" value="${data.tag||''}" placeholder="e.g. Hair Care Basics"/></div>
+    <div class="fg"><label>Excerpt</label><textarea id="edu-excerpt" rows="3">${data.excerpt||''}</textarea></div>
+    <div class="fg"><label>Display Order</label><input id="edu-order" type="number" value="${data.order||0}"/></div>
+    <div class="fg"><label>Image</label>
+      <div class="upload-zone"><input type="file" accept="image/*" onchange="handleEduImg(this)"/><i class="fas fa-cloud-upload-alt"></i><p id="edu-upload-txt">${data.image?'Image uploaded. Click to replace':'Click to upload image'}</p></div>
+      ${data.image?`<img src="${data.image}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;" id="edu-img-prev"/>`:'<img id="edu-img-prev" style="display:none;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;"/>'}
+    </div>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveEdu('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
+}
+window.handleEduImg=async function(input){
+  const file=input.files[0];if(!file)return;
+  document.getElementById('edu-upload-txt').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
+  try{eduImgUrl=await uploadToCloudinary(file);document.getElementById('edu-img-prev').src=eduImgUrl;document.getElementById('edu-img-prev').style.display='block';document.getElementById('edu-upload-txt').textContent='Uploaded.';}
+  catch(e){document.getElementById('edu-upload-txt').textContent='Upload failed.';}
+}
+window.saveEdu=async function(id){
+  const title=document.getElementById('edu-title').value.trim();
+  const tag=document.getElementById('edu-tag').value.trim();
+  const excerpt=document.getElementById('edu-excerpt').value.trim();
+  const order=+document.getElementById('edu-order').value||0;
+  if(!title){notify('Title required.','error');return;}
+  try{
+    const data={title,tag,excerpt,order,image:eduImgUrl,updatedAt:serverTimestamp()};
+    if(id){await updateDoc(doc(db,'education',id),data);}
+    else{await addDoc(collection(db,'education'),{...data,createdAt:serverTimestamp()});}
+    notify('Education article saved.');closeModal();loadEducation();
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+window.deleteEdu=async function(id){
+  if(!confirm('Delete this article?'))return;
+  try{await deleteDoc(doc(db,'education',id));notify('Deleted.');loadEducation();}catch(e){notify('Error.','error');}
+}
+
+// ====== FAQS ======
+async function loadFaqs(){
+  const tbody=document.getElementById('faqs-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="3">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'faqs'));
+    const items=[];snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    if(items.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="3">No FAQs yet.</td></tr>';return;}
+    tbody.innerHTML=items.map(f=>`<tr>
+      <td style="max-width:350px;">${f.question||'-'}</td>
+      <td>${f.order||0}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-sm" onclick="openFaqModal('${f.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn-sm red" onclick="deleteFaq('${f.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="3">Error.</td></tr>';}
+}
+window.openFaqModal=async function(id=null){
+  let data={};
+  if(id){try{const s=await getDoc(doc(db,'faqs',id));if(s.exists())data=s.data();}catch(e){}}
+  openModal(id?'Edit FAQ':'Add FAQ',`
+    <div class="fg"><label>Question</label><input id="faq-q" value="${data.question||''}" placeholder="e.g. Are your products safe for newborns?"/></div>
+    <div class="fg"><label>Answer</label><textarea id="faq-a" rows="4">${data.answer||''}</textarea></div>
+    <div class="fg"><label>Display Order</label><input id="faq-order" type="number" value="${data.order||0}"/></div>
+  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveFaq('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
+}
+window.saveFaq=async function(id){
+  const question=document.getElementById('faq-q').value.trim();
+  const answer=document.getElementById('faq-a').value.trim();
+  const order=+document.getElementById('faq-order').value||0;
+  if(!question){notify('Question required.','error');return;}
+  try{
+    if(id){await updateDoc(doc(db,'faqs',id),{question,answer,order,updatedAt:serverTimestamp()});}
+    else{await addDoc(collection(db,'faqs'),{question,answer,order,createdAt:serverTimestamp()});}
+    notify('FAQ saved.');closeModal();loadFaqs();
+  }catch(e){notify('Error: '+e.message,'error');}
+}
+window.deleteFaq=async function(id){
+  if(!confirm('Delete this FAQ?'))return;
+  try{await deleteDoc(doc(db,'faqs',id));notify('Deleted.');loadFaqs();}catch(e){notify('Error.','error');}
+}
+</script>
+</body>
+</html>

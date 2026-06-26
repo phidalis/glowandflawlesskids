@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Policy & Education — Glow & Flowless Kids Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;--dark:#1a1a1a;--text:#2d2d2d;--subtext:#666;--font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:hidden;}
+#nav1{background:var(--pink);padding:7px 0;}
+#nav1 marquee{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+#nav2{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;}
+#nav2 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+#nav2 .search-wrap{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:24px;padding:7px 16px;border:1px solid #f0d8e8;cursor:pointer;}
+#nav2 .search-wrap input{border:none;background:transparent;font-family:var(--font-body);font-size:0.82rem;outline:none;width:160px;}
+#nav2 .search-wrap i{color:#b06080;}
+#nav2 .logo{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--dark);text-decoration:none;}
+#nav2 .logo span{color:#d4608a;}
+#nav2 .nav2-right{display:flex;align-items:center;gap:14px;}
+#nav2 .nav2-right a{color:var(--text);font-size:0.82rem;text-decoration:none;font-weight:500;}
+#nav2 .cart-btn{background:var(--pink);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:#7a3050;cursor:pointer;}
+#nav3{background:var(--dark);}
+#nav3 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:center;gap:4px;}
+#nav3 a{color:#e8e8e8;text-decoration:none;font-size:0.82rem;font-weight:500;padding:12px 16px;display:block;transition:background 0.2s;position:relative;white-space:nowrap;}
+#nav3 a:hover,#nav3 a.active{color:#fff;background:rgba(255,255,255,0.08);}
+#nav3 a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--pink);}
+#nav4{background:var(--lavender);padding:7px 0;text-align:center;}
+#nav4 p{font-size:0.78rem;font-weight:500;color:#5a4080;}
+.page-wrapper{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+.page-header{background:linear-gradient(135deg,var(--mint) 0%,var(--blue) 100%);padding:48px 0 36px;text-align:center;}
+.page-header h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:#1a4a3a;margin-bottom:8px;}
+.page-header p{color:#2d6a4a;font-size:0.92rem;}
+
+/* Tab nav */
+.tab-nav{display:flex;gap:4px;padding:28px 0 0;flex-wrap:wrap;}
+.tab-btn{background:var(--cream);border:none;border-radius:24px;padding:9px 20px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;color:var(--subtext);cursor:pointer;transition:all 0.2s;}
+.tab-btn.active{background:var(--dark);color:#fff;}
+.tab-btn:hover:not(.active){background:var(--pink);color:#7a3050;}
+
+/* Tab content */
+.tab-content{display:none;padding:40px 0 72px;}
+.tab-content.active{display:block;}
+
+/* Articles */
+.policy-article{margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #f0e8f0;}
+.policy-article:last-child{border-bottom:none;}
+.policy-article h2{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.policy-article p{font-size:0.9rem;line-height:1.8;color:var(--subtext);margin-bottom:12px;}
+.policy-article ul{padding-left:20px;margin:12px 0;}
+.policy-article ul li{font-size:0.9rem;line-height:1.8;color:var(--subtext);margin-bottom:6px;}
+
+/* Edu cards */
+.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:8px 0;}
+.edu-card{background:var(--cream);border-radius:16px;overflow:hidden;transition:transform 0.2s;}
+.edu-card:hover{transform:translateY(-4px);}
+.edu-card .edu-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--pink);}
+.edu-card .edu-img-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;color:#b06080;font-size:0.8rem;}
+.edu-card .edu-body{padding:18px;}
+.edu-card .edu-tag{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#b06080;margin-bottom:6px;}
+.edu-card .edu-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.3;}
+.edu-card .edu-text{font-size:0.82rem;line-height:1.7;color:var(--subtext);}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid #f0e8f0;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 0;cursor:pointer;gap:12px;}
+.faq-q span{font-weight:600;font-size:0.9rem;color:var(--dark);}
+.faq-q i{color:#b06080;transition:transform 0.3s;flex-shrink:0;}
+.faq-item.open .faq-q i{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.faq-item.open .faq-a{max-height:300px;}
+.faq-a p{font-size:0.87rem;line-height:1.75;color:var(--subtext);padding-bottom:16px;}
+
+footer{background:var(--dark);color:#ccc;padding:56px 0 24px;}
+footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
+footer .f-brand .logo span{color:var(--pink);}
+footer .f-brand p{font-size:0.83rem;line-height:1.7;color:#999;max-width:240px;}
+footer .f-brand .socials{display:flex;gap:10px;margin-top:18px;}
+footer .f-brand .socials a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+footer .f-brand .socials a:hover{background:var(--pink);color:#7a3050;}
+footer .f-col h4{font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:16px;}
+footer .f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+footer .f-col ul li a{font-size:0.82rem;color:#999;text-decoration:none;transition:color 0.2s;}
+footer .f-col ul li a:hover{color:var(--pink);}
+footer .f-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer .f-bottom p{font-size:0.75rem;color:#666;}
+footer .f-bottom .payment{display:flex;gap:8px;}
+footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #333;padding:3px 8px;border-radius:4px;}
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+#search-overlay.open{display:flex;}
+#search-box{background:#fff;border-radius:16px;padding:28px 24px;width:90%;max-width:560px;}
+#search-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+#search-box .si{display:flex;gap:10px;}
+#search-box input{flex:1;border:1px solid #e0d8e8;border-radius:10px;padding:12px 16px;font-family:var(--font-body);font-size:0.92rem;outline:none;}
+#search-box button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;}
+#search-close{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;}
+@media(max-width:900px){
+  .page-wrapper{padding:0 18px;}
+  #nav2 .inner{padding:0 18px;}
+  #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+  #nav3 a{padding:12px 10px;font-size:0.75rem;}
+  .edu-grid{grid-template-columns:1fr 1fr;}
+  footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:600px){
+  #nav2 .logo{font-size:1.35rem;}
+  #nav2 .search-wrap input{width:80px;}
+  .edu-grid{grid-template-columns:1fr;}
+  footer .footer-grid{grid-template-columns:1fr;}
+  #nav2 .lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="nav1"><marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee></div>
+
+<nav id="nav2">
+  <div class="inner">
+    <div class="search-wrap" onclick="document.getElementById('search-overlay').classList.add('open')">
+      <i class="fas fa-search"></i><input type="text" placeholder="Search products..." readonly/>
+    </div>
+    <a href="index.html" class="logo">Glow &amp; <span>Flowless</span></a>
+    <div class="nav2-right">
+      <a href="customer.html"><i class="fas fa-user"></i> <span class="lbl">Account</span></a>
+      <button class="cart-btn"><i class="fas fa-shopping-bag"></i> Cart (0)</button>
+    </div>
+  </div>
+</nav>
+
+<nav id="nav3">
+  <div class="inner">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="customer.html">Customer Cabinet</a>
+    <a href="policyedu.html" class="active">Policy &amp; Education</a>
+    <a href="reviews.html">Testimonials</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+</nav>
+
+<div id="nav4"><p id="nav4-msg">Knowledge is power — learn how to care for your child's hair the right way</p></div>
+
+<div id="search-overlay">
+  <div id="search-box">
+    <button id="search-close" onclick="document.getElementById('search-overlay').classList.remove('open')"><i class="fas fa-times"></i></button>
+    <h3>Search Products</h3>
+    <div class="si">
+      <input type="text" placeholder="Search products..." id="search-input"/>
+      <button onclick="window.location.href='products.html?search='+document.getElementById('search-input').value">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Policy &amp; Education</h1>
+  <p>Everything you need to know — our policies and hair care guides for your child</p>
+</div>
+
+<div class="page-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('policies',this)">Our Policies</button>
+    <button class="tab-btn" onclick="switchTab('education',this)">Hair Care Education</button>
+    <button class="tab-btn" onclick="switchTab('faq',this)">FAQs</button>
+  </div>
+
+  <!-- POLICIES TAB -->
+  <div id="tab-policies" class="tab-content active">
+    <div id="policies-container">
+      <div class="policy-article">
+        <h2>Shipping Policy</h2>
+        <p>We deliver across Kenya with care and reliability. All orders are processed within 1–2 business days. Delivery within Nairobi takes 1–2 business days; upcountry deliveries take 2–4 business days.</p>
+        <ul>
+          <li>Free delivery on orders over KES 2,500</li>
+          <li>Standard shipping: KES 200 within Nairobi</li>
+          <li>Upcountry shipping: from KES 350</li>
+          <li>We partner with trusted courier services across Kenya</li>
+        </ul>
+      </div>
+      <div class="policy-article">
+        <h2>Return &amp; Exchange Policy</h2>
+        <p>Your satisfaction is our priority. If you are not completely happy with your purchase, we offer hassle-free returns within 7 days of delivery, provided the product is unused and in its original packaging.</p>
+        <ul>
+          <li>Contact us within 7 days of receiving your order</li>
+          <li>Products must be unused and sealed</li>
+          <li>Refunds processed within 5–7 business days</li>
+          <li>Exchanges available for same or higher value products</li>
+        </ul>
+      </div>
+      <div class="policy-article">
+        <h2>Privacy Policy</h2>
+        <p>We respect your privacy and are committed to protecting your personal information. We collect only what is necessary to process your orders and improve your shopping experience.</p>
+        <ul>
+          <li>We never sell your personal data to third parties</li>
+          <li>Your payment information is encrypted and secure</li>
+          <li>You may request deletion of your data at any time</li>
+          <li>We use cookies to improve site functionality</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDUCATION TAB -->
+  <div id="tab-education" class="tab-content">
+    <div id="edu-container" class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-body">
+          <div class="edu-tag">Hair Care Basics</div>
+          <div class="edu-title">How to Wash Your Child's Hair the Right Way</div>
+          <div class="edu-text">Learn the gentle techniques that protect your child's scalp while keeping their hair clean, moisturised and tangle-free.</div>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-body">
+          <div class="edu-tag">Growth Tips</div>
+          <div class="edu-title">Promoting Healthy Hair Growth in Children</div>
+          <div class="edu-text">Discover the best practices for encouraging strong, healthy hair growth in children of all hair types.</div>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-body">
+          <div class="edu-tag">Scalp Health</div>
+          <div class="edu-title">Understanding Your Child's Scalp Health</div>
+          <div class="edu-text">A healthy scalp is the foundation for beautiful hair. Learn how to identify and address common scalp issues in children.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ TAB -->
+  <div id="tab-faq" class="tab-content">
+    <div id="faq-container">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Are your products safe for newborns?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>Our products are formulated for children aged 2 and above. For newborns and infants under 2 years, we recommend consulting your paediatrician before use. Our gentle formulas are free from harsh chemicals, but every baby's skin is unique.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>How often should I use your hair growth products?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>For best results, we recommend using our hair growth system 2–3 times per week. Consistency is key — you should begin seeing noticeable improvements within 4–6 weeks of regular use.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Do you ship outside Nairobi?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>Yes! We deliver across Kenya, including Mombasa, Kisumu, Nakuru, Eldoret, and all upcountry destinations. Delivery times vary by location, typically 2–4 business days outside Nairobi.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Can I pay on delivery?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>Yes, we offer pay-on-delivery for orders within Nairobi. For upcountry orders, we require M-PESA payment in advance. We accept M-PESA, Visa, and Mastercard.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Are your products cruelty-free?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>Absolutely. Glow &amp; Flowless products are never tested on animals. We are proud to be a cruelty-free brand committed to ethical, sustainable practices throughout our supply chain.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>What if my child has a sensitive scalp?</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a"><p>All our products are formulated for sensitive scalps. We use gentle, natural ingredients and avoid sulfates, parabens, and artificial fragrances. We recommend doing a patch test before full application if your child has a history of skin sensitivities.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="page-wrapper">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="logo">Glow &amp; <span>Flowless</span></div>
+        <p>Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-tiktok"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="f-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="f-col"><h4>Customer</h4><ul><li><a href="customer.html">My Account</a></li><li><a href="customer.html">My Orders</a></li><li><a href="policyedu.html">Policy &amp; Education</a></li></ul></div>
+      <div class="f-col"><h4>Contact</h4><ul><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a>Nairobi, Kenya</a></li></ul></div>
+    </div>
+    <div class="f-bottom">
+      <p>&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <div class="payment"><span>M-PESA</span><span>Visa</span><span>Mastercard</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleFaq(el){
+  const item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+try{const s=await getDoc(doc(db,'config','site'));if(s.exists()&&s.data().nav4Msg)document.getElementById('nav4-msg').textContent=s.data().nav4Msg;}catch(e){}
+try{
+  const polSnap=await getDocs(collection(db,'policies'));
+  const policies=[];polSnap.forEach(d=>policies.push({id:d.id,...d.data()}));
+  policies.sort((a,b)=>(a.order||0)-(b.order||0));
+  if(policies.length>0){
+    document.getElementById('policies-container').innerHTML=policies.map(p=>`<div class="policy-article"><h2>${p.title||''}</h2><div>${p.content||''}</div></div>`).join('');
+  }
+}catch(e){}
+try{
+  const eduSnap=await getDocs(collection(db,'education'));
+  const edus=[];eduSnap.forEach(d=>edus.push({id:d.id,...d.data()}));
+  edus.sort((a,b)=>(a.order||0)-(b.order||0));
+  if(edus.length>0){
+    document.getElementById('edu-container').innerHTML=edus.map(e=>`<div class="edu-card">${e.image?`<img src="${e.image}" class="edu-img" alt="${e.title||''}"/>`:'<div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>'}<div class="edu-body"><div class="edu-tag">${e.tag||'Education'}</div><div class="edu-title">${e.title||''}</div><div class="edu-text">${e.excerpt||''}</div></div></div>`).join('');
+  }
+}catch(e){}
+try{
+  const faqSnap=await getDocs(collection(db,'faqs'));
+  const faqs=[];faqSnap.forEach(d=>faqs.push({id:d.id,...d.data()}));
+  faqs.sort((a,b)=>(a.order||0)-(b.order||0));
+  if(faqs.length>0){
+    document.getElementById('faq-container').innerHTML=faqs.map(f=>`<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>${f.question||''}</span><i class="fas fa-chevron-down"></i></div><div class="faq-a"><p>${f.answer||''}</p></div></div>`).join('');
+  }
+}catch(e){}
+</script>
+</body>
+</html>

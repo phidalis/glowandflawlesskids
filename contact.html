@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Contact Us — Glow & Flowless Kids Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;--dark:#1a1a1a;--text:#2d2d2d;--subtext:#666;--font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:hidden;}
+#nav1{background:var(--pink);padding:7px 0;}
+#nav1 marquee{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+#nav2{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;}
+#nav2 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+#nav2 .search-wrap{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:24px;padding:7px 16px;border:1px solid #f0d8e8;cursor:pointer;}
+#nav2 .search-wrap input{border:none;background:transparent;font-family:var(--font-body);font-size:0.82rem;outline:none;width:160px;}
+#nav2 .search-wrap i{color:#b06080;}
+#nav2 .logo{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--dark);text-decoration:none;}
+#nav2 .logo span{color:#d4608a;}
+#nav2 .nav2-right{display:flex;align-items:center;gap:14px;}
+#nav2 .nav2-right a{color:var(--text);font-size:0.82rem;text-decoration:none;font-weight:500;}
+#nav2 .cart-btn{background:var(--pink);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:#7a3050;cursor:pointer;}
+#nav3{background:var(--dark);}
+#nav3 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:center;gap:4px;}
+#nav3 a{color:#e8e8e8;text-decoration:none;font-size:0.82rem;font-weight:500;padding:12px 16px;display:block;transition:background 0.2s;position:relative;white-space:nowrap;}
+#nav3 a:hover,#nav3 a.active{color:#fff;background:rgba(255,255,255,0.08);}
+#nav3 a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--pink);}
+#nav4{background:var(--lavender);padding:7px 0;text-align:center;}
+#nav4 p{font-size:0.78rem;font-weight:500;color:#5a4080;}
+.page-wrapper{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+.page-header{background:linear-gradient(135deg,var(--blue) 0%,var(--lavender) 100%);padding:48px 0 36px;text-align:center;}
+.page-header h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:#2d4080;margin-bottom:8px;}
+.page-header p{color:#5a5090;font-size:0.92rem;}
+
+.contact-section{padding:64px 0;}
+.contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:60px;align-items:start;}
+
+/* Info cards */
+.contact-info{display:flex;flex-direction:column;gap:20px;}
+.contact-card{background:var(--cream);border-radius:16px;padding:22px 20px;display:flex;align-items:flex-start;gap:16px;}
+.contact-card .c-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.contact-card .c-icon.pink{background:var(--pink);color:#a03060;}
+.contact-card .c-icon.blue{background:var(--blue);color:#2d5580;}
+.contact-card .c-icon.mint{background:var(--mint);color:#2d6a4a;}
+.contact-card .c-icon.lavender{background:var(--lavender);color:#5a4080;}
+.contact-card .c-text h4{font-size:0.82rem;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.contact-card .c-text p,.contact-card .c-text a{font-size:0.83rem;color:var(--subtext);text-decoration:none;line-height:1.6;}
+.contact-card .c-text a:hover{color:#d4608a;}
+
+.social-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.social-links a{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;text-decoration:none;transition:all 0.2s;}
+.social-links a.ig{background:#fce4ec;color:#c2185b;}
+.social-links a.fb{background:#e3f2fd;color:#1565c0;}
+.social-links a.tw{background:#e0f7fa;color:#00838f;}
+.social-links a.tt{background:#f3e5f5;color:#6a1b9a;}
+.social-links a.wa{background:#e8f5e9;color:#2e7d32;}
+.social-links a:hover{transform:translateY(-2px);filter:brightness(0.9);}
+
+/* Contact form */
+.contact-form-wrap{background:var(--cream);border-radius:20px;padding:36px 32px;}
+.contact-form-wrap h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.contact-form-wrap p{font-size:0.85rem;color:var(--subtext);margin-bottom:24px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-group label{font-size:0.8rem;font-weight:600;color:var(--dark);}
+.form-group input,.form-group select,.form-group textarea{border:1px solid #e0d8e8;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.87rem;color:var(--text);background:#fff;outline:none;transition:border 0.2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#b06080;}
+.form-group textarea{resize:vertical;min-height:120px;}
+.submit-btn{width:100%;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--font-body);font-weight:600;font-size:0.95rem;cursor:pointer;transition:background 0.2s;margin-top:4px;}
+.submit-btn:hover{background:#333;}
+.submit-btn:disabled{background:#999;cursor:not-allowed;}
+#form-msg{margin-top:12px;font-size:0.85rem;text-align:center;padding:10px;border-radius:8px;display:none;}
+#form-msg.success{background:var(--mint);color:#2d6a4a;display:block;}
+#form-msg.error{background:#ffe8e8;color:#a03030;display:block;}
+
+footer{background:var(--dark);color:#ccc;padding:56px 0 24px;}
+footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
+footer .f-brand .logo span{color:var(--pink);}
+footer .f-brand p{font-size:0.83rem;line-height:1.7;color:#999;max-width:240px;}
+footer .f-brand .socials{display:flex;gap:10px;margin-top:18px;}
+footer .f-brand .socials a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+footer .f-brand .socials a:hover{background:var(--pink);color:#7a3050;}
+footer .f-col h4{font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:16px;}
+footer .f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+footer .f-col ul li a{font-size:0.82rem;color:#999;text-decoration:none;transition:color 0.2s;}
+footer .f-col ul li a:hover{color:var(--pink);}
+footer .f-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer .f-bottom p{font-size:0.75rem;color:#666;}
+footer .f-bottom .payment{display:flex;gap:8px;}
+footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #333;padding:3px 8px;border-radius:4px;}
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+#search-overlay.open{display:flex;}
+#search-box{background:#fff;border-radius:16px;padding:28px 24px;width:90%;max-width:560px;}
+#search-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+#search-box .si{display:flex;gap:10px;}
+#search-box input{flex:1;border:1px solid #e0d8e8;border-radius:10px;padding:12px 16px;font-family:var(--font-body);font-size:0.92rem;outline:none;}
+#search-box button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;}
+#search-close{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;}
+@media(max-width:900px){
+  .page-wrapper{padding:0 18px;}
+  #nav2 .inner{padding:0 18px;}
+  #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+  #nav3 a{padding:12px 10px;font-size:0.75rem;}
+  .contact-grid{grid-template-columns:1fr;gap:36px;}
+  .form-row{grid-template-columns:1fr;}
+  footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:600px){
+  #nav2 .logo{font-size:1.35rem;}
+  #nav2 .search-wrap input{width:80px;}
+  .contact-form-wrap{padding:24px 18px;}
+  footer .footer-grid{grid-template-columns:1fr;}
+  #nav2 .lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="nav1"><marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee></div>
+
+<nav id="nav2">
+  <div class="inner">
+    <div class="search-wrap" onclick="document.getElementById('search-overlay').classList.add('open')">
+      <i class="fas fa-search"></i><input type="text" placeholder="Search products..." readonly/>
+    </div>
+    <a href="index.html" class="logo">Glow &amp; <span>Flowless</span></a>
+    <div class="nav2-right">
+      <a href="customer.html"><i class="fas fa-user"></i> <span class="lbl">Account</span></a>
+      <button class="cart-btn"><i class="fas fa-shopping-bag"></i> Cart (0)</button>
+    </div>
+  </div>
+</nav>
+
+<nav id="nav3">
+  <div class="inner">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="customer.html">Customer Cabinet</a>
+    <a href="policyedu.html">Policy &amp; Education</a>
+    <a href="reviews.html">Testimonials</a>
+    <a href="contact.html" class="active">Contact Us</a>
+  </div>
+</nav>
+
+<div id="nav4"><p id="nav4-msg">We are here to help — reach out any time</p></div>
+
+<div id="search-overlay">
+  <div id="search-box">
+    <button id="search-close" onclick="document.getElementById('search-overlay').classList.remove('open')"><i class="fas fa-times"></i></button>
+    <h3>Search Products</h3>
+    <div class="si">
+      <input type="text" placeholder="Search products..." id="search-input"/>
+      <button onclick="window.location.href='products.html?search='+document.getElementById('search-input').value">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Contact Us</h1>
+  <p>We would love to hear from you — reach out and we will respond promptly</p>
+</div>
+
+<section class="contact-section">
+  <div class="page-wrapper">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-card">
+          <div class="c-icon pink"><i class="fas fa-phone"></i></div>
+          <div class="c-text"><h4>Call or WhatsApp</h4><a href="tel:+254700000000" id="contact-phone">+254 700 000 000</a></div>
+        </div>
+        <div class="contact-card">
+          <div class="c-icon blue"><i class="fas fa-envelope"></i></div>
+          <div class="c-text"><h4>Email Us</h4><a href="mailto:hello@glowandflowless.co.ke" id="contact-email">hello@glowandflowless.co.ke</a></div>
+        </div>
+        <div class="contact-card">
+          <div class="c-icon mint"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="c-text"><h4>Location</h4><p id="contact-address">Nairobi, Kenya</p></div>
+        </div>
+        <div class="contact-card">
+          <div class="c-icon lavender"><i class="fas fa-clock"></i></div>
+          <div class="c-text"><h4>Business Hours</h4><p id="contact-hours">Mon – Sat: 8:00 AM – 6:00 PM<br/>Sunday: 10:00 AM – 4:00 PM</p></div>
+        </div>
+        <div class="contact-card">
+          <div class="c-icon pink"><i class="fas fa-share-alt"></i></div>
+          <div class="c-text">
+            <h4>Follow Us</h4>
+            <div class="social-links">
+              <a href="#" class="ig" id="soc-ig"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="fb" id="soc-fb"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="tw" id="soc-tw"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="tt" id="soc-tt"><i class="fab fa-tiktok"></i></a>
+              <a href="#" class="wa" id="soc-wa"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <h2>Send Us a Message</h2>
+        <p>Fill in the form and we will get back to you within 24 hours.</p>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" id="f-fname" placeholder="e.g. Amina"/></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="f-lname" placeholder="e.g. Wanjiku"/></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="f-email" placeholder="your@email.com"/></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="f-phone" placeholder="+254 7XX XXX XXX"/></div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="f-subject">
+            <option value="">Select a subject...</option>
+            <option>Product Enquiry</option>
+            <option>Order Issue</option>
+            <option>Delivery Question</option>
+            <option>Returns &amp; Refunds</option>
+            <option>Wholesale / Bulk Orders</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea id="f-message" placeholder="Tell us how we can help..."></textarea></div>
+        <button class="submit-btn" id="submit-btn" onclick="submitForm()"><i class="fas fa-paper-plane"></i> Send Message</button>
+        <div id="form-msg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="page-wrapper">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="logo">Glow &amp; <span>Flowless</span></div>
+        <p>Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-tiktok"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="f-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="f-col"><h4>Customer</h4><ul><li><a href="customer.html">My Account</a></li><li><a href="customer.html">My Orders</a></li><li><a href="policyedu.html">Policy &amp; Education</a></li></ul></div>
+      <div class="f-col"><h4>Contact</h4><ul><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a>Nairobi, Kenya</a></li></ul></div>
+    </div>
+    <div class="f-bottom">
+      <p>&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <div class="payment"><span>M-PESA</span><span>Visa</span><span>Mastercard</span></div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+try{
+  const s=await getDoc(doc(db,'config','site'));
+  if(s.exists()){
+    const d=s.data();
+    if(d.nav4Msg)document.getElementById('nav4-msg').textContent=d.nav4Msg;
+    if(d.contactPhone){document.getElementById('contact-phone').textContent=d.contactPhone;document.getElementById('contact-phone').href='tel:'+d.contactPhone;}
+    if(d.contactEmail){document.getElementById('contact-email').textContent=d.contactEmail;document.getElementById('contact-email').href='mailto:'+d.contactEmail;}
+    if(d.contactAddress)document.getElementById('contact-address').textContent=d.contactAddress;
+    if(d.contactHours)document.getElementById('contact-hours').innerHTML=d.contactHours;
+    if(d.socialIg)document.getElementById('soc-ig').href=d.socialIg;
+    if(d.socialFb)document.getElementById('soc-fb').href=d.socialFb;
+    if(d.socialTw)document.getElementById('soc-tw').href=d.socialTw;
+    if(d.socialTt)document.getElementById('soc-tt').href=d.socialTt;
+    if(d.socialWa)document.getElementById('soc-wa').href=d.socialWa;
+  }
+}catch(e){}
+
+window.submitForm=async function(){
+  const btn=document.getElementById('submit-btn');
+  const msgEl=document.getElementById('form-msg');
+  const fname=document.getElementById('f-fname').value.trim();
+  const lname=document.getElementById('f-lname').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const subject=document.getElementById('f-subject').value;
+  const message=document.getElementById('f-message').value.trim();
+  if(!fname||!email||!message){
+    msgEl.textContent='Please fill in your name, email and message.';
+    msgEl.className='error';return;
+  }
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';
+  try{
+    await addDoc(collection(db,'contacts'),{fname,lname,email,phone,subject,message,createdAt:serverTimestamp(),status:'new'});
+    msgEl.textContent='Message sent! We will get back to you within 24 hours.';
+    msgEl.className='success';
+    ['f-fname','f-lname','f-email','f-phone','f-message'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-subject').value='';
+  }catch(e){
+    msgEl.textContent='Something went wrong. Please try again or call us directly.';
+    msgEl.className='error';
+  }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> Send Message';
+}
+</script>
+</body>
+</html>
