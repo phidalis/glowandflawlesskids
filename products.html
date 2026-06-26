@@ -62,6 +62,9 @@ body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:h
 .product-card .info{padding:8px 4px 12px;}
 .product-card .name{font-size:0.8rem;font-weight:600;color:var(--dark);margin-bottom:3px;line-height:1.3;}
 .product-card .price{font-size:0.82rem;font-weight:700;color:#b06080;margin-bottom:8px;}
+.product-card .price .orig{font-size:0.72rem;font-weight:400;color:#bbb;text-decoration:line-through;margin-right:4px;}
+.product-card .price .offer{color:#c03030;}
+.product-card .price .range{color:#b06080;}
 .product-card .buy-btn{width:100%;background:var(--dark);color:#fff;border:none;border-radius:6px;padding:7px 0;font-family:var(--font-body);font-size:0.75rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
 .product-card .buy-btn:hover{background:#333;}
 
@@ -72,16 +75,26 @@ body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:h
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* MODAL */
-#product-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+#product-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:0;}
 #product-modal.open{display:flex;}
-#modal-inner{background:#fff;border-radius:20px;max-width:820px;width:100%;max-height:90vh;overflow-y:auto;display:flex;gap:0;position:relative;}
-#modal-close{position:absolute;top:16px;right:16px;background:var(--dark);color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;z-index:10;}
-#modal-gallery{flex:0 0 48%;position:relative;background:var(--cream);border-radius:20px 0 0 20px;overflow:hidden;}
-#modal-main-img{width:100%;aspect-ratio:1;object-fit:cover;}
-#modal-thumbs{display:flex;gap:6px;padding:10px;overflow-x:auto;}
+#modal-inner{background:#fff;width:100%;height:100%;max-width:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:0;position:relative;}
+#modal-close{position:fixed;top:16px;right:16px;background:var(--dark);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:0.95rem;display:flex;align-items:center;justify-content:center;z-index:10;box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+#modal-gallery{flex:none;position:relative;background:var(--cream);overflow:hidden;}
+#modal-main-img{width:100%;max-height:70vh;min-height:280px;object-fit:contain;background:var(--cream);display:block;}
+#modal-thumbs{display:flex;gap:6px;padding:10px;overflow-x:auto;background:#fff;}
 #modal-thumbs img{width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;flex-shrink:0;}
 #modal-thumbs img.active{border-color:#b06080;}
-#modal-info{flex:1;padding:28px 24px;}
+#modal-info{flex:none;padding:28px 24px;max-width:820px;width:100%;margin:0 auto;}
+#modal-related-wrap{border-top:1px solid #f0e8ec;margin-top:28px;padding-top:22px;}
+#modal-related-wrap h3{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:14px;}
+#modal-related{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+
+@media(min-width:901px){
+  #modal-inner{max-width:900px;max-height:92vh;margin:4vh auto;border-radius:20px;}
+  #product-modal{align-items:center;padding:20px;}
+  #modal-gallery{border-radius:20px 20px 0 0;}
+  #modal-main-img{max-height:50vh;}
+}
 #modal-cat-badge{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:10px;}
 #modal-name{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.3;}
 #modal-price{font-size:1.4rem;font-weight:700;color:#b06080;margin-bottom:14px;}
@@ -125,9 +138,9 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
   #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
   #nav3 a{padding:12px 10px;font-size:0.75rem;white-space:nowrap;}
   .products-grid,.loading-grid{grid-template-columns:repeat(2,1fr);gap:4px;}
-  #modal-inner{flex-direction:column;}
-  #modal-gallery{border-radius:20px 20px 0 0;flex:none;}
-  #modal-main-img{aspect-ratio:4/3;}
+  .product-card .img-wrap{aspect-ratio:4/5;}
+  .skeleton-card{height:340px;}
+  #modal-related{grid-template-columns:repeat(2,1fr);gap:4px;}
   footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 @media(max-width:600px){
@@ -135,6 +148,8 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
   #nav2 .search-wrap input{width:80px;}
   footer .footer-grid{grid-template-columns:1fr;}
   #nav2 .lbl{display:none;}
+  .product-card .img-wrap{aspect-ratio:3/4;}
+  .skeleton-card{height:380px;}
 }
 </style>
 </head>
@@ -207,6 +222,10 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
       <p id="modal-price"></p>
       <p id="modal-desc"></p>
       <button id="modal-buy">Buy Now</button>
+      <div id="modal-related-wrap" style="display:none;">
+        <h3>Continue Browsing</h3>
+        <div id="modal-related"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -264,6 +283,30 @@ async function loadData(){
   }
 }
 
+function formatPrice(p,forModal=false){
+  const fmt=n=>'KES '+(n||0).toLocaleString();
+  if(p.priceType==='range'&&p.priceMin!=null&&p.priceMax!=null){
+    return forModal
+      ?`<span style="color:#b06080;">${fmt(p.priceMin)} – ${fmt(p.priceMax)}</span>`
+      :`<span class="range">${fmt(p.priceMin)} – ${fmt(p.priceMax)}</span>`;
+  }
+  if(p.priceType==='offer'&&p.priceOffer!=null){
+    return forModal
+      ?`<span style="text-decoration:line-through;color:#bbb;font-size:0.9rem;margin-right:6px;">${fmt(p.price)}</span><span style="color:#c03030;">${fmt(p.priceOffer)}</span>`
+      :`<span class="orig">${fmt(p.price)}</span><span class="offer">${fmt(p.priceOffer)}</span>`;
+  }
+  return forModal?`<span style="color:#b06080;">${fmt(p.price)}</span>`:`<span>${fmt(p.price)}</span>`;
+}
+
+function buildProductCard(p,cat){
+  const card=document.createElement('div');card.className='product-card';
+  const imgHTML=p.images&&p.images.length>0?`<img src="${p.images[0]}" alt="${p.name}" loading="lazy"/>`:`<div class="img-placeholder"><i class="fas fa-image"></i></div>`;
+  card.innerHTML=`<div class="img-wrap">${imgHTML}</div><div class="info"><div class="name">${p.name||'Product'}</div><div class="price">${formatPrice(p)}</div><button class="buy-btn">Buy Now</button></div>`;
+  card.querySelector('.buy-btn').addEventListener('click',e=>{e.stopPropagation();openModal(p,cat);});
+  card.addEventListener('click',()=>openModal(p,cat));
+  return card;
+}
+
 function renderAll(search=''){
   const container=document.getElementById('categories-container');
   container.innerHTML='';
@@ -278,14 +321,7 @@ function renderAll(search=''){
     sec.innerHTML=`<div class="category-header"><div class="category-badge" style="background:${badgeColor}"></div><h2>${cat.name}</h2></div><div class="products-grid" id="grid-${cat.id}"></div>`;
     container.appendChild(sec);
     const grid=document.getElementById('grid-'+cat.id);
-    prods.forEach(p=>{
-      const card=document.createElement('div');card.className='product-card';
-      const imgHTML=p.images&&p.images.length>0?`<img src="${p.images[0]}" alt="${p.name}" loading="lazy"/>`:`<div class="img-placeholder"><i class="fas fa-image"></i></div>`;
-      card.innerHTML=`<div class="img-wrap">${imgHTML}</div><div class="info"><div class="name">${p.name||'Product'}</div><div class="price">KES ${(p.price||0).toLocaleString()}</div><button class="buy-btn">Buy Now</button></div>`;
-      card.querySelector('.buy-btn').addEventListener('click',e=>{e.stopPropagation();openModal(p,cat);});
-      card.addEventListener('click',()=>openModal(p,cat));
-      grid.appendChild(card);
-    });
+    prods.forEach(p=>grid.appendChild(buildProductCard(p,cat)));
   });
   if(!anyShown){
     container.innerHTML='<div class="empty-state"><i class="fas fa-search"></i><p>No products found. Check back soon.</p></div>';
@@ -304,7 +340,7 @@ window.openModal=function(p,cat){
   badge.style.background=badgeColor;
   badge.style.color=darkenColor(badgeColor);
   document.getElementById('modal-name').textContent=p.name||'Product';
-  document.getElementById('modal-price').textContent='KES '+(p.price||0).toLocaleString();
+  document.getElementById('modal-price').innerHTML=formatPrice(p,true);
   document.getElementById('modal-desc').textContent=p.description||'No description available.';
   const imgs=p.images&&p.images.length>0?p.images:[];
   const mainImg=document.getElementById('modal-main-img');
@@ -320,7 +356,25 @@ window.openModal=function(p,cat){
       thumbsEl.appendChild(t);
     });
   }
+  // Continue Browsing: show other products so the person can keep exploring without closing the modal
+  const relWrap=document.getElementById('modal-related-wrap');
+  const relGrid=document.getElementById('modal-related');
+  relGrid.innerHTML='';
+  const others=allProducts.filter(o=>o.id!==p.id);
+  const sameCat=others.filter(o=>o.categoryId===p.categoryId);
+  const diffCat=others.filter(o=>o.categoryId!==p.categoryId);
+  const toShow=[...sameCat,...diffCat].slice(0,10);
+  if(toShow.length>0){
+    toShow.forEach(o=>{
+      const oCat=allCategories.find(c=>c.id===o.categoryId)||cat;
+      relGrid.appendChild(buildProductCard(o,oCat));
+    });
+    relWrap.style.display='block';
+  }else{
+    relWrap.style.display='none';
+  }
   document.getElementById('product-modal').classList.add('open');
+  document.getElementById('modal-inner').scrollTop=0;
   document.body.style.overflow='hidden';
 }
 window.closeModal=function(){

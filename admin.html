@@ -788,11 +788,15 @@ window.loadProducts=async function(){
     tbody.innerHTML=products.map(p=>{
       const cat=cats.find(c=>c.id===p.categoryId);
       const img=p.images&&p.images.length>0?`<img src="${p.images[0]}" class="img-thumb" alt="${p.name}"/>`:'<div class="img-thumb-placeholder"><i class="fas fa-image"></i></div>';
+      let priceDisplay='-';
+      if(p.priceType==='range'&&p.priceMin!=null&&p.priceMax!=null){priceDisplay=`KES ${(p.priceMin||0).toLocaleString()} – ${(p.priceMax||0).toLocaleString()}`;}
+      else if(p.priceType==='offer'&&p.priceOffer!=null){priceDisplay=`<span style="text-decoration:line-through;color:#aaa;font-size:0.75rem;">KES ${(p.price||0).toLocaleString()}</span> <span style="color:#c03030;font-weight:700;">KES ${(p.priceOffer||0).toLocaleString()}</span>`;}
+      else{priceDisplay=`KES ${(p.price||0).toLocaleString()}`;}
       return`<tr>
         <td>${img}</td>
         <td>${p.name||'-'}</td>
         <td>${cat?cat.name:'-'}</td>
-        <td>${(p.price||0).toLocaleString()}</td>
+        <td>${priceDisplay}</td>
         <td><div class="tbl-actions">
           <button class="btn-sm" onclick="openProductModal('${p.id}')"><i class="fas fa-edit"></i></button>
           <button class="btn-sm red" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
@@ -811,11 +815,35 @@ window.openProductModal=async function(id=null){
   if(cats.length===0)await loadCategories();
   const catOptions=cats.map(c=>`<option value="${c.id}"${data.categoryId===c.id?' selected':''}>${c.name}</option>`).join('');
   const imgsHTML=productImgUrls.map((u,i)=>`<div class="prev-wrap"><img src="${u}" alt="img${i}"/><button class="rm-img" onclick="removeProductImg(${i})"><i class="fas fa-times"></i></button></div>`).join('');
+  const pt=data.priceType||'single';
   openModal(id?'Edit Product':'Add Product',`
     <div class="fg"><label>Product Name</label><input id="p-name" value="${data.name||''}" placeholder="e.g. Hair Growth Oil 100ml"/></div>
-    <div class="fg-row">
-      <div class="fg"><label>Category</label><select id="p-cat"><option value="">Select category...</option>${catOptions}</select></div>
-      <div class="fg"><label>Price (KES)</label><input id="p-price" type="number" value="${data.price||''}" placeholder="1500"/></div>
+    <div class="fg"><label>Category</label><select id="p-cat"><option value="">Select category...</option>${catOptions}</select></div>
+    <div class="fg"><label>Price Type</label>
+      <select id="p-price-type" onchange="togglePriceFields()">
+        <option value="single"${pt==='single'?' selected':''}>Single Price</option>
+        <option value="range"${pt==='range'?' selected':''}>Price Range (from – to)</option>
+        <option value="offer"${pt==='offer'?' selected':''}>On Offer (original &amp; offer price)</option>
+      </select>
+    </div>
+    <!-- SINGLE -->
+    <div id="pf-single" class="fg" style="display:${pt==='single'?'flex':'none'};flex-direction:column;gap:5px;">
+      <label>Price (KES)</label>
+      <input id="p-price" type="number" value="${data.price||''}" placeholder="1500"/>
+    </div>
+    <!-- RANGE -->
+    <div id="pf-range" style="display:${pt==='range'?'block':'none'};">
+      <div class="fg-row">
+        <div class="fg"><label>From (KES)</label><input id="p-price-min" type="number" value="${data.priceMin||''}" placeholder="1000"/></div>
+        <div class="fg"><label>To (KES)</label><input id="p-price-max" type="number" value="${data.priceMax||''}" placeholder="3000"/></div>
+      </div>
+    </div>
+    <!-- OFFER -->
+    <div id="pf-offer" style="display:${pt==='offer'?'block':'none'};">
+      <div class="fg-row">
+        <div class="fg"><label>Original Price (KES)</label><input id="p-price-orig" type="number" value="${data.price||''}" placeholder="2000"/></div>
+        <div class="fg"><label>Offer Price (KES)</label><input id="p-price-offer" type="number" value="${data.priceOffer||''}" placeholder="1500"/></div>
+      </div>
     </div>
     <div class="fg"><label>Description</label><textarea id="p-desc" rows="4">${data.description||''}</textarea></div>
     <div class="fg"><label>Product Images</label>
@@ -844,13 +872,34 @@ function renderProductImgPreviews(){
   document.getElementById('p-img-previews').innerHTML=productImgUrls.map((u,i)=>`<div class="prev-wrap"><img src="${u}" alt="img${i}"/><button class="rm-img" onclick="removeProductImg(${i})"><i class="fas fa-times"></i></button></div>`).join('');
 }
 
+window.togglePriceFields=function(){
+  const pt=document.getElementById('p-price-type').value;
+  document.getElementById('pf-single').style.display=pt==='single'?'flex':'none';
+  document.getElementById('pf-range').style.display=pt==='range'?'block':'none';
+  document.getElementById('pf-offer').style.display=pt==='offer'?'block':'none';
+}
+
 window.saveProduct=async function(id){
   const name=document.getElementById('p-name').value.trim();
   const categoryId=document.getElementById('p-cat').value;
-  const price=+document.getElementById('p-price').value||0;
   const description=document.getElementById('p-desc').value.trim();
+  const priceType=document.getElementById('p-price-type').value;
   if(!name||!categoryId){notify('Name and category required.','error');return;}
-  const data={name,categoryId,price,description,images:productImgUrls,updatedAt:serverTimestamp()};
+  let priceData={priceType};
+  if(priceType==='single'){
+    priceData.price=+document.getElementById('p-price').value||0;
+    priceData.priceMin=null;priceData.priceMax=null;priceData.priceOffer=null;
+  } else if(priceType==='range'){
+    priceData.priceMin=+document.getElementById('p-price-min').value||0;
+    priceData.priceMax=+document.getElementById('p-price-max').value||0;
+    priceData.price=priceData.priceMin;
+    priceData.priceOffer=null;
+  } else if(priceType==='offer'){
+    priceData.price=+document.getElementById('p-price-orig').value||0;
+    priceData.priceOffer=+document.getElementById('p-price-offer').value||0;
+    priceData.priceMin=null;priceData.priceMax=null;
+  }
+  const data={name,categoryId,description,images:productImgUrls,...priceData,updatedAt:serverTimestamp()};
   try{
     if(id){await updateDoc(doc(db,'products',id),data);}
     else{await addDoc(collection(db,'products'),{...data,createdAt:serverTimestamp()});}
