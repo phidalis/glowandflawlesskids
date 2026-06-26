@@ -413,11 +413,19 @@ table tr:hover td{background:#fdf8ff;}
       <!-- EDUCATION -->
       <div class="panel" id="panel-education">
         <div class="admin-card">
-          <div class="admin-card-head"><h3>Hair Care Education</h3><button class="btn-sm" onclick="openEduModal()"><i class="fas fa-plus"></i> Add Article</button></div>
-          <table>
-            <thead><tr><th>Image</th><th>Title</th><th>Tag</th><th>Order</th><th>Actions</th></tr></thead>
-          <tbody id="edu-tbody"><tr class="empty-row"><td colspan="5">Loading...</td></tr></tbody>
-          </table>
+          <div class="admin-card-head"><h3>Hair Care Education</h3></div>
+          <div style="padding:20px;">
+            <p style="font-size:0.8rem;color:var(--subtext);margin-bottom:16px;">These cards' titles and text are fixed on the Policy &amp; Education page. Upload an image for each category below — it updates on the site immediately.</p>
+
+            <div class="form-divider">Hair Care Basics</div>
+            <div class="fg"><label>Card Image</label><div class="upload-zone" id="zone-edu-basics"><input type="file" accept="image/*" onchange="uploadEduImg(this,'basics')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Hair Care Basics image</p></div><img id="prev-edu-basics" class="article-img-preview" style="display:none"/></div>
+
+            <div class="form-divider">Growth Tips</div>
+            <div class="fg"><label>Card Image</label><div class="upload-zone" id="zone-edu-growth"><input type="file" accept="image/*" onchange="uploadEduImg(this,'growth')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Growth Tips image</p></div><img id="prev-edu-growth" class="article-img-preview" style="display:none"/></div>
+
+            <div class="form-divider">Scalp Health</div>
+            <div class="fg"><label>Card Image</label><div class="upload-zone" id="zone-edu-scalp"><input type="file" accept="image/*" onchange="uploadEduImg(this,'scalp')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Scalp Health image</p></div><img id="prev-edu-scalp" class="article-img-preview" style="display:none"/></div>
+          </div>
         </div>
       </div>
 
@@ -989,68 +997,34 @@ window.deletePolicy=async function(id){
   try{await deleteDoc(doc(db,'policies',id));notify('Deleted.');loadPolicies();}catch(e){notify('Error.','error');}
 }
 
-// ====== EDUCATION ======
-let eduImgUrl='';
+// ====== EDUCATION (image only — titles/text are fixed on the Policy & Education page) ======
 async function loadEducation(){
-  const tbody=document.getElementById('edu-tbody');
-  tbody.innerHTML='<tr class="empty-row"><td colspan="5">Loading...</td></tr>';
   try{
-    const snap=await getDocs(collection(db,'education'));
-    const items=[];snap.forEach(d=>items.push({id:d.id,...d.data()}));
-    items.sort((a,b)=>(a.order||0)-(b.order||0));
-    if(items.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="5">No articles yet.</td></tr>';return;}
-    tbody.innerHTML=items.map(e=>{
-      const img=e.image?`<img src="${e.image}" class="img-thumb" alt="edu"/>`:'<div class="img-thumb-placeholder"><i class="fas fa-image"></i></div>';
-      return`<tr>
-        <td>${img}</td>
-        <td>${e.title||'-'}</td>
-        <td>${e.tag||'-'}</td>
-        <td>${e.order||0}</td>
-        <td><div class="tbl-actions">
-          <button class="btn-sm" onclick="openEduModal('${e.id}')"><i class="fas fa-edit"></i></button>
-          <button class="btn-sm red" onclick="deleteEdu('${e.id}')"><i class="fas fa-trash"></i></button>
-        </div></td>
-      </tr>`;
-    }).join('');
-  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Error.</td></tr>';}
+    const s=await getDoc(doc(db,'education','home'));
+    if(s.exists()){
+      const d=s.data();
+      ['basics','growth','scalp'].forEach(k=>{
+        if(d[k+'Img']){const prev=document.getElementById('prev-edu-'+k);if(prev){prev.src=d[k+'Img'];prev.style.display='block';}}
+      });
+    }
+  }catch(e){}
 }
-window.openEduModal=async function(id=null){
-  let data={};
-  if(id){try{const s=await getDoc(doc(db,'education',id));if(s.exists())data=s.data();}catch(e){}}
-  eduImgUrl=data.image||'';
-  openModal(id?'Edit Education Article':'Add Education Article',`
-    <div class="fg"><label>Title</label><input id="edu-title" value="${data.title||''}" placeholder="e.g. How to Wash Your Child's Hair"/></div>
-    <div class="fg"><label>Tag / Category</label><input id="edu-tag" value="${data.tag||''}" placeholder="e.g. Hair Care Basics"/></div>
-    <div class="fg"><label>Excerpt</label><textarea id="edu-excerpt" rows="3">${data.excerpt||''}</textarea></div>
-    <div class="fg"><label>Display Order</label><input id="edu-order" type="number" value="${data.order||0}"/></div>
-    <div class="fg"><label>Image</label>
-      <div class="upload-zone"><input type="file" accept="image/*" onchange="handleEduImg(this)"/><i class="fas fa-cloud-upload-alt"></i><p id="edu-upload-txt">${data.image?'Image uploaded. Click to replace':'Click to upload image'}</p></div>
-      ${data.image?`<img src="${data.image}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;" id="edu-img-prev"/>`:'<img id="edu-img-prev" style="display:none;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;"/>'}
-    </div>
-  `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveEdu('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
-}
-window.handleEduImg=async function(input){
+
+const eduImgUrls={basics:'',growth:'',scalp:''};
+
+window.uploadEduImg=async function(input,key){
   const file=input.files[0];if(!file)return;
-  document.getElementById('edu-upload-txt').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
-  try{eduImgUrl=await uploadToCloudinary(file);document.getElementById('edu-img-prev').src=eduImgUrl;document.getElementById('edu-img-prev').style.display='block';document.getElementById('edu-upload-txt').textContent='Uploaded.';}
-  catch(e){document.getElementById('edu-upload-txt').textContent='Upload failed.';}
-}
-window.saveEdu=async function(id){
-  const title=document.getElementById('edu-title').value.trim();
-  const tag=document.getElementById('edu-tag').value.trim();
-  const excerpt=document.getElementById('edu-excerpt').value.trim();
-  const order=+document.getElementById('edu-order').value||0;
-  if(!title){notify('Title required.','error');return;}
+  const zone=document.getElementById('zone-edu-'+key);
+  zone.querySelector('p').innerHTML='<span class="uploading"><i class="fas fa-spinner fa-spin"></i> Uploading...</span>';
   try{
-    const data={title,tag,excerpt,order,image:eduImgUrl,updatedAt:serverTimestamp()};
-    if(id){await updateDoc(doc(db,'education',id),data);}
-    else{await addDoc(collection(db,'education'),{...data,createdAt:serverTimestamp()});}
-    notify('Education article saved.');closeModal();loadEducation();
-  }catch(e){notify('Error: '+e.message,'error');}
-}
-window.deleteEdu=async function(id){
-  if(!confirm('Delete this article?'))return;
-  try{await deleteDoc(doc(db,'education',id));notify('Deleted.');loadEducation();}catch(e){notify('Error.','error');}
+    const url=await uploadToCloudinary(file);
+    eduImgUrls[key]=url;
+    const prev=document.getElementById('prev-edu-'+key);
+    prev.src=url;prev.style.display='block';
+    zone.querySelector('p').textContent='Image uploaded.';
+    await setDoc(doc(db,'education','home'),{[key+'Img']:url,updatedAt:serverTimestamp()},{merge:true});
+    notify('Image updated for "'+key+'" card.');
+  }catch(e){zone.querySelector('p').textContent='Upload failed.';notify('Error: '+e.message,'error');}
 }
 
 // ====== FAQS ======

@@ -209,7 +209,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
   <div id="tab-education" class="tab-content">
     <div id="edu-container" class="edu-grid">
       <div class="edu-card">
-        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-img-placeholder" id="edu-img-basics"><i class="fas fa-image" style="font-size:2rem"></i></div>
         <div class="edu-body">
           <div class="edu-tag">Hair Care Basics</div>
           <div class="edu-title">How to Wash Your Child's Hair the Right Way</div>
@@ -217,7 +217,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
         </div>
       </div>
       <div class="edu-card">
-        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-img-placeholder" id="edu-img-growth"><i class="fas fa-image" style="font-size:2rem"></i></div>
         <div class="edu-body">
           <div class="edu-tag">Growth Tips</div>
           <div class="edu-title">Promoting Healthy Hair Growth in Children</div>
@@ -225,7 +225,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
         </div>
       </div>
       <div class="edu-card">
-        <div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>
+        <div class="edu-img-placeholder" id="edu-img-scalp"><i class="fas fa-image" style="font-size:2rem"></i></div>
         <div class="edu-body">
           <div class="edu-tag">Scalp Health</div>
           <div class="edu-title">Understanding Your Child's Scalp Health</div>
@@ -319,11 +319,17 @@ try{
   }
 }catch(e){}
 try{
-  const eduSnap=await getDocs(collection(db,'education'));
-  const edus=[];eduSnap.forEach(d=>edus.push({id:d.id,...d.data()}));
-  edus.sort((a,b)=>(a.order||0)-(b.order||0));
-  if(edus.length>0){
-    document.getElementById('edu-container').innerHTML=edus.map(e=>`<div class="edu-card">${e.image?`<img src="${e.image}" class="edu-img" alt="${e.title||''}"/>`:'<div class="edu-img-placeholder"><i class="fas fa-image" style="font-size:2rem"></i></div>'}<div class="edu-body"><div class="edu-tag">${e.tag||'Education'}</div><div class="edu-title">${e.title||''}</div><div class="edu-text">${e.excerpt||''}</div></div></div>`).join('');
+  const eduSnap=await getDoc(doc(db,'education','home'));
+  if(eduSnap.exists()){
+    const d=eduSnap.data();
+    const setEduImg=(elId,url,alt)=>{
+      if(!url)return;
+      const el=document.getElementById(elId);
+      if(el)el.outerHTML=`<img src="${url}" class="edu-img" alt="${alt}" id="${elId}"/>`;
+    };
+    setEduImg('edu-img-basics',d.basicsImg,'Hair Care Basics');
+    setEduImg('edu-img-growth',d.growthImg,'Growth Tips');
+    setEduImg('edu-img-scalp',d.scalpImg,'Scalp Health');
   }
 }catch(e){}
 try{
