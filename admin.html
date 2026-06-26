@@ -323,8 +323,8 @@ table tr:hover td{background:#fdf8ff;}
         <div class="admin-card">
           <div class="admin-card-head"><h3>Product Categories</h3><button class="btn-sm" onclick="openCatModal()"><i class="fas fa-plus"></i> Add Category</button></div>
           <table>
-            <thead><tr><th>Name</th><th>Color</th><th>Order</th><th>Actions</th></tr></thead>
-            <tbody id="cats-tbody"><tr class="empty-row"><td colspan="4">Loading...</td></tr></tbody>
+            <thead><tr><th>Name</th><th>Bg Color</th><th>Text Color</th><th>Preview</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="cats-tbody"><tr class="empty-row"><td colspan="6">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -716,15 +716,17 @@ window.saveArticles=async function(){
 let cats=[];
 async function loadCategories(){
   const tbody=document.getElementById('cats-tbody');
-  tbody.innerHTML='<tr class="empty-row"><td colspan="4">Loading...</td></tr>';
+  tbody.innerHTML='<tr class="empty-row"><td colspan="6">Loading...</td></tr>';
   try{
     const snap=await getDocs(collection(db,'categories'));
     cats=[];snap.forEach(d=>cats.push({id:d.id,...d.data()}));
     cats.sort((a,b)=>(a.order||0)-(b.order||0));
-    if(cats.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="4">No categories yet.</td></tr>';return;}
+    if(cats.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="6">No categories yet.</td></tr>';return;}
     tbody.innerHTML=cats.map(c=>`<tr>
       <td>${c.name}</td>
       <td><span class="color-dot" style="background:${c.color||'#ccc'}"></span> ${c.color||'-'}</td>
+      <td><span class="color-dot" style="background:${c.textColor||'#333'}"></span> ${c.textColor||'-'}</td>
+      <td><span style="background:${c.color||'#FFDDE6'};color:${c.textColor||'#5a2040'};padding:3px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;white-space:nowrap;">${c.name}</span></td>
       <td>${c.order||0}</td>
       <td><div class="tbl-actions">
         <button class="btn-sm" onclick="openCatModal('${c.id}')"><i class="fas fa-edit"></i></button>
@@ -744,25 +746,42 @@ window.openCatModal=async function(id=null){
   if(id){try{const s=await getDoc(doc(db,'categories',id));if(s.exists())data=s.data();}catch(e){}}
   openModal(id?'Edit Category':'Add Category',`
     <div class="fg"><label>Category Name</label><input id="cat-name" value="${data.name||''}" placeholder="e.g. Teen Hair Growth System"/></div>
-    <div class="fg"><label>Color (hex)</label><div style="display:flex;gap:10px;align-items:center;"><input id="cat-color" type="color" value="${data.color||'#FFDDE6'}" style="width:44px;height:36px;border:1px solid #e0d8e8;border-radius:8px;padding:2px;cursor:pointer;"/><input id="cat-color-hex" value="${data.color||'#FFDDE6'}" style="flex:1;" placeholder="#FFDDE6"/></div></div>
+    <div class="fg-row">
+      <div class="fg"><label>Background Color</label><div style="display:flex;gap:10px;align-items:center;"><input id="cat-color" type="color" value="${data.color||'#FFDDE6'}" style="width:44px;height:36px;border:1px solid #e0d8e8;border-radius:8px;padding:2px;cursor:pointer;"/><input id="cat-color-hex" value="${data.color||'#FFDDE6'}" style="flex:1;" placeholder="#FFDDE6"/></div></div>
+      <div class="fg"><label>Text Color</label><div style="display:flex;gap:10px;align-items:center;"><input id="cat-text-color" type="color" value="${data.textColor||'#5a2040'}" style="width:44px;height:36px;border:1px solid #e0d8e8;border-radius:8px;padding:2px;cursor:pointer;"/><input id="cat-text-color-hex" value="${data.textColor||'#5a2040'}" style="flex:1;" placeholder="#5a2040"/></div></div>
+    </div>
+    <div class="fg"><label>Live Preview</label><div id="cat-preview" style="display:inline-block;padding:6px 20px;border-radius:20px;font-size:0.85rem;font-weight:600;background:${data.color||'#FFDDE6'};color:${data.textColor||'#5a2040'};">${data.name||'Category Name'}</div></div>
     <div class="fg"><label>Display Order</label><input id="cat-order" type="number" value="${data.order||0}"/></div>
   `,`<button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm" style="background:var(--accent);" onclick="saveCat('${id||''}')"><i class="fas fa-save"></i> Save</button>`);
   setTimeout(()=>{
     const colorInput=document.getElementById('cat-color');
     const hexInput=document.getElementById('cat-color-hex');
-    colorInput.addEventListener('input',()=>hexInput.value=colorInput.value);
-    hexInput.addEventListener('input',()=>colorInput.value=hexInput.value);
+    const textColorInput=document.getElementById('cat-text-color');
+    const textHexInput=document.getElementById('cat-text-color-hex');
+    const nameInput=document.getElementById('cat-name');
+    const preview=document.getElementById('cat-preview');
+    function updatePreview(){
+      preview.style.background=hexInput.value||colorInput.value;
+      preview.style.color=textHexInput.value||textColorInput.value;
+      preview.textContent=nameInput.value||'Category Name';
+    }
+    colorInput.addEventListener('input',()=>{hexInput.value=colorInput.value;updatePreview();});
+    hexInput.addEventListener('input',()=>{colorInput.value=hexInput.value;updatePreview();});
+    textColorInput.addEventListener('input',()=>{textHexInput.value=textColorInput.value;updatePreview();});
+    textHexInput.addEventListener('input',()=>{textColorInput.value=textHexInput.value;updatePreview();});
+    nameInput.addEventListener('input',()=>updatePreview());
   },100);
 }
 
 window.saveCat=async function(id){
   const name=document.getElementById('cat-name').value.trim();
   const color=document.getElementById('cat-color-hex').value.trim()||'#FFDDE6';
+  const textColor=document.getElementById('cat-text-color-hex').value.trim()||'#5a2040';
   const order=+document.getElementById('cat-order').value||0;
   if(!name){notify('Category name required.','error');return;}
   try{
-    if(id){await updateDoc(doc(db,'categories',id),{name,color,order,updatedAt:serverTimestamp()});}
-    else{await addDoc(collection(db,'categories'),{name,color,order,createdAt:serverTimestamp()});}
+    if(id){await updateDoc(doc(db,'categories',id),{name,color,textColor,order,updatedAt:serverTimestamp()});}
+    else{await addDoc(collection(db,'categories'),{name,color,textColor,order,createdAt:serverTimestamp()});}
     notify('Category saved.');closeModal();loadCategories();
   }catch(e){notify('Error: '+e.message,'error');}
 }
@@ -826,19 +845,15 @@ window.openProductModal=async function(id=null){
         <option value="offer"${pt==='offer'?' selected':''}>On Offer (original &amp; offer price)</option>
       </select>
     </div>
-    <!-- SINGLE -->
     <div id="pf-single" class="fg" style="display:${pt==='single'?'flex':'none'};flex-direction:column;gap:5px;">
-      <label>Price (KES)</label>
-      <input id="p-price" type="number" value="${data.price||''}" placeholder="1500"/>
+      <label>Price (KES)</label><input id="p-price" type="number" value="${data.price||''}" placeholder="1500"/>
     </div>
-    <!-- RANGE -->
     <div id="pf-range" style="display:${pt==='range'?'block':'none'};">
       <div class="fg-row">
         <div class="fg"><label>From (KES)</label><input id="p-price-min" type="number" value="${data.priceMin||''}" placeholder="1000"/></div>
         <div class="fg"><label>To (KES)</label><input id="p-price-max" type="number" value="${data.priceMax||''}" placeholder="3000"/></div>
       </div>
     </div>
-    <!-- OFFER -->
     <div id="pf-offer" style="display:${pt==='offer'?'block':'none'};">
       <div class="fg-row">
         <div class="fg"><label>Original Price (KES)</label><input id="p-price-orig" type="number" value="${data.price||''}" placeholder="2000"/></div>
@@ -892,8 +907,7 @@ window.saveProduct=async function(id){
   } else if(priceType==='range'){
     priceData.priceMin=+document.getElementById('p-price-min').value||0;
     priceData.priceMax=+document.getElementById('p-price-max').value||0;
-    priceData.price=priceData.priceMin;
-    priceData.priceOffer=null;
+    priceData.price=priceData.priceMin;priceData.priceOffer=null;
   } else if(priceType==='offer'){
     priceData.price=+document.getElementById('p-price-orig').value||0;
     priceData.priceOffer=+document.getElementById('p-price-offer').value||0;
