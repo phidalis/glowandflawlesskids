@@ -304,28 +304,15 @@ table tr:hover td{background:#fdf8ff;}
         <div class="admin-card">
           <div class="admin-card-head"><h3>Home Page Articles</h3><button class="btn-sm" onclick="saveArticles()"><i class="fas fa-save"></i> Save All</button></div>
           <div style="padding:20px;">
+            <p style="font-size:0.8rem;color:var(--subtext);margin-bottom:16px;">These sections' text is fixed on the home page. Upload an image below to change what shows in each section — it updates on the site immediately.</p>
+
             <div class="form-divider">Welcome Section</div>
-            <div class="fg-row">
-              <div class="fg"><label>Eyebrow Text</label><input id="art-welcome-eyebrow" placeholder="e.g. Our Promise"/></div>
-              <div class="fg"><label>Title</label><input id="art-welcome-title" placeholder="Welcome to Glow & Flowless"/></div>
-            </div>
-            <div class="fg"><label>Article Body</label><textarea id="art-welcome-body" rows="4"></textarea></div>
             <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-welcome"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'welcome')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Welcome section image</p></div><img id="prev-welcome" class="article-img-preview" style="display:none"/></div>
 
             <div class="form-divider">Our Story Section</div>
-            <div class="fg-row">
-              <div class="fg"><label>Eyebrow Text</label><input id="art-story-eyebrow" placeholder="e.g. How We Started"/></div>
-              <div class="fg"><label>Title</label><input id="art-story-title" placeholder="Our Story"/></div>
-            </div>
-            <div class="fg"><label>Article Body</label><textarea id="art-story-body" rows="4"></textarea></div>
             <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-story"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'story')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Our Story section image</p></div><img id="prev-story" class="article-img-preview" style="display:none"/></div>
 
             <div class="form-divider">Why Parents Love Us</div>
-            <div class="fg-row">
-              <div class="fg"><label>Eyebrow Text</label><input id="art-why-eyebrow" placeholder="e.g. Trusted by Families"/></div>
-              <div class="fg"><label>Title</label><input id="art-why-title" placeholder="Why Parents Love Us"/></div>
-            </div>
-            <div class="fg"><label>Article Body</label><textarea id="art-why-body" rows="4"></textarea></div>
             <div class="fg"><label>Section Image</label><div class="upload-zone" id="zone-why"><input type="file" accept="image/*" onchange="uploadArticleImg(this,'why')"/><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Why Parents section image</p></div><img id="prev-why" class="article-img-preview" style="display:none"/></div>
           </div>
         </div>
@@ -667,19 +654,13 @@ window.deleteHero=async function(id){
   try{await deleteDoc(doc(db,'heroImages',id));notify('Deleted.');loadHero();}catch(e){notify('Error.','error');}
 }
 
-// ====== ARTICLES ======
+// ====== ARTICLES (image only — text is fixed on the home page) ======
 async function loadArticles(){
   try{
     const s=await getDoc(doc(db,'articles','home'));
     if(s.exists()){
       const d=s.data();
       ['welcome','story','why'].forEach(k=>{
-        const eyebrow=document.getElementById('art-'+k+'-eyebrow');
-        const title=document.getElementById('art-'+k+'-title');
-        const body=document.getElementById('art-'+k+'-body');
-        if(eyebrow)eyebrow.value=d[k+'Eyebrow']||'';
-        if(title)title.value=d[k+'Title']||'';
-        if(body)body.value=d[k+'Body']||'';
         if(d[k+'Img']){const prev=document.getElementById('prev-'+k);if(prev){prev.src=d[k+'Img'];prev.style.display='block';}}
       });
     }
@@ -698,25 +679,28 @@ window.uploadArticleImg=async function(input,key){
     const prev=document.getElementById('prev-'+key);
     prev.src=url;prev.style.display='block';
     zone.querySelector('p').textContent='Image uploaded.';
+    // Save this image immediately so it reflects on the article right away
+    await saveArticleImage(key,url);
   }catch(e){zone.querySelector('p').textContent='Upload failed.';}
+}
+
+async function saveArticleImage(key,url){
+  try{
+    await setDoc(doc(db,'articles','home'),{[key+'Img']:url,updatedAt:serverTimestamp()},{merge:true});
+    notify('Image updated for "'+key+'" section.');
+  }catch(e){notify('Error saving image: '+e.message,'error');}
 }
 
 window.saveArticles=async function(){
   try{
-    const existing=(await getDoc(doc(db,'articles','home'))).data()||{};
     const payload={};
+    let any=false;
     ['welcome','story','why'].forEach(k=>{
-      const eyebrowEl=document.getElementById('art-'+k+'-eyebrow');
-      const titleEl=document.getElementById('art-'+k+'-title');
-      const bodyEl=document.getElementById('art-'+k+'-body');
-      payload[k+'Eyebrow']=eyebrowEl?eyebrowEl.value.trim():(existing[k+'Eyebrow']||'');
-      payload[k+'Title']=titleEl?titleEl.value.trim():(existing[k+'Title']||'');
-      payload[k+'Body']=bodyEl?bodyEl.value.trim():(existing[k+'Body']||'');
-      if(articleImgUrls[k])payload[k+'Img']=articleImgUrls[k];
-      else payload[k+'Img']=existing[k+'Img']||'';
+      if(articleImgUrls[k]){payload[k+'Img']=articleImgUrls[k];any=true;}
     });
-    await setDoc(doc(db,'articles','home'),{...payload,updatedAt:serverTimestamp()});
-    notify('Articles saved successfully.');
+    if(!any){notify('No new images selected.');return;}
+    await setDoc(doc(db,'articles','home'),{...payload,updatedAt:serverTimestamp()},{merge:true});
+    notify('Article images saved successfully.');
   }catch(e){notify('Error: '+e.message,'error');}
 }
 
