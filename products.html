@@ -233,7 +233,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
     <div class="footer-grid">
       <div class="f-brand">
         <div class="logo">Glow &amp; <span>Flowless</span></div>
-        <p>Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <p id="footer-desc">Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
         <div class="socials">
           <a href="#" id="footer-ig"><i class="fab fa-instagram"></i></a>
           <a href="#" id="footer-fb"><i class="fab fa-facebook-f"></i></a>
@@ -244,10 +244,10 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
       </div>
       <div class="f-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
       <div class="f-col"><h4>Customer</h4><ul><li><a href="customer.html">My Account</a></li><li><a href="customer.html">My Orders</a></li><li><a href="policyedu.html">Policy &amp; Education</a></li></ul></div>
-      <div class="f-col"><h4>Contact</h4><ul><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a>Nairobi, Kenya</a></li></ul></div>
+      <div class="f-col"><h4>Contact</h4><ul id="footer-contact"><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a href="#" id="footer-address">Nairobi, Kenya</a></li></ul></div>
     </div>
     <div class="f-bottom">
-      <p>&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <p id="footer-copy">&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
       <div class="payment"><span>M-PESA</span><span>Visa</span><span>Mastercard</span></div>
     </div>
   </div>
@@ -263,7 +263,23 @@ const db=getFirestore(app);
 let allCategories=[];let allProducts=[];
 
 async function loadConfig(){
-  try{const s=await getDoc(doc(db,'config','site'));if(s.exists()&&s.data().nav4Msg)document.getElementById('nav4-msg').textContent=s.data().nav4Msg;}catch(e){}
+  try{
+    const s=await getDoc(doc(db,'config','site'));
+    if(s.exists()){
+      const d=s.data();
+      if(d.nav4Msg)document.getElementById('nav4-msg').textContent=d.nav4Msg;
+      if(d.footerDesc)document.getElementById('footer-desc').textContent=d.footerDesc;
+      if(d.footerCopy)document.getElementById('footer-copy').innerHTML=d.footerCopy;
+      if(d.socialIg)document.getElementById('footer-ig').href=d.socialIg;
+      if(d.socialFb)document.getElementById('footer-fb').href=d.socialFb;
+      if(d.socialTw)document.getElementById('footer-tw').href=d.socialTw;
+      if(d.socialTt)document.getElementById('footer-tt').href=d.socialTt;
+      if(d.socialWa)document.getElementById('footer-wa').href=d.socialWa;
+      if(d.contactEmail){const els=document.querySelectorAll('#footer-contact a[href^="mailto"]');els.forEach(e=>{e.href='mailto:'+d.contactEmail;e.textContent=d.contactEmail;});}
+      if(d.contactPhone){const els=document.querySelectorAll('#footer-contact a[href^="tel"]');els.forEach(e=>{e.href='tel:'+d.contactPhone;e.textContent=d.contactPhone;});}
+      if(d.contactAddress)document.getElementById('footer-address').textContent=d.contactAddress;
+    }
+  }catch(e){}
 }
 
 async function loadData(){

@@ -351,7 +351,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
         <ul id="footer-contact">
           <li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li>
           <li><a href="tel:+254700000000">+254 700 000 000</a></li>
-          <li><a href="#">Nairobi, Kenya</a></li>
+          <li><a href="#" id="footer-address">Nairobi, Kenya</a></li>
         </ul>
       </div>
     </div>
@@ -387,8 +387,9 @@ async function loadSiteConfig(){
       if(d.socialTw)document.getElementById('footer-tw').href=d.socialTw;
       if(d.socialTt)document.getElementById('footer-tt').href=d.socialTt;
       if(d.socialWa)document.getElementById('footer-wa').href=d.socialWa;
-      if(d.contactEmail){const els=document.querySelectorAll('#footer-contact a[href^="mailto"]');els.forEach(e=>e.href='mailto:'+d.contactEmail);}
-      if(d.contactPhone){const els=document.querySelectorAll('#footer-contact a[href^="tel"]');els.forEach(e=>e.href='tel:'+d.contactPhone);}
+      if(d.contactEmail){const els=document.querySelectorAll('#footer-contact a[href^="mailto"]');els.forEach(e=>{e.href='mailto:'+d.contactEmail;e.textContent=d.contactEmail;});}
+      if(d.contactPhone){const els=document.querySelectorAll('#footer-contact a[href^="tel"]');els.forEach(e=>{e.href='tel:'+d.contactPhone;e.textContent=d.contactPhone;});}
+      if(d.contactAddress)document.getElementById('footer-address').textContent=d.contactAddress;
     }
   }catch(e){console.log('Config load:',e.message);}
 }
