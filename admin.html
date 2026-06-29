@@ -622,16 +622,41 @@ async function uploadToCloudinary(file){
   throw new Error(data.error?.message||'Upload failed');
 }
 
-// Auth
-onAuthStateChanged(auth,user=>{
+// Auth — role-gated admin access
+onAuthStateChanged(auth,async user=>{
   if(user){
-    document.getElementById('login-screen').classList.add('hide');
-    document.getElementById('app').classList.remove('hide');
-    document.getElementById('admin-email-display').textContent=user.email;
-    initAdmin();
+    try{
+      const userSnap=await getDoc(doc(db,'users',user.uid));
+      const role=userSnap.exists()?userSnap.data().role:null;
+      if(role==='admin'){
+        document.getElementById('login-screen').classList.add('hide');
+        document.getElementById('app').classList.remove('hide');
+        document.getElementById('admin-email-display').textContent=user.email;
+        initAdmin();
+      }else{
+        // Signed in but not an admin — reject
+        await signOut(auth);
+        const errEl=document.getElementById('login-err');
+        errEl.textContent='Access denied. This portal is for admins only.';
+        errEl.style.display='block';
+        document.getElementById('login-screen').classList.remove('hide');
+        document.getElementById('app').classList.add('hide');
+      }
+    }catch(e){
+      await signOut(auth);
+      const errEl=document.getElementById('login-err');
+      errEl.textContent='Could not verify account permissions. Try again.';
+      errEl.style.display='block';
+      document.getElementById('login-screen').classList.remove('hide');
+      document.getElementById('app').classList.add('hide');
+    }
   }else{
     document.getElementById('login-screen').classList.remove('hide');
     document.getElementById('app').classList.add('hide');
+    // Reset error to default text on logout
+    const errEl=document.getElementById('login-err');
+    errEl.textContent='Invalid credentials. Please try again.';
+    errEl.style.display='none';
   }
 });
 
@@ -641,7 +666,10 @@ window.doLogin=async function(){
   const errEl=document.getElementById('login-err');
   errEl.style.display='none';
   try{await signInWithEmailAndPassword(auth,email,pass);}
-  catch(e){errEl.style.display='block';}
+  catch(e){
+    errEl.textContent='Invalid credentials. Please try again.';
+    errEl.style.display='block';
+  }
 }
 window.doLogout=async function(){await signOut(auth);}
 
