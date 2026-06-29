@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My Dashboard — Glow & Flawless Kids Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;--dark:#1a1a1a;--text:#2d2d2d;--subtext:#666;--font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#f7f2f5;color:var(--text);overflow-x:hidden;min-height:100vh;}
+/* TOP NAV */
+#topbar{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+#topbar .inner{max-width:1400px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+#topbar .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--dark);text-decoration:none;}
+#topbar .logo span{color:#d4608a;}
+#topbar .tb-right{display:flex;align-items:center;gap:14px;}
+.tb-user{display:flex;align-items:center;gap:10px;}
+.tb-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.88rem;color:#7a3050;overflow:hidden;flex-shrink:0;}
+.tb-avatar img{width:100%;height:100%;object-fit:cover;}
+.tb-name{font-size:0.82rem;font-weight:600;color:var(--dark);}
+.btn-signout{background:var(--cream);border:none;border-radius:20px;padding:7px 16px;font-family:var(--font-body);font-size:0.78rem;font-weight:600;color:var(--subtext);cursor:pointer;}
+.btn-signout:hover{background:var(--pink);color:#7a3050;}
+.tb-back{font-size:0.82rem;color:var(--subtext);text-decoration:none;display:flex;align-items:center;gap:6px;}
+.tb-back:hover{color:#d4608a;}
+/* LAYOUT */
+.dash-layout{max-width:1400px;margin:0 auto;padding:24px;display:grid;grid-template-columns:240px 1fr;gap:24px;min-height:calc(100vh - 65px);}
+/* SIDEBAR */
+.dash-sidebar{background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,0.05);position:sticky;top:90px;align-self:start;}
+.sidebar-user{text-align:center;padding-bottom:20px;border-bottom:1px solid #f0e8f0;margin-bottom:16px;}
+.sidebar-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.6rem;color:#7a3050;margin:0 auto 10px;overflow:hidden;}
+.sidebar-avatar img{width:100%;height:100%;object-fit:cover;}
+.sidebar-uname{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--dark);}
+.sidebar-email{font-size:0.74rem;color:var(--subtext);}
+.sidebar-badge{display:inline-block;font-size:0.68rem;font-weight:600;background:var(--mint);color:#2d6a4a;padding:2px 10px;border-radius:20px;margin-top:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;font-size:0.84rem;font-weight:500;color:var(--subtext);transition:all 0.2s;border:none;background:none;width:100%;text-align:left;font-family:var(--font-body);}
+.nav-item i{width:20px;text-align:center;font-size:0.9rem;}
+.nav-item:hover{background:var(--cream);color:var(--dark);}
+.nav-item.active{background:var(--dark);color:#fff;}
+.nav-item .badge{margin-left:auto;background:#d4608a;color:#fff;font-size:0.65rem;font-weight:700;padding:1px 7px;border-radius:20px;}
+.nav-section{font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#bbb;padding:12px 14px 4px;}
+/* MAIN CONTENT */
+.dash-main{display:flex;flex-direction:column;gap:20px;}
+.dash-section{display:none;}
+.dash-section.active{display:block;}
+/* OVERVIEW CARDS */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+.stat-card .sc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:14px;}
+.stat-card .sc-num{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--dark);}
+.stat-card .sc-lbl{font-size:0.76rem;color:var(--subtext);font-weight:500;margin-top:2px;}
+/* Card */
+.card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+.card-title{font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.card-sub{font-size:0.8rem;color:var(--subtext);margin-bottom:20px;}
+/* ORDERS */
+.orders-list{display:flex;flex-direction:column;gap:12px;}
+.order-row{background:var(--cream);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.order-ref{font-weight:700;font-size:0.88rem;color:var(--dark);}
+.order-date{font-size:0.76rem;color:var(--subtext);}
+.order-total{font-weight:700;color:#b06080;font-size:0.92rem;}
+.order-status{font-size:0.72rem;font-weight:600;padding:3px 12px;border-radius:20px;}
+.status-paid{background:var(--mint);color:#2d6a4a;}
+.status-pending{background:#fff3cd;color:#7a5c00;}
+.status-delivered{background:var(--blue);color:#1a4060;}
+.order-items{font-size:0.76rem;color:var(--subtext);margin-top:4px;}
+.order-detail-btn{background:var(--dark);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.74rem;font-weight:600;cursor:pointer;font-family:var(--font-body);}
+.empty-state{text-align:center;padding:48px 20px;color:var(--subtext);}
+.empty-state i{font-size:2.2rem;color:#e0d0e0;margin-bottom:12px;display:block;}
+.empty-state p{font-size:0.88rem;margin-bottom:16px;}
+.empty-state a{display:inline-flex;align-items:center;gap:6px;background:var(--dark);color:#fff;padding:10px 24px;border-radius:24px;text-decoration:none;font-size:0.85rem;font-weight:600;}
+/* REVIEWS section */
+.reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.review-card{background:var(--cream);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;}
+.review-card .stars{display:flex;gap:3px;}
+.review-card .stars i{color:#f59e0b;font-size:0.82rem;}
+.review-card .stars i.empty{color:#e0d8d0;}
+.review-card .review-text{font-size:0.84rem;line-height:1.7;color:var(--text);font-style:italic;}
+.review-card .reviewer{display:flex;align-items:center;gap:9px;}
+.reviewer-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0;}
+.reviewer-name{font-size:0.8rem;font-weight:600;color:var(--dark);}
+.reviewer-meta{font-size:0.72rem;color:var(--subtext);}
+.review-form-area{background:var(--dark);border-radius:16px;padding:24px;}
+.review-form-area h3{font-family:var(--font-display);font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px;}
+.rf-row{margin-bottom:12px;}
+.rf-label{font-size:0.78rem;font-weight:600;color:#ccc;display:block;margin-bottom:5px;}
+.rf-input{width:100%;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:0.85rem;color:#fff;background:rgba(255,255,255,0.07);outline:none;}
+.rf-input:focus{border-color:var(--pink);}
+.rf-input::placeholder{color:#888;}
+textarea.rf-input{resize:vertical;min-height:80px;}
+.star-picker{display:flex;gap:6px;}
+.star-picker i{font-size:1.4rem;color:#555;cursor:pointer;transition:color 0.15s;}
+.star-picker i.lit{color:#f59e0b;}
+.rf-submit{background:var(--pink);color:#7a3050;border:none;border-radius:8px;padding:11px 24px;font-family:var(--font-body);font-weight:700;font-size:0.88rem;cursor:pointer;margin-top:4px;}
+#rf-msg{margin-top:10px;font-size:0.8rem;padding:9px 12px;border-radius:8px;display:none;}
+#rf-msg.success{background:var(--mint);color:#2d6a4a;display:block;}
+#rf-msg.error{background:#ffe8e8;color:#a03030;display:block;}
+/* MESSAGES */
+.msg-layout{display:grid;grid-template-columns:280px 1fr;gap:0;border-radius:16px;overflow:hidden;background:#fff;min-height:500px;}
+.msg-sidebar{border-right:1px solid #f0e8f0;display:flex;flex-direction:column;}
+.msg-head{padding:16px 18px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between;}
+.msg-head h3{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--dark);}
+.msg-thread-list{flex:1;overflow-y:auto;}
+.msg-thread{padding:14px 16px;border-bottom:1px solid #f9f2f5;cursor:pointer;display:flex;gap:10px;align-items:center;transition:background 0.15s;}
+.msg-thread:hover{background:var(--cream);}
+.msg-thread.active{background:var(--pink);}
+.mt-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:1rem;color:#7a3050;flex-shrink:0;}
+.mt-info{flex:1;min-width:0;}
+.mt-name{font-size:0.82rem;font-weight:600;color:var(--dark);}
+.mt-preview{font-size:0.74rem;color:var(--subtext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mt-time{font-size:0.68rem;color:var(--subtext);}
+.mt-unread{width:8px;height:8px;border-radius:50%;background:#d4608a;flex-shrink:0;margin-top:2px;}
+.msg-main{display:flex;flex-direction:column;}
+.msg-chat-head{padding:14px 18px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;gap:10px;}
+.msg-chat-head .status-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;}
+.msg-chat-head .ch-name{font-weight:600;font-size:0.9rem;color:var(--dark);}
+.msg-chat-head .ch-status{font-size:0.73rem;color:var(--subtext);}
+.msg-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f9f5f7;}
+.msg-bubble{max-width:72%;display:flex;flex-direction:column;}
+.msg-bubble.sent{align-self:flex-end;align-items:flex-end;}
+.msg-bubble.recv{align-self:flex-start;}
+.bubble-text{padding:11px 16px;border-radius:16px;font-size:0.84rem;line-height:1.55;word-break:break-word;}
+.sent .bubble-text{background:var(--dark);color:#fff;border-bottom-right-radius:4px;}
+.recv .bubble-text{background:#fff;color:var(--text);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.bubble-time{font-size:0.67rem;color:var(--subtext);margin-top:3px;padding:0 4px;}
+.msg-compose{padding:14px 16px;border-top:1px solid #f0e8f0;background:#fff;display:flex;gap:10px;align-items:flex-end;}
+.msg-compose textarea{flex:1;border:1.5px solid #e8dde4;border-radius:12px;padding:11px 14px;font-family:var(--font-body);font-size:0.85rem;resize:none;outline:none;max-height:100px;line-height:1.5;}
+.msg-compose textarea:focus{border-color:#d4608a;}
+.send-btn{background:var(--dark);color:#fff;border:none;border-radius:12px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:0.9rem;}
+.send-btn:hover{background:#333;}
+.msg-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--subtext);text-align:center;padding:40px;}
+.msg-empty i{font-size:2rem;color:#e0d0e0;}
+/* PROFILE SECTION */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.pf-group{display:flex;flex-direction:column;gap:5px;}
+.pf-label{font-size:0.78rem;font-weight:600;color:var(--dark);}
+.pf-input{border:1.5px solid #e8dde4;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--text);outline:none;}
+.pf-input:focus{border-color:#d4608a;}
+.pf-input:disabled{background:var(--cream);color:var(--subtext);}
+.pf-full{grid-column:1/-1;}
+.btn-save{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:var(--font-body);font-weight:600;font-size:0.88rem;cursor:pointer;}
+.btn-save:hover{background:#333;}
+#pf-msg{font-size:0.8rem;padding:9px 12px;border-radius:8px;display:none;margin-top:10px;}
+#pf-msg.success{background:var(--mint);color:#2d6a4a;display:block;}
+#pf-msg.error{background:#ffe8e8;color:#a03030;display:block;}
+/* ORDER DETAIL MODAL */
+#order-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+#order-modal.open{display:flex;}
+#order-modal-box{background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
+.om-head{padding:18px 22px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;}
+.om-head h3{font-family:var(--font-display);font-size:1.1rem;font-weight:700;}
+.om-head button{background:none;border:none;cursor:pointer;color:var(--subtext);font-size:1rem;}
+.om-body{padding:20px 22px;}
+.om-row{display:flex;justify-content:space-between;font-size:0.83rem;padding:5px 0;border-bottom:1px solid #f9f2f5;}
+.om-row.total{font-weight:700;font-size:0.92rem;border-bottom:none;margin-top:4px;}
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,#f0e8f0 25%,#e8d8e8 50%,#f0e8f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 22px;border-radius:30px;font-size:0.84rem;font-weight:500;z-index:5000;opacity:0;pointer-events:none;transition:all 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* Responsive */
+@media(max-width:1100px){
+  .dash-layout{grid-template-columns:200px 1fr;}
+  .stat-cards{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:800px){
+  .dash-layout{grid-template-columns:1fr;padding:12px;}
+  .dash-sidebar{position:static;display:none;}
+  .dash-sidebar.mob-open{display:block;position:fixed;inset:0;z-index:400;border-radius:0;overflow-y:auto;}
+  .stat-cards{grid-template-columns:repeat(2,1fr);}
+  .reviews-grid{grid-template-columns:1fr;}
+  .msg-layout{grid-template-columns:1fr;}
+  .msg-sidebar{display:none;}
+  .profile-grid{grid-template-columns:1fr;}
+}
+/* Mobile nav */
+#mob-nav{display:none;background:#fff;border-top:1px solid #f0e8f0;position:fixed;bottom:0;left:0;right:0;z-index:300;padding:8px 0 12px;}
+#mob-nav .inner{display:flex;justify-content:space-around;}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:0.65rem;font-weight:600;color:var(--subtext);cursor:pointer;padding:4px 10px;border:none;background:none;font-family:var(--font-body);}
+.mob-nav-item i{font-size:1.1rem;}
+.mob-nav-item.active{color:#d4608a;}
+@media(max-width:800px){#mob-nav{display:block;}body{padding-bottom:64px;}}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="inner">
+    <a href="index.html" class="logo">Glow &amp; <span>Flawless</span></a>
+    <div class="tb-right">
+      <a href="products.html" class="tb-back"><i class="fas fa-store"></i> Shop</a>
+      <div class="tb-user">
+        <div class="tb-avatar" id="tb-av"><i class="fas fa-user"></i></div>
+        <span class="tb-name" id="tb-name">Loading...</span>
+      </div>
+      <button class="btn-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+    </div>
+  </div>
+</div>
+
+<div class="dash-layout">
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sb-av"><i class="fas fa-user"></i></div>
+      <div class="sidebar-uname" id="sb-name">—</div>
+      <div class="sidebar-email" id="sb-email">—</div>
+      <span class="sidebar-badge">Verified Customer</span>
+    </div>
+    <p class="nav-section">Menu</p>
+    <button class="nav-item active" onclick="showSection('overview',this)"><i class="fas fa-home"></i> Dashboard</button>
+    <button class="nav-item" onclick="showSection('orders',this)"><i class="fas fa-box"></i> My Orders</button>
+    <button class="nav-item" onclick="showSection('reviews',this)"><i class="fas fa-star"></i> Reviews</button>
+    <button class="nav-item" onclick="showSection('messages',this)"><i class="fas fa-comments"></i> Messages <span class="badge" id="unread-badge" style="display:none">0</span></button>
+    <p class="nav-section">Account</p>
+    <button class="nav-item" onclick="showSection('profile',this)"><i class="fas fa-user-edit"></i> My Profile</button>
+    <button class="nav-item" onclick="window.location.href='dashboard-products.html'"><i class="fas fa-shopping-bag"></i> Shop Products</button>
+    <button class="nav-item" style="color:#c03030;" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- OVERVIEW -->
+    <div class="dash-section active" id="section-overview">
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="sc-icon" style="background:var(--pink);color:#c03060;"><i class="fas fa-box"></i></div>
+          <div class="sc-num" id="total-orders">—</div>
+          <div class="sc-lbl">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon" style="background:var(--mint);color:#2d6a4a;"><i class="fas fa-check-circle"></i></div>
+          <div class="sc-num" id="delivered-orders">—</div>
+          <div class="sc-lbl">Delivered</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon" style="background:var(--lavender);color:#5a4080;"><i class="fas fa-star"></i></div>
+          <div class="sc-num" id="my-reviews">—</div>
+          <div class="sc-lbl">My Reviews</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon" style="background:var(--blue);color:#1a5080;"><i class="fas fa-comments"></i></div>
+          <div class="sc-num" id="my-msgs">—</div>
+          <div class="sc-lbl">Messages</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Recent Orders</p>
+        <p class="card-sub">Your last 5 orders</p>
+        <div id="overview-orders"><div class="skeleton" style="height:60px;margin-bottom:10px;"></div><div class="skeleton" style="height:60px;"></div></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <p class="card-title">What Customers Are Saying</p>
+        <p class="card-sub">Latest approved reviews from the Glow &amp; Flawless community</p>
+        <div class="reviews-grid" id="overview-reviews">
+          <div class="skeleton" style="height:130px;"></div>
+          <div class="skeleton" style="height:130px;"></div>
+          <div class="skeleton" style="height:130px;"></div>
+          <div class="skeleton" style="height:130px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="dash-section" id="section-orders">
+      <div class="card">
+        <p class="card-title">My Orders</p>
+        <p class="card-sub">Track all your orders from Glow &amp; Flawless</p>
+        <div id="orders-list"><div class="skeleton" style="height:70px;margin-bottom:12px;"></div><div class="skeleton" style="height:70px;margin-bottom:12px;"></div><div class="skeleton" style="height:70px;"></div></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="dash-section" id="section-reviews">
+      <div class="card" style="margin-bottom:20px;">
+        <p class="card-title">Community Reviews</p>
+        <p class="card-sub">All approved reviews from Kenyan families</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;" id="review-filters">
+          <button class="btn-filter active" onclick="filterRevs(5,this)">⭐ 5 Stars</button>
+          <button class="btn-filter" onclick="filterRevs(4,this)">⭐ 4 Stars</button>
+          <button class="btn-filter" onclick="filterRevs(0,this)">All Reviews</button>
+        </div>
+        <style>.btn-filter{background:var(--cream);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.78rem;font-weight:600;color:var(--subtext);cursor:pointer;}.btn-filter.active{background:var(--dark);color:#fff;}</style>
+        <div class="reviews-grid" id="all-reviews-grid"><div class="skeleton" style="height:130px;"></div><div class="skeleton" style="height:130px;"></div><div class="skeleton" style="height:130px;"></div><div class="skeleton" style="height:130px;"></div></div>
+      </div>
+
+      <div class="review-form-area">
+        <h3><i class="fas fa-pen"></i> Write a Review</h3>
+        <div id="rf-msg"></div>
+        <div class="rf-row"><label class="rf-label">Product Reviewed</label><input type="text" class="rf-input" id="r-product" placeholder="e.g. Hair Growth Oil"/></div>
+        <div class="rf-row"><label class="rf-label">Your Location</label><input type="text" class="rf-input" id="r-location" placeholder="e.g. Nairobi"/></div>
+        <div class="rf-row"><label class="rf-label">Rating</label><div class="star-picker" id="star-picker"><i class="far fa-star" data-val="1"></i><i class="far fa-star" data-val="2"></i><i class="far fa-star" data-val="3"></i><i class="far fa-star" data-val="4"></i><i class="far fa-star" data-val="5"></i></div></div>
+        <div class="rf-row"><label class="rf-label">Your Review</label><textarea class="rf-input" id="r-text" placeholder="Tell us about your experience..."></textarea></div>
+        <button class="rf-submit" onclick="submitReview()"><i class="fas fa-star"></i> Submit Review</button>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="dash-section" id="section-messages">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="msg-layout">
+          <div class="msg-sidebar">
+            <div class="msg-head"><h3>Messages</h3></div>
+            <div class="msg-thread-list" id="thread-list">
+              <!-- Support thread always shown -->
+              <div class="msg-thread active" onclick="openThread('support')">
+                <div class="mt-avatar"><i class="fas fa-headset"></i></div>
+                <div class="mt-info">
+                  <div class="mt-name">Glow &amp; Flawless Support</div>
+                  <div class="mt-preview" id="support-preview">Chat with our team...</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="mt-time" id="support-time"></span>
+                  <span class="mt-unread" id="support-unread" style="display:none;"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-main" id="msg-main">
+            <div class="msg-empty"><i class="fas fa-comments"></i><p>Select a conversation</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="dash-section" id="section-profile">
+      <div class="card">
+        <p class="card-title">My Profile</p>
+        <p class="card-sub">Update your personal information</p>
+        <div class="profile-grid">
+          <div class="pf-group"><label class="pf-label">Full Name</label><input type="text" class="pf-input" id="pf-name"/></div>
+          <div class="pf-group"><label class="pf-label">Email Address</label><input type="email" class="pf-input" id="pf-email" disabled/></div>
+          <div class="pf-group"><label class="pf-label">Phone Number</label><input type="tel" class="pf-input" id="pf-phone" placeholder="07XX XXX XXX"/></div>
+          <div class="pf-group"><label class="pf-label">Location</label><input type="text" class="pf-input" id="pf-location" placeholder="e.g. Nairobi, Kenya"/></div>
+        </div>
+        <div style="margin-top:20px;"><button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button></div>
+        <div id="pf-msg"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mob-nav">
+  <div class="inner">
+    <button class="mob-nav-item active" onclick="showSection('overview',this,true)"><i class="fas fa-home"></i>Home</button>
+    <button class="mob-nav-item" onclick="showSection('orders',this,true)"><i class="fas fa-box"></i>Orders</button>
+    <button class="mob-nav-item" onclick="showSection('reviews',this,true)"><i class="fas fa-star"></i>Reviews</button>
+    <button class="mob-nav-item" onclick="showSection('messages',this,true)"><i class="fas fa-comments"></i>Messages</button>
+    <button class="mob-nav-item" onclick="showSection('profile',this,true)"><i class="fas fa-user"></i>Profile</button>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div id="order-modal">
+  <div id="order-modal-box">
+    <div class="om-head"><h3>Order Details</h3><button onclick="document.getElementById('order-modal').classList.remove('open')"><i class="fas fa-times"></i></button></div>
+    <div class="om-body" id="om-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut as fbSignOut,updateProfile}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,collection,getDocs,addDoc,query,where,orderBy,onSnapshot,serverTimestamp,updateDoc}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let currentUser=null;
+let userDoc=null;
+let allReviews=[];
+let selectedRating=0;
+let unsubMessages=null;
+let activeThread='support';
+
+const avatarColors=['#d4608a','#5a80d4','#4a9a6a','#9a5ab0','#d4805a','#5ab0c8'];
+function avatarColor(name){return avatarColors[(name||'').charCodeAt(0)%avatarColors.length];}
+function initial(name){return(name||'?')[0].toUpperCase();}
+function starsHTML(r){let h='';for(let i=1;i<=5;i++)h+=`<i class="fas fa-star${i<=r?'':' empty'}"></i>`;return h;}
+function timeAgo(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():new Date(ts);const s=Math.floor((Date.now()-d)/1000);if(s<60)return'now';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return d.toLocaleDateString('en-KE',{day:'numeric',month:'short'});}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+// Auth guard
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='customer.html';return;}
+  currentUser=user;
+  // Set UI names
+  const name=user.displayName||user.email.split('@')[0];
+  document.getElementById('tb-name').textContent=name;
+  document.getElementById('sb-name').textContent=name;
+  document.getElementById('sb-email').textContent=user.email;
+  if(user.photoURL){
+    document.getElementById('tb-av').innerHTML=`<img src="${user.photoURL}" alt=""/>`;
+    document.getElementById('sb-av').innerHTML=`<img src="${user.photoURL}" alt=""/>`;
+  }else{
+    const av=`<span style="font-weight:700;font-size:1rem;">${initial(name)}</span>`;
+    document.getElementById('tb-av').innerHTML=av;
+    document.getElementById('sb-av').style.background=avatarColor(name);
+    document.getElementById('sb-av').innerHTML=`<span style="font-weight:700;font-size:1.4rem;">${initial(name)}</span>`;
+  }
+  // Load user doc
+  try{
+    const snap=await getDoc(doc(db,'users',user.uid));
+    if(snap.exists())userDoc=snap.data();
+  }catch(e){}
+  loadProfile();
+  loadOrders();
+  loadReviews();
+  listenMessages();
+});
+
+window.signOut=async function(){
+  await fbSignOut(auth);
+  window.location.href='index.html';
+}
+
+// SECTION SWITCHING
+window.showSection=function(id,el,isMob=false){
+  document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  if(!isMob){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if(el)el.classList.add('active');
+  }else{
+    document.querySelectorAll('.mob-nav-item').forEach(n=>n.classList.remove('active'));
+    if(el)el.classList.add('active');
+  }
+  if(id==='messages')listenMessages();
+}
+
+// ORDERS
+async function loadOrders(){
+  if(!currentUser)return;
+  try{
+    // Query by uid — no composite index needed, works immediately
+    const snap=await getDocs(query(collection(db,'orders'),where('uid','==',currentUser.uid),orderBy('createdAt','desc')));
+    let orders=[];
+    snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    // Also pull in any older orders matched by email (before uid was stored)
+    if(orders.length===0){
+      const snapEmail=await getDocs(query(collection(db,'orders'),where('customerEmail','==',currentUser.email),orderBy('createdAt','desc')));
+      snapEmail.forEach(d=>orders.push({id:d.id,...d.data()}));
+    }
+    document.getElementById('total-orders').textContent=orders.length;
+    document.getElementById('delivered-orders').textContent=orders.filter(o=>o.status==='delivered').length;
+    renderOrdersList(orders.slice(0,5),'overview-orders');
+    renderOrdersList(orders,'orders-list');
+  }catch(e){
+    document.getElementById('orders-list').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No orders found yet.</p><a href="dashboard-products.html"><i class="fas fa-shopping-bag"></i> Start Shopping</a></div>';
+    document.getElementById('overview-orders').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet.</p><a href="dashboard-products.html">Shop Now</a></div>';
+    document.getElementById('total-orders').textContent='0';
+    document.getElementById('delivered-orders').textContent='0';
+  }
+}
+
+function renderOrdersList(orders,containerId){
+  const el=document.getElementById(containerId);
+  if(!orders.length){el.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet.</p><a href="dashboard-products.html"><i class="fas fa-shopping-bag"></i> Shop Now</a></div>';return;}
+  el.innerHTML='<div class="orders-list">'+orders.map(o=>{
+    const date=o.createdAt?.toDate?o.createdAt.toDate():new Date();
+    const statusClass={'paid':'status-paid','delivered':'status-delivered','pending':'status-pending'}[o.status]||'status-pending';
+    const items=(o.items||[]).slice(0,2).map(i=>`${i.name}×${i.qty}`).join(', ')+(o.items?.length>2?` +${o.items.length-2} more`:'');
+    return`<div class="order-row">
+      <div><div class="order-ref">${o.ref||o.id}</div><div class="order-items">${items}</div><div class="order-date">${date.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'})}</div></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="order-total">KES ${(o.total||0).toLocaleString()}</span>
+        <span class="order-status ${statusClass}">${o.status||'pending'}</span>
+        <button class="order-detail-btn" onclick="viewOrder('${o.id}')">View</button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+window.viewOrder=async function(id){
+  document.getElementById('order-modal').classList.add('open');
+  document.getElementById('om-body').innerHTML='<div class="skeleton" style="height:200px;"></div>';
+  try{
+    const snap=await getDoc(doc(db,'orders',id));
+    if(!snap.exists()){document.getElementById('om-body').innerHTML='<p>Order not found.</p>';return;}
+    const o={id:snap.id,...snap.data()};
+    const date=o.createdAt?.toDate?o.createdAt.toDate():new Date();
+    const items=(o.items||[]).map(i=>`<div class="om-row"><span>${i.name} × ${i.qty}</span><span>KES ${(i.price*i.qty).toLocaleString()}</span></div>`).join('');
+    document.getElementById('om-body').innerHTML=`
+      <p style="font-size:0.8rem;color:var(--subtext);margin-bottom:14px;">Order ref: <strong>${o.ref||o.id}</strong> &nbsp;|&nbsp; ${date.toLocaleDateString('en-KE',{day:'numeric',month:'long',year:'numeric'})}</p>
+      ${items}
+      <div class="om-row"><span>Subtotal</span><span>KES ${(o.subtotal||0).toLocaleString()}</span></div>
+      <div class="om-row"><span>Delivery</span><span>${o.deliveryFee>0?'KES '+(o.deliveryFee).toLocaleString():'TBC'}</span></div>
+      <div class="om-row total"><span>Total</span><span>KES ${(o.total||0).toLocaleString()}</span></div>
+      <div style="margin-top:16px;background:var(--cream);border-radius:10px;padding:12px 14px;font-size:0.8rem;">
+        <p><strong>Name:</strong> ${o.customerName||'—'}</p>
+        <p><strong>Phone:</strong> ${o.customerPhone||'—'}</p>
+        <p><strong>Delivery:</strong> ${o.deliveryLocation?.address||'—'}</p>
+        ${o.note?`<p><strong>Note:</strong> ${o.note}</p>`:''}
+        <p style="margin-top:8px;"><strong>Status:</strong> <span style="font-weight:700;color:#d4608a;">${o.status||'pending'}</span></p>
+      </div>`;
+  }catch(e){document.getElementById('om-body').innerHTML='<p>Could not load order.</p>';}
+}
+
+// REVIEWS
+async function loadReviews(){
+  try{
+    const snap=await getDocs(query(collection(db,'reviews'),where('approved','==',true)));
+    allReviews=[];snap.forEach(d=>allReviews.push({id:d.id,...d.data()}));
+    allReviews.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    document.getElementById('my-reviews').textContent=allReviews.length;
+    renderReviews(allReviews.filter(r=>(r.rating||5)>=5),'all-reviews-grid');
+    renderReviews(allReviews.slice(0,4),'overview-reviews');
+  }catch(e){}
+}
+
+function renderReviews(list,containerId){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  if(!list.length){el.innerHTML='<p style="color:var(--subtext);font-size:0.85rem;grid-column:1/-1;">No reviews yet.</p>';return;}
+  el.innerHTML=list.map(r=>`<div class="review-card"><div class="stars">${starsHTML(r.rating||5)}</div><p class="review-text">"${r.review||''}"</p><div class="reviewer"><div class="reviewer-avatar" style="background:${avatarColor(r.name||'A')}">${initial(r.name||'A')}</div><div><div class="reviewer-name">${r.name||'Anonymous'}</div><div class="reviewer-meta">${r.location||''} ${r.product?'· '+r.product:''}</div></div></div></div>`).join('');
+}
+
+window.filterRevs=function(stars,btn){
+  document.querySelectorAll('.btn-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReviews(stars===0?allReviews:allReviews.filter(r=>(r.rating||5)===stars),'all-reviews-grid');
+}
+
+// Star picker
+let selectedRatingVal=0;
+document.querySelectorAll('#star-picker i').forEach(star=>{
+  star.addEventListener('mouseover',()=>{const v=+star.dataset.val;document.querySelectorAll('#star-picker i').forEach((s,i)=>s.className=i<v?'fas fa-star lit':'far fa-star');});
+  star.addEventListener('click',()=>{selectedRatingVal=+star.dataset.val;document.querySelectorAll('#star-picker i').forEach((s,i)=>s.className=i<selectedRatingVal?'fas fa-star lit':'far fa-star');});
+  star.addEventListener('mouseout',()=>{document.querySelectorAll('#star-picker i').forEach((s,i)=>s.className=i<selectedRatingVal?'fas fa-star lit':'far fa-star');});
+});
+
+window.submitReview=async function(){
+  const name=currentUser?.displayName||userDoc?.name||'Customer';
+  const product=document.getElementById('r-product').value.trim();
+  const location=document.getElementById('r-location').value.trim();
+  const review=document.getElementById('r-text').value.trim();
+  const msgEl=document.getElementById('rf-msg');
+  if(!review||!selectedRatingVal){msgEl.textContent='Please write a review and pick a rating.';msgEl.className='error';return;}
+  msgEl.style.display='none';
+  try{
+    await addDoc(collection(db,'reviews'),{name,product,location,review,rating:selectedRatingVal,approved:false,uid:currentUser.uid,email:currentUser.email,createdAt:serverTimestamp()});
+    msgEl.textContent='Review submitted! It will appear after approval.';msgEl.className='success';
+    document.getElementById('r-product').value='';document.getElementById('r-location').value='';document.getElementById('r-text').value='';
+    selectedRatingVal=0;document.querySelectorAll('#star-picker i').forEach(s=>s.className='far fa-star');
+  }catch(e){msgEl.textContent='Something went wrong. Try again.';msgEl.className='error';}
+}
+
+// MESSAGES — real-time using Firestore
+function listenMessages(){
+  if(!currentUser)return;
+  if(unsubMessages)unsubMessages();
+  const threadId=`support_${currentUser.uid}`;
+  const q=query(collection(db,'messages'),where('threadId','==',threadId),orderBy('createdAt','asc'));
+  unsubMessages=onSnapshot(q,snap=>{
+    const msgs=[];snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+    document.getElementById('my-msgs').textContent=msgs.length;
+    renderChatThread(msgs,threadId);
+    if(msgs.length>0){
+      const last=msgs[msgs.length-1];
+      document.getElementById('support-preview').textContent=last.text||'';
+      document.getElementById('support-time').textContent=timeAgo(last.createdAt);
+    }
+  },()=>{});
+  openThread('support');
+}
+
+window.openThread=function(type){
+  activeThread=type;
+  const threadId=`support_${currentUser?.uid||''}`;
+  document.getElementById('msg-main').innerHTML=`
+    <div class="msg-chat-head">
+      <div class="mt-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;color:#7a3050;font-size:1rem;"><i class="fas fa-headset"></i></div>
+      <div><div class="ch-name">Glow &amp; Flawless Support</div><div class="ch-status"><span class="status-dot"></span> Available</div></div>
+    </div>
+    <div class="msg-messages" id="chat-messages"><div style="text-align:center;padding:20px;font-size:0.8rem;color:var(--subtext);">Loading messages...</div></div>
+    <div class="msg-compose">
+      <textarea id="msg-input" placeholder="Type your message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+      <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>`;
+}
+
+function renderChatThread(msgs,threadId){
+  const el=document.getElementById('chat-messages');
+  if(!el)return;
+  if(!msgs.length){
+    el.innerHTML=`<div class="msg-empty"><i class="fas fa-comments"></i><p>No messages yet. Say hello to our team!</p></div>`;
+    return;
+  }
+  el.innerHTML=msgs.map(m=>{
+    const isSent=m.senderId===currentUser?.uid;
+    const t=m.createdAt?.toDate?m.createdAt.toDate():new Date();
+    const timeStr=t.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+    return`<div class="msg-bubble ${isSent?'sent':'recv'}"><div class="bubble-text">${m.text||''}</div><span class="bubble-time">${timeStr}</span></div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+window.sendMessage=async function(){
+  const inp=document.getElementById('msg-input');
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text||!currentUser)return;
+  inp.value='';
+  const threadId=`support_${currentUser.uid}`;
+  try{
+    await addDoc(collection(db,'messages'),{
+      threadId,
+      senderId:currentUser.uid,
+      senderName:currentUser.displayName||currentUser.email,
+      senderRole:'customer',
+      text,
+      createdAt:serverTimestamp(),
+      read:false
+    });
+  }catch(e){showToast('Could not send message. Try again.');}
+}
+
+// PROFILE
+function loadProfile(){
+  if(!currentUser)return;
+  document.getElementById('pf-email').value=currentUser.email||'';
+  document.getElementById('pf-name').value=currentUser.displayName||userDoc?.name||'';
+  document.getElementById('pf-phone').value=userDoc?.phone||'';
+  document.getElementById('pf-location').value=userDoc?.location||'';
+}
+
+window.saveProfile=async function(){
+  const name=document.getElementById('pf-name').value.trim();
+  const phone=document.getElementById('pf-phone').value.trim();
+  const location=document.getElementById('pf-location').value.trim();
+  const msgEl=document.getElementById('pf-msg');
+  try{
+    await updateProfile(currentUser,{displayName:name});
+    await setDoc(doc(db,'users',currentUser.uid),{name,phone,location,updatedAt:serverTimestamp()},{merge:true});
+    msgEl.textContent='Profile updated successfully!';msgEl.className='success';
+    document.getElementById('tb-name').textContent=name;
+    document.getElementById('sb-name').textContent=name;
+    setTimeout(()=>{msgEl.style.display='none';},3000);
+  }catch(e){msgEl.textContent='Could not save. Try again.';msgEl.className='error';}
+}
+</script>
+</body>
+</html>

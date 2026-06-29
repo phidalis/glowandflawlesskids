@@ -38,6 +38,42 @@ body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:h
 .coming-soon p{font-size:0.92rem;color:var(--subtext);line-height:1.7;margin-bottom:28px;}
 .coming-soon .btn{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:#fff;padding:13px 32px;border-radius:30px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:all 0.25s;}
 .coming-soon .btn:hover{background:#333;transform:translateY(-2px);}
+/* AUTH STYLES */
+.page-content{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 20px;}
+.auth-card{background:#fff;border-radius:24px;box-shadow:0 8px 48px rgba(0,0,0,0.08);width:100%;max-width:460px;border:1px solid #f0e8f0;}
+.auth-hero{background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 100%);padding:32px 28px 24px;text-align:center;border-radius:24px 24px 0 0;}
+.auth-hero .icon{width:60px;height:60px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem;color:#d4608a;box-shadow:0 4px 16px rgba(212,96,138,0.2);}
+.auth-hero h1{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#5a2040;margin-bottom:5px;}
+.auth-hero p{font-size:0.8rem;color:#7a4060;}
+.auth-tabs{display:flex;border-bottom:1px solid #f0e8f0;}
+.auth-tab{flex:1;padding:13px;text-align:center;font-size:0.83rem;font-weight:600;color:var(--subtext);cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:all 0.2s;border-bottom:2px solid transparent;}
+.auth-tab.active{color:#d4608a;border-bottom-color:#d4608a;background:var(--cream);}
+.auth-form{padding:24px 28px 28px;display:none;}
+.auth-form.active{display:block;}
+.f-group{margin-bottom:14px;}
+.f-label{display:block;font-size:0.78rem;font-weight:600;color:var(--dark);margin-bottom:5px;}
+.f-input{width:100%;border:1.5px solid #e8dde4;border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.87rem;color:var(--text);outline:none;transition:border 0.2s;}
+.f-input:focus{border-color:#d4608a;background:#fff9fb;}
+.f-input-wrap{position:relative;}
+.f-input-wrap .f-input{padding-right:40px;}
+.toggle-pw{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--subtext);font-size:0.85rem;}
+.f-err{font-size:0.74rem;color:#c03030;margin-top:4px;display:none;}
+.f-err.show{display:block;}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.auth-divider span{flex:1;height:1px;background:#f0e4ec;}
+.auth-divider p{font-size:0.73rem;color:var(--subtext);white-space:nowrap;}
+.btn-auth{width:100%;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:600;font-size:0.9rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-auth:hover{background:#333;}
+.btn-auth:disabled{background:#ccc;cursor:not-allowed;}
+.btn-google{width:100%;background:#fff;color:var(--dark);border:1.5px solid #e8dde4;border-radius:10px;padding:12px;font-family:var(--font-body);font-weight:600;font-size:0.86rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:8px;}
+.btn-google:hover{background:var(--cream);border-color:#d4608a;}
+.btn-google img{width:17px;height:17px;}
+.auth-footer-note{text-align:center;font-size:0.78rem;color:var(--subtext);margin-top:14px;}
+.auth-footer-note a{color:#d4608a;text-decoration:none;font-weight:600;}
+#auth-msg,#auth-msg-su{padding:10px 14px;border-radius:8px;font-size:0.81rem;display:none;margin-bottom:14px;}
+#auth-msg.success,#auth-msg-su.success{background:var(--mint);color:#2d6a4a;display:block;}
+#auth-msg.error,#auth-msg-su.error{background:#ffe8e8;color:#a03030;display:block;}
+
 footer{background:var(--dark);color:#ccc;padding:56px 0 24px;margin-top:auto;}
 footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
 footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
@@ -118,12 +154,86 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
   </div>
 </div>
 
+
 <div class="page-content">
-  <div class="coming-soon">
-    <div class="icon-wrap"><i class="fas fa-user-circle"></i></div>
-    <h1>Customer Cabinet</h1>
-    <p>Your personal space to manage orders, track deliveries, save your favourite products, and more. This section is coming soon — we are building something special just for you.</p>
-    <a href="products.html" class="btn"><i class="fas fa-shopping-bag"></i> Continue Shopping</a>
+  <div class="auth-card">
+    <div class="auth-hero">
+      <div class="icon"><i class="fas fa-user-circle"></i></div>
+      <h1>Customer Cabinet</h1>
+      <p>Sign in to manage your orders, track deliveries &amp; more</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="form-login">
+      <div id="auth-msg"></div>
+      <button class="btn-google" onclick="signInWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span></span><p>or use email</p><span></span></div>
+      <div class="f-group">
+        <label class="f-label">Email Address</label>
+        <input type="email" class="f-input" id="login-email" placeholder="you@email.com"/>
+        <p class="f-err" id="login-email-err">Please enter a valid email.</p>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <div class="f-input-wrap">
+          <input type="password" class="f-input" id="login-password" placeholder="Your password"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('login-password',this)"><i class="fas fa-eye"></i></button>
+        </div>
+        <p class="f-err" id="login-pw-err">Please enter your password.</p>
+      </div>
+      <button class="btn-auth" id="login-btn" onclick="signInEmail()"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+      <div class="auth-footer-note">
+        <p>Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Create one</a></p>
+        <p style="margin-top:5px;"><a href="#" onclick="resetPassword();return false;">Forgot password?</a></p>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="auth-form" id="form-signup">
+      <div id="auth-msg-su"></div>
+      <button class="btn-google" onclick="signInWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+        Sign up with Google
+      </button>
+      <div class="auth-divider"><span></span><p>or use email</p><span></span></div>
+      <div class="f-group">
+        <label class="f-label">Full Name</label>
+        <input type="text" class="f-input" id="su-name" placeholder="e.g. Grace Wanjiru"/>
+        <p class="f-err" id="su-name-err">Please enter your name.</p>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Email Address</label>
+        <input type="email" class="f-input" id="su-email" placeholder="you@email.com"/>
+        <p class="f-err" id="su-email-err">Please enter a valid email.</p>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Phone Number</label>
+        <input type="tel" class="f-input" id="su-phone" placeholder="07XX XXX XXX"/>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <div class="f-input-wrap">
+          <input type="password" class="f-input" id="su-password" placeholder="Min 6 characters"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('su-password',this)"><i class="fas fa-eye"></i></button>
+        </div>
+        <p class="f-err" id="su-pw-err">Password must be at least 6 characters.</p>
+      </div>
+      <button class="btn-auth" id="signup-btn" onclick="signUpEmail()"><i class="fas fa-user-plus"></i> Create Account</button>
+      <div class="auth-footer-note"><p>Already have an account? <a href="#" onclick="switchTab('login');return false;">Sign in</a></p></div>
+    </div>
+  </div>
+</div>
+
+    <h1>My Account</h1>
+    <p>Your personal account to managing your profile and orders.</p>
   </div>
 </div>
 
@@ -154,10 +264,18 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,doc,getDoc}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,sendPasswordResetEmail,updateProfile}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
+const auth=getAuth(app);
+const googleProvider=new GoogleAuthProvider();
+
+// Redirect if already signed in
+onAuthStateChanged(auth,user=>{if(user)window.location.href='dashboard.html';});
+
+// Site config
 try{
   const s=await getDoc(doc(db,'config','site'));
   if(s.exists()){
@@ -175,6 +293,99 @@ try{
     if(d.contactAddress)document.getElementById('footer-address').textContent=d.contactAddress;
   }
 }catch(e){}
+
+function showMsg(id,msg,type){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className=type;}
+function hideMsg(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+
+async function ensureUserDoc(user,extra={}){
+  try{
+    const ref=doc(db,'users',user.uid);
+    const snap=await getDoc(ref);
+    if(!snap.exists())await setDoc(ref,{uid:user.uid,name:user.displayName||extra.name||'',email:user.email||'',phone:extra.phone||'',photoURL:user.photoURL||'',createdAt:new Date(),role:'customer'});
+  }catch(e){}
+}
+
+window.switchTab=function(tab){
+  document.getElementById('form-login').classList.toggle('active',tab==='login');
+  document.getElementById('form-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('auth-msg').style.display='none';
+  document.getElementById('auth-msg-su').style.display='none';
+}
+
+window.togglePw=function(inputId,btn){
+  const inp=document.getElementById(inputId);
+  const isText=inp.type==='text';
+  inp.type=isText?'password':'text';
+  btn.innerHTML=isText?'<i class="fas fa-eye"></i>':'<i class="fas fa-eye-slash"></i>';
+}
+
+window.signInEmail=async function(){
+  const email=document.getElementById('login-email').value.trim();
+  const pw=document.getElementById('login-password').value;
+  document.getElementById('auth-msg').style.display='none';
+  let ok=true;
+  if(!email||!email.includes('@')){document.getElementById('login-email-err').classList.add('show');ok=false;}
+  else document.getElementById('login-email-err').classList.remove('show');
+  if(!pw){document.getElementById('login-pw-err').classList.add('show');ok=false;}
+  else document.getElementById('login-pw-err').classList.remove('show');
+  if(!ok)return;
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Signing in...';
+  try{
+    await signInWithEmailAndPassword(auth,email,pw);
+    window.location.href='dashboard.html';
+  }catch(e){
+    const msgs={'auth/user-not-found':'No account found with that email.','auth/wrong-password':'Incorrect password. Try again.','auth/too-many-requests':'Too many attempts. Try again later.','auth/invalid-credential':'Invalid email or password.'};
+    showMsg('auth-msg',msgs[e.code]||'Sign in failed. Please try again.','error');
+  }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';
+}
+
+window.signUpEmail=async function(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const phone=document.getElementById('su-phone').value.trim();
+  const pw=document.getElementById('su-password').value;
+  document.getElementById('auth-msg-su').style.display='none';
+  let ok=true;
+  if(!name){document.getElementById('su-name-err').classList.add('show');ok=false;}else document.getElementById('su-name-err').classList.remove('show');
+  if(!email||!email.includes('@')){document.getElementById('su-email-err').classList.add('show');ok=false;}else document.getElementById('su-email-err').classList.remove('show');
+  if(!pw||pw.length<6){document.getElementById('su-pw-err').classList.add('show');ok=false;}else document.getElementById('su-pw-err').classList.remove('show');
+  if(!ok)return;
+  const btn=document.getElementById('signup-btn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Creating account...';
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pw);
+    await updateProfile(cred.user,{displayName:name});
+    await ensureUserDoc(cred.user,{name,phone});
+    window.location.href='dashboard.html';
+  }catch(e){
+    const msgs={'auth/email-already-in-use':'An account with this email already exists.','auth/weak-password':'Password must be at least 6 characters.'};
+    showMsg('auth-msg-su',msgs[e.code]||'Sign up failed. Please try again.','error');
+  }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Create Account';
+}
+
+window.signInWithGoogle=async function(){
+  try{
+    const result=await signInWithPopup(auth,googleProvider);
+    await ensureUserDoc(result.user);
+    window.location.href='dashboard.html';
+  }catch(e){
+    if(e.code!=='auth/popup-closed-by-user')showMsg('auth-msg','Google sign in failed. Please try again.','error');
+  }
+}
+
+window.resetPassword=async function(){
+  const email=document.getElementById('login-email').value.trim();
+  if(!email){showMsg('auth-msg','Enter your email above first.','error');return;}
+  try{
+    await sendPasswordResetEmail(auth,email);
+    showMsg('auth-msg','Password reset email sent. Check your inbox.','success');
+  }catch(e){showMsg('auth-msg','Could not send reset email. Check the address.','error');}
+}
 </script>
 </body>
 </html>

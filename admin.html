@@ -213,6 +213,53 @@ table tr:hover td{background:#fdf8ff;}
   .dash-cards{grid-template-columns:1fr;}
   .hero-grid{grid-template-columns:1fr;}
 }
+
+/* ===== CUSTOMER CHAT ===== */
+.chat-layout{display:grid;grid-template-columns:280px 1fr;gap:0;background:#fff;border-radius:14px;overflow:hidden;height:calc(100vh - 160px);min-height:480px;}
+.chat-threads{border-right:1px solid #f0e8f0;display:flex;flex-direction:column;overflow:hidden;}
+.chat-threads-head{padding:14px 16px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-threads-head h3{font-size:0.85rem;font-weight:700;color:var(--dark);}
+.chat-threads-search{padding:10px 12px;border-bottom:1px solid #f0e8f0;flex-shrink:0;}
+.chat-threads-search input{width:100%;border:1px solid #e8dde4;border-radius:8px;padding:7px 10px;font-family:var(--font-body);font-size:0.78rem;outline:none;}
+.chat-threads-search input:focus{border-color:var(--accent);}
+.chat-thread-list{flex:1;overflow-y:auto;}
+.chat-thread-item{padding:12px 14px;border-bottom:1px solid #faf3f7;cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:background 0.15s;}
+.chat-thread-item:hover{background:var(--cream);}
+.chat-thread-item.active{background:var(--pink);}
+.ct-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#7a3050;flex-shrink:0;}
+.ct-info{flex:1;min-width:0;}
+.ct-name{font-size:0.8rem;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ct-preview{font-size:0.72rem;color:var(--subtext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.ct-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.ct-time{font-size:0.66rem;color:var(--subtext);}
+.ct-unread{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+.chat-main{display:flex;flex-direction:column;overflow:hidden;}
+.chat-main-head{padding:12px 18px;border-bottom:1px solid #f0e8f0;display:flex;align-items:center;gap:10px;flex-shrink:0;background:#fff;}
+.chat-main-head .cm-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#7a3050;flex-shrink:0;}
+.chat-main-head .cm-name{font-size:0.88rem;font-weight:600;color:var(--dark);}
+.chat-main-head .cm-email{font-size:0.72rem;color:var(--subtext);}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#f9f5f7;}
+.chat-empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--subtext);text-align:center;padding:40px;background:#f9f5f7;}
+.chat-empty-state i{font-size:2rem;color:#e0d0e0;}
+.chat-bubble{max-width:70%;display:flex;flex-direction:column;}
+.chat-bubble.admin-msg{align-self:flex-end;align-items:flex-end;}
+.chat-bubble.customer-msg{align-self:flex-start;}
+.bubble-text{padding:10px 14px;border-radius:14px;font-size:0.83rem;line-height:1.55;word-break:break-word;}
+.admin-msg .bubble-text{background:var(--dark);color:#fff;border-bottom-right-radius:4px;}
+.customer-msg .bubble-text{background:#fff;color:var(--text);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+.bubble-time{font-size:0.65rem;color:var(--subtext);margin-top:2px;padding:0 3px;}
+.chat-compose{padding:12px 16px;border-top:1px solid #f0e8f0;background:#fff;display:flex;gap:10px;align-items:flex-end;flex-shrink:0;}
+.chat-compose textarea{flex:1;border:1.5px solid #e8dde4;border-radius:10px;padding:10px 12px;font-family:var(--font-body);font-size:0.83rem;resize:none;outline:none;max-height:100px;line-height:1.5;}
+.chat-compose textarea:focus{border-color:var(--accent);}
+.chat-send-btn{background:var(--dark);color:#fff;border:none;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:0.88rem;}
+.chat-send-btn:hover{background:#333;}
+.no-thread-selected{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--subtext);background:#f9f5f7;}
+.no-thread-selected i{font-size:2.2rem;color:#e0d0e0;}
+@media(max-width:768px){
+  .chat-layout{grid-template-columns:1fr;height:auto;}
+  .chat-threads{height:220px;}
+  .chat-main{height:420px;}
+}
 </style>
 </head>
 <body>
@@ -253,7 +300,8 @@ table tr:hover td{background:#fdf8ff;}
       <a onclick="showPanel('products')" id="nav-products"><i class="fas fa-box-open"></i> Products</a>
       <div class="sb-section">Engagement</div>
       <a onclick="showPanel('reviews')" id="nav-reviews"><i class="fas fa-star"></i> Reviews</a>
-      <a onclick="showPanel('contacts')" id="nav-contacts"><i class="fas fa-envelope"></i> Messages</a>
+      <a onclick="showPanel('contacts')" id="nav-contacts"><i class="fas fa-envelope"></i> Guest Messages</a>
+      <a onclick="showPanel('chats')" id="nav-chats"><i class="fas fa-comments"></i> Customer Chat <span id="chat-unread-badge" style="display:none;background:var(--accent);color:#fff;font-size:0.62rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto;">0</span></a>
       <div class="sb-section">Settings</div>
       <a onclick="showPanel('config')" id="nav-config"><i class="fas fa-cog"></i> Site Config</a>
       <a onclick="showPanel('policies')" id="nav-policies"><i class="fas fa-shield-alt"></i> Policies</a>
@@ -421,6 +469,32 @@ table tr:hover td{background:#fdf8ff;}
         </div>
       </div>
 
+      <!-- CUSTOMER CHAT -->
+      <div class="panel" id="panel-chats">
+        <div class="chat-layout">
+          <!-- Thread list -->
+          <div class="chat-threads">
+            <div class="chat-threads-head">
+              <h3>Customer Conversations</h3>
+              <span id="chat-thread-count" style="font-size:0.72rem;color:var(--subtext);"></span>
+            </div>
+            <div class="chat-threads-search">
+              <input type="text" id="chat-search" placeholder="Search by name or email..." oninput="filterChatThreads()"/>
+            </div>
+            <div class="chat-thread-list" id="chat-thread-list">
+              <div style="padding:24px;text-align:center;color:var(--subtext);font-size:0.82rem;">Loading conversations...</div>
+            </div>
+          </div>
+          <!-- Chat view -->
+          <div class="chat-main" id="chat-main">
+            <div class="no-thread-selected">
+              <i class="fas fa-comments"></i>
+              <p style="font-size:0.85rem;">Select a conversation to view messages</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- SITE CONFIG -->
       <div class="panel" id="panel-config">
         <div class="admin-card">
@@ -526,7 +600,7 @@ table tr:hover td{background:#fdf8ff;}
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,collection,getDocs,serverTimestamp,query,orderBy}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,collection,getDocs,serverTimestamp,query,orderBy,where,onSnapshot}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
@@ -607,7 +681,7 @@ window.showPanel=function(id){
   document.getElementById('panel-'+id).classList.add('active');
   const navEl=document.getElementById('nav-'+id);
   if(navEl)navEl.classList.add('active');
-  const titles={dashboard:'Dashboard',orders:'Customer Orders',hero:'Hero Images',articles:'Home Articles',categories:'Categories',products:'Products',reviews:'Reviews',contacts:'Messages',config:'Site Config',policies:'Policies',education:'Education',faqs:'FAQs'};
+  const titles={dashboard:'Dashboard',orders:'Customer Orders',hero:'Hero Images',articles:'Home Articles',categories:'Categories',products:'Products',reviews:'Reviews',contacts:'Guest Messages',chats:'Customer Chat',config:'Site Config',policies:'Policies',education:'Education',faqs:'FAQs'};
   document.getElementById('topbar-title').textContent=titles[id]||id;
   loaders[id]&&loaders[id]();
   // Auto-close sidebar on mobile when a section is selected
@@ -640,6 +714,7 @@ const loaders={
   products:()=>loadProducts(),
   reviews:()=>loadReviews(),
   contacts:()=>loadContacts(),
+  chats:()=>loadChatThreads(),
   config:()=>loadConfig(),
   policies:()=>loadPolicies(),
   education:()=>loadEducation(),
@@ -1156,6 +1231,177 @@ window.markRead=async function(id){
 window.deleteContact=async function(id){
   if(!confirm('Delete this message?'))return;
   try{await deleteDoc(doc(db,'contacts',id));notify('Deleted.');loadContacts();}catch(e){notify('Error.','error');}
+}
+
+// ====== CUSTOMER CHAT ======
+let allThreads=[];         // [{threadId, userId, name, email, lastMsg, lastTime, unread}]
+let activeThreadId=null;
+let unsubChatMessages=null;
+
+// Avatar colour helper (matches customer dashboard)
+const avatarColors=['#d4608a','#5a80d4','#4a9a6a','#9a5ab0','#d4805a','#5ab0c8'];
+function threadAvatarColor(name){return avatarColors[(name||'').charCodeAt(0)%avatarColors.length];}
+function threadInitial(name){return(name||'?')[0].toUpperCase();}
+function chatTimeAgo(ts){
+  if(!ts)return'';
+  const d=ts.toDate?ts.toDate():new Date(ts);
+  const s=Math.floor((Date.now()-d)/1000);
+  if(s<60)return'now';if(s<3600)return Math.floor(s/60)+'m';
+  if(s<86400)return Math.floor(s/3600)+'h';
+  return d.toLocaleDateString('en-KE',{day:'numeric',month:'short'});
+}
+
+async function loadChatThreads(){
+  const listEl=document.getElementById('chat-thread-list');
+  listEl.innerHTML='<div style="padding:24px;text-align:center;color:var(--subtext);font-size:0.82rem;">Loading...</div>';
+  try{
+    // Get all messages, group by threadId
+    const snap=await getDocs(query(collection(db,'messages'),orderBy('createdAt','desc')));
+    const threadMap={};
+    snap.forEach(d=>{
+      const m={id:d.id,...d.data()};
+      if(!threadMap[m.threadId]){
+        threadMap[m.threadId]={
+          threadId:m.threadId,
+          userId:m.threadId.replace('support_',''),
+          name:m.senderRole==='customer'?m.senderName:'Support',
+          email:'',
+          lastMsg:m.text||'',
+          lastTime:m.createdAt,
+          unread:(!m.read&&m.senderRole==='customer')?1:0,
+          lastSenderRole:m.senderRole
+        };
+      }else{
+        if(!m.read&&m.senderRole==='customer')threadMap[m.threadId].unread++;
+      }
+    });
+    allThreads=Object.values(threadMap);
+    // Count total unread for badge
+    const totalUnread=allThreads.reduce((s,t)=>s+t.unread,0);
+    const badge=document.getElementById('chat-unread-badge');
+    if(totalUnread>0){badge.textContent=totalUnread;badge.style.display='inline';}
+    else badge.style.display='none';
+    document.getElementById('chat-thread-count').textContent=allThreads.length+' conversation'+(allThreads.length!==1?'s':'');
+    renderChatThreadList(allThreads);
+  }catch(e){
+    listEl.innerHTML='<div style="padding:24px;text-align:center;color:#c03030;font-size:0.82rem;">Error loading. Check Firestore index for messages orderBy createdAt.</div>';
+  }
+}
+
+function renderChatThreadList(threads){
+  const listEl=document.getElementById('chat-thread-list');
+  if(!threads.length){listEl.innerHTML='<div style="padding:32px;text-align:center;color:var(--subtext);font-size:0.82rem;">No customer conversations yet.</div>';return;}
+  listEl.innerHTML=threads.map(t=>{
+    const isActive=t.threadId===activeThreadId;
+    const color=threadAvatarColor(t.name);
+    const initial=threadInitial(t.name);
+    return`<div class="chat-thread-item${isActive?' active':''}" onclick="openChatThread('${t.threadId}','${(t.name||'').replace(/'/g,"\\'")}','${(t.email||'')}')">
+      <div class="ct-avatar" style="background:${color};color:#fff;">${initial}</div>
+      <div class="ct-info">
+        <div class="ct-name">${t.name||'Unknown'}</div>
+        <div class="ct-preview">${t.lastMsg||''}</div>
+      </div>
+      <div class="ct-meta">
+        <span class="ct-time">${chatTimeAgo(t.lastTime)}</span>
+        ${t.unread>0?`<span class="ct-unread"></span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.filterChatThreads=function(){
+  const q=document.getElementById('chat-search').value.toLowerCase().trim();
+  if(!q){renderChatThreadList(allThreads);return;}
+  renderChatThreadList(allThreads.filter(t=>(t.name||'').toLowerCase().includes(q)||(t.email||'').toLowerCase().includes(q)));
+}
+
+window.openChatThread=function(threadId,name,email){
+  activeThreadId=threadId;
+  // Re-render thread list to show active state
+  renderChatThreadList(allThreads.filter(t=>{
+    const q=document.getElementById('chat-search').value.toLowerCase().trim();
+    return !q||(t.name||'').toLowerCase().includes(q)||(t.email||'').toLowerCase().includes(q);
+  }));
+  // Mark customer messages as read
+  markThreadRead(threadId);
+  // Render chat main area
+  const color=threadAvatarColor(name);
+  const initial=threadInitial(name);
+  document.getElementById('chat-main').innerHTML=`
+    <div class="chat-main-head">
+      <div class="cm-avatar" style="background:${color};color:#fff;">${initial}</div>
+      <div><div class="cm-name">${name||'Customer'}</div><div class="cm-email">${email||''}</div></div>
+    </div>
+    <div class="chat-messages" id="chat-messages-view"></div>
+    <div class="chat-compose">
+      <textarea id="admin-msg-input" placeholder="Type your reply..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminReply('${threadId}');}"></textarea>
+      <button class="chat-send-btn" onclick="sendAdminReply('${threadId}')"><i class="fas fa-paper-plane"></i></button>
+    </div>`;
+  // Subscribe to live messages for this thread
+  if(unsubChatMessages)unsubChatMessages();
+  const q=query(collection(db,'messages'),where('threadId','==',threadId),orderBy('createdAt','asc'));
+  unsubChatMessages=onSnapshot(q,snap=>{
+    const msgs=[];snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+    renderChatMessages(msgs);
+  });
+}
+
+function renderChatMessages(msgs){
+  const el=document.getElementById('chat-messages-view');
+  if(!el)return;
+  if(!msgs.length){
+    el.innerHTML=`<div class="chat-empty-state"><i class="fas fa-comments"></i><p style="font-size:0.82rem;">No messages yet in this thread.</p></div>`;
+    return;
+  }
+  el.innerHTML=msgs.map(m=>{
+    const isAdmin=m.senderRole==='admin';
+    const t=m.createdAt?.toDate?m.createdAt.toDate():new Date();
+    const timeStr=t.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+    const dateStr=t.toLocaleDateString('en-KE',{day:'numeric',month:'short'});
+    return`<div class="chat-bubble ${isAdmin?'admin-msg':'customer-msg'}">
+      <div class="bubble-text">${m.text||''}</div>
+      <span class="bubble-time">${dateStr} ${timeStr}${isAdmin?' · You':''}</span>
+    </div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+async function markThreadRead(threadId){
+  try{
+    const snap=await getDocs(query(collection(db,'messages'),where('threadId','==',threadId),where('senderRole','==','customer'),where('read','==',false)));
+    const batch=[];
+    snap.forEach(d=>batch.push(updateDoc(doc(db,'messages',d.id),{read:true})));
+    await Promise.all(batch);
+    // Update local unread count & badge
+    const t=allThreads.find(x=>x.threadId===threadId);
+    if(t)t.unread=0;
+    const totalUnread=allThreads.reduce((s,t)=>s+t.unread,0);
+    const badge=document.getElementById('chat-unread-badge');
+    if(totalUnread>0){badge.textContent=totalUnread;badge.style.display='inline';}
+    else badge.style.display='none';
+  }catch(e){}
+}
+
+window.sendAdminReply=async function(threadId){
+  const inp=document.getElementById('admin-msg-input');
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  try{
+    await addDoc(collection(db,'messages'),{
+      threadId,
+      senderId:'admin',
+      senderName:'Glow & Flawless Support',
+      senderRole:'admin',
+      text,
+      createdAt:serverTimestamp(),
+      read:true
+    });
+    // Refresh thread list preview
+    loadChatThreads();
+  }catch(e){notify('Could not send reply. Try again.','error');}
 }
 
 // ====== CONFIG ======

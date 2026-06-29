@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Shop Products — Glow & Flawless Kids Kenya (Dashboard)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--cream:#FFF8F0;--pink:#FFDDE6;--blue:#DFF4FF;--mint:#DFF7E8;--lavender:#EEE5FF;--white:#FFFFFF;--black:#111111;--dark:#1a1a1a;--text:#2d2d2d;--subtext:#666;--font-display:'Playfair Display',serif;--font-body:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:#fff;color:var(--text);overflow-x:hidden;}
+#nav1{background:var(--pink);padding:7px 0;text-align:center;}
+#nav1 marquee{font-size:0.78rem;font-weight:500;color:#7a3a50;letter-spacing:0.04em;}
+#nav2{background:#fff;border-bottom:1px solid #f0e8f0;padding:12px 0;}
+#nav2 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+#nav2 .search-wrap{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:24px;padding:7px 16px;border:1px solid #f0d8e8;cursor:pointer;}
+#nav2 .search-wrap input{border:none;background:transparent;font-family:var(--font-body);font-size:0.82rem;color:var(--text);outline:none;width:160px;}
+#nav2 .search-wrap i{color:#b06080;font-size:0.9rem;}
+#nav2 .logo{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--dark);letter-spacing:-0.02em;text-decoration:none;}
+#nav2 .logo span{color:#d4608a;}
+#nav2 .nav2-right{display:flex;align-items:center;gap:14px;}
+#nav2 .nav2-right a{color:var(--text);font-size:0.82rem;text-decoration:none;font-weight:500;transition:color 0.2s;}
+#nav2 .nav2-right a:hover{color:#d4608a;}
+#nav2 .cart-btn{background:var(--pink);border:none;border-radius:20px;padding:6px 16px;font-family:var(--font-body);font-size:0.8rem;font-weight:600;color:#7a3050;cursor:pointer;}
+#nav3{background:var(--dark);padding:0;}
+#nav3 .inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:center;gap:4px;}
+#nav3 a{color:#e8e8e8;text-decoration:none;font-size:0.82rem;font-weight:500;padding:12px 16px;display:block;transition:background 0.2s;position:relative;}
+#nav3 a:hover,#nav3 a.active{color:#fff;background:rgba(255,255,255,0.08);}
+#nav3 a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--pink);}
+#nav4{background:var(--lavender);padding:7px 0;text-align:center;}
+#nav4 p{font-size:0.78rem;font-weight:500;color:#5a4080;}
+
+.page-wrapper{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+/* Page header */
+.page-header{background:linear-gradient(135deg,var(--pink) 0%,var(--lavender) 100%);padding:48px 0 36px;text-align:center;}
+.page-header h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:#5a2040;margin-bottom:8px;}
+.page-header p{color:#7a4060;font-size:0.92rem;}
+
+/* Search bar */
+.products-search{padding:24px 0 0;}
+.products-search .inner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.products-search input{flex:1;min-width:200px;border:1px solid #e0d8e8;border-radius:10px;padding:11px 16px;font-family:var(--font-body);font-size:0.88rem;outline:none;}
+.products-search button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-family:var(--font-body);font-weight:600;cursor:pointer;}
+
+/* Categories */
+.category-section{padding:40px 0 12px;}
+.category-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:12px 20px;border-radius:10px;}
+.category-header h2{font-family:var(--font-display);font-size:1.4rem;font-weight:700;}
+
+/* Product Grid */
+.products-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.product-card{cursor:pointer;background:#fff;border:none;padding:0;transition:transform 0.2s;}
+.product-card:hover{transform:translateY(-3px);}
+.product-card .img-wrap{width:100%;aspect-ratio:1;overflow:hidden;background:var(--cream);}
+.product-card .img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;}
+.product-card:hover .img-wrap img{transform:scale(1.06);}
+.product-card .img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#b06080;font-size:0.75rem;background:var(--pink);}
+.product-card .info{padding:8px 4px 12px;}
+.product-card .name{font-size:0.8rem;font-weight:600;color:var(--dark);margin-bottom:3px;line-height:1.3;}
+.product-card .price{font-size:0.82rem;font-weight:700;color:#b06080;margin-bottom:8px;}
+.product-card .price .orig{font-size:0.72rem;font-weight:400;color:#bbb;text-decoration:line-through;margin-right:4px;}
+.product-card .price .offer{color:#c03030;}
+.product-card .price .range{color:#b06080;}
+.product-card .buy-btn{width:100%;background:var(--dark);color:#fff;border:none;border-radius:6px;padding:7px 0;font-family:var(--font-body);font-size:0.75rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.product-card .buy-btn:hover{background:#333;}
+
+/* Loading state */
+.loading-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.skeleton{background:linear-gradient(90deg,#f0e8f0 25%,#e8d8e8 50%,#f0e8f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;}
+.skeleton-card{height:220px;border-radius:4px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* MODAL */
+#product-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:0;}
+#product-modal.open{display:flex;}
+#modal-inner{background:#fff;width:100%;height:100%;max-width:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:0;position:relative;}
+#modal-close{position:fixed;top:16px;right:16px;background:var(--dark);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:0.95rem;display:flex;align-items:center;justify-content:center;z-index:10;box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+#modal-gallery{flex:none;position:relative;background:var(--cream);overflow:hidden;}
+#modal-main-img{width:100%;max-height:70vh;min-height:280px;object-fit:contain;background:var(--cream);display:block;}
+#modal-thumbs{display:flex;gap:6px;padding:10px;overflow-x:auto;background:#fff;}
+#modal-thumbs img{width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;flex-shrink:0;}
+#modal-thumbs img.active{border-color:#b06080;}
+#modal-info{flex:none;padding:28px 24px;max-width:820px;width:100%;margin:0 auto;}
+#modal-related-wrap{border-top:1px solid #f0e8ec;margin-top:28px;padding-top:22px;}
+#modal-related-wrap h3{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:14px;}
+#modal-related{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+
+@media(min-width:901px){
+  #modal-main-img{max-height:75vh;}
+  #modal-info{max-width:900px;}
+  #modal-related{grid-template-columns:repeat(5,1fr);}
+}
+#modal-cat-badge{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:10px;}
+#modal-name{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.3;}
+#modal-price{font-size:1.4rem;font-weight:700;color:#b06080;margin-bottom:14px;}
+#modal-desc{font-size:0.88rem;line-height:1.75;color:var(--subtext);margin-bottom:24px;}
+#modal-buy{width:100%;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--font-body);font-weight:600;font-size:0.95rem;cursor:pointer;transition:background 0.2s;}
+#modal-buy:hover{background:#333;}
+
+/* No products */
+.empty-state{text-align:center;padding:60px 20px;color:var(--subtext);}
+.empty-state i{font-size:2.5rem;color:#e0d0e0;margin-bottom:14px;display:block;}
+
+/* CART BADGE */
+#nav2 .cart-btn{position:relative;}
+#cart-count{position:absolute;top:-7px;right:-7px;background:#c03030;color:#fff;font-size:0.62rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+#cart-count.hide{display:none;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:13px 22px;border-radius:30px;font-size:0.85rem;font-weight:500;z-index:5000;opacity:0;pointer-events:none;transition:all 0.3s;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast i{color:#7ddc9a;}
+
+/* CART DRAWER */
+#cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;display:none;backdrop-filter:blur(2px);}
+#cart-overlay.open{display:block;}
+#cart-drawer{position:fixed;top:0;right:0;height:100%;width:100%;max-width:420px;background:#fff;z-index:3001;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s ease;box-shadow:-10px 0 30px rgba(0,0,0,0.15);}
+#cart-overlay.open #cart-drawer{transform:translateX(0);}
+.cart-head{padding:20px 22px;border-bottom:1px solid #f0e8ec;display:flex;align-items:center;justify-content:space-between;}
+.cart-head h3{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--dark);}
+.cart-head button{background:var(--cream);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;color:#666;font-size:0.95rem;}
+#cart-items{flex:1;overflow-y:auto;padding:14px 18px;}
+.cart-row{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f5eef2;}
+.cart-row img{width:64px;height:64px;border-radius:8px;object-fit:cover;background:var(--cream);flex-shrink:0;}
+.cart-row .ci-info{flex:1;min-width:0;}
+.cart-row .ci-name{font-size:0.85rem;font-weight:600;color:var(--dark);margin-bottom:4px;line-height:1.3;}
+.cart-row .ci-price{font-size:0.8rem;color:#b06080;font-weight:600;margin-bottom:8px;}
+.qty-stepper{display:inline-flex;align-items:center;gap:0;border:1px solid #e8dde4;border-radius:8px;overflow:hidden;}
+.qty-stepper button{background:var(--cream);border:none;width:26px;height:26px;cursor:pointer;font-size:0.85rem;color:var(--dark);}
+.qty-stepper span{width:30px;text-align:center;font-size:0.82rem;font-weight:600;}
+.ci-remove{background:none;border:none;color:#c0a0b0;cursor:pointer;font-size:0.85rem;padding:4px;align-self:flex-start;}
+.ci-remove:hover{color:#c03030;}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--subtext);}
+.cart-empty i{font-size:2.5rem;color:#e0d0e0;margin-bottom:14px;display:block;}
+.cart-foot{padding:18px 22px;border-top:1px solid #f0e8ec;background:#fff;}
+.cart-foot .ct-row{display:flex;justify-content:space-between;font-size:0.9rem;color:var(--subtext);margin-bottom:6px;}
+.cart-foot .ct-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:var(--dark);margin:10px 0 16px;}
+.btn-full{width:100%;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--font-body);font-weight:600;font-size:0.92rem;cursor:pointer;transition:background 0.2s;}
+.btn-full:hover{background:#333;}
+.btn-full:disabled{background:#ccc;cursor:not-allowed;}
+.btn-ghost{width:100%;background:none;border:1px solid #e0d0d8;color:var(--dark);border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:600;font-size:0.88rem;cursor:pointer;margin-top:8px;}
+
+/* CHECKOUT MODAL */
+#checkout-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:4000;display:none;align-items:center;justify-content:center;padding:16px;}
+#checkout-overlay.open{display:flex;}
+#checkout-box{background:#fff;border-radius:18px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;}
+.co-head{padding:20px 24px;border-bottom:1px solid #f0e8ec;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:5;}
+.co-head h3{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--dark);}
+.co-head button{background:var(--cream);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;color:#666;}
+.co-steps{display:flex;gap:6px;padding:16px 24px 0;}
+.co-step-dot{flex:1;height:4px;border-radius:3px;background:#eee0e8;}
+.co-step-dot.active{background:var(--dark);}
+.co-step-dot.done{background:#7ddc9a;}
+.co-body{padding:20px 24px 28px;}
+.co-step{display:none;}
+.co-step.active{display:block;}
+.co-label{font-size:0.8rem;font-weight:600;color:var(--dark);margin-bottom:6px;display:block;}
+.co-input{width:100%;border:1px solid #e0d8e8;border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.88rem;outline:none;margin-bottom:16px;}
+.co-input:focus{border-color:#d4608a;}
+textarea.co-input{resize:vertical;min-height:70px;font-family:var(--font-body);}
+.map-search-wrap{position:relative;margin-bottom:10px;}
+#map-search{width:100%;border:1px solid #e0d8e8;border-radius:10px;padding:12px 40px 12px 14px;font-family:var(--font-body);font-size:0.88rem;outline:none;}
+#map-search-results{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e8dde4;border-radius:10px;margin-top:4px;max-height:180px;overflow-y:auto;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,0.1);display:none;}
+#map-search-results.show{display:block;}
+#map-search-results div{padding:10px 14px;font-size:0.82rem;cursor:pointer;border-bottom:1px solid #f5eef2;}
+#map-search-results div:hover{background:var(--cream);}
+.locate-btn{position:absolute;right:6px;top:6px;background:var(--dark);color:#fff;border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:0.85rem;}
+#map-pick{width:100%;height:240px;border-radius:12px;margin-bottom:10px;background:var(--cream);z-index:1;}
+#picked-address{font-size:0.78rem;color:var(--subtext);background:var(--cream);padding:10px 12px;border-radius:8px;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;}
+#picked-address i{color:#b06080;margin-top:2px;}
+.order-summary-list{background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:16px;}
+.osl-row{display:flex;justify-content:space-between;font-size:0.82rem;padding:6px 0;color:var(--text);}
+.osl-row.muted{color:var(--subtext);font-size:0.78rem;}
+.osl-divider{border-top:1px solid #e8d8e0;margin:8px 0;}
+.osl-total{display:flex;justify-content:space-between;font-weight:700;font-size:1rem;color:var(--dark);}
+.pay-status{text-align:center;padding:20px 0;}
+.pay-status .spin{width:46px;height:46px;border:4px solid #f0e0e8;border-top-color:#d4608a;border-radius:50%;margin:0 auto 16px;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.pay-status h4{font-family:var(--font-display);font-size:1.1rem;margin-bottom:8px;color:var(--dark);}
+.pay-status p{font-size:0.85rem;color:var(--subtext);line-height:1.6;}
+.success-icon{width:70px;height:70px;border-radius:50%;background:#e3f9eb;color:#34a853;font-size:1.8rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.co-nav{display:flex;gap:10px;margin-top:6px;}
+.btn-secondary{flex:1;background:var(--cream);color:var(--dark);border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:600;font-size:0.88rem;cursor:pointer;}
+.btn-primary{flex:2;background:var(--dark);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--font-body);font-weight:600;font-size:0.88rem;cursor:pointer;}
+.btn-primary:disabled{background:#ccc;cursor:not-allowed;}
+.wa-btn{width:100%;background:#25D366;color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--font-body);font-weight:600;font-size:0.92rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.wa-btn:hover{background:#1ebe57;}
+.field-err{color:#c03030;font-size:0.74rem;margin:-12px 0 14px;display:none;}
+@media(max-width:600px){
+  #cart-drawer{max-width:100%;}
+}
+
+footer{background:var(--dark);color:#ccc;padding:56px 0 24px;}
+footer .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+footer .f-brand .logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;}
+footer .f-brand .logo span{color:var(--pink);}
+footer .f-brand p{font-size:0.83rem;line-height:1.7;color:#999;max-width:240px;}
+footer .f-brand .socials{display:flex;gap:10px;margin-top:18px;}
+footer .f-brand .socials a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+footer .f-brand .socials a:hover{background:var(--pink);color:#7a3050;}
+footer .f-col h4{font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:16px;}
+footer .f-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+footer .f-col ul li a{font-size:0.82rem;color:#999;text-decoration:none;transition:color 0.2s;}
+footer .f-col ul li a:hover{color:var(--pink);}
+footer .f-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer .f-bottom p{font-size:0.75rem;color:#666;}
+footer .f-bottom .payment{display:flex;gap:8px;}
+footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #333;padding:3px 8px;border-radius:4px;}
+
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px);}
+#search-overlay.open{display:flex;}
+#search-box{background:#fff;border-radius:16px;padding:28px 24px;width:90%;max-width:560px;}
+#search-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+#search-box .si{display:flex;gap:10px;}
+#search-box input{flex:1;border:1px solid #e0d8e8;border-radius:10px;padding:12px 16px;font-family:var(--font-body);font-size:0.92rem;outline:none;}
+#search-box button{background:var(--dark);color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;}
+#search-close{float:right;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;}
+
+@media(max-width:900px){
+  .page-wrapper{padding:0 18px;}
+  #nav2 .inner{padding:0 18px;}
+  #nav3 .inner{padding:0 8px;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+  #nav3 a{padding:12px 10px;font-size:0.75rem;white-space:nowrap;}
+  .products-grid,.loading-grid{grid-template-columns:repeat(2,1fr);gap:4px;}
+  .product-card .img-wrap{aspect-ratio:4/5;}
+  .skeleton-card{height:340px;}
+  #modal-related{grid-template-columns:repeat(2,1fr);gap:4px;}
+  footer .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:600px){
+  #nav2 .logo{font-size:1.35rem;}
+  #nav2 .search-wrap input{width:80px;}
+  footer .footer-grid{grid-template-columns:1fr;}
+  #nav2 .lbl{display:none;}
+  .product-card .img-wrap{aspect-ratio:3/4;}
+  .skeleton-card{height:380px;}
+}
+</style>
+</head>
+<body>
+
+<div id="nav1"><marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee></div>
+
+<nav id="nav2">
+  <div class="inner">
+    <div class="search-wrap" onclick="document.getElementById('search-overlay').classList.add('open')">
+      <i class="fas fa-search"></i><input type="text" placeholder="Search products..." readonly/>
+    </div>
+    <a href="index.html" class="logo">Glow &amp; <span>Flawless</span></a>
+    <div class="nav2-right">
+      <a href="dashboard.html"><i class="fas fa-user"></i> <span class="lbl">Account</span></a>
+      <button class="cart-btn" id="cart-btn" onclick="openCart()"><i class="fas fa-shopping-bag"></i> Cart <span id="cart-count" class="hide">0</span></button>
+    </div>
+  </div>
+</nav>
+
+<nav id="nav3">
+  <div class="inner">
+    <a href="index.html">Home</a>
+    <a href="products.html" class="active">Products</a>
+    <a href="dashboard.html">Customer Cabinet</a>
+    <a href="policyedu.html">Policy &amp; Education</a>
+    <a href="reviews.html">Testimonials</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+</nav>
+
+<div id="nav4"><p id="nav4-msg">Shop our natural hair care range — loved by Kenyan families</p></div>
+
+<div id="search-overlay">
+  <div id="search-box">
+    <button id="search-close" onclick="document.getElementById('search-overlay').classList.remove('open')"><i class="fas fa-times"></i></button>
+    <h3>Search Products</h3>
+    <div class="si">
+      <input type="text" placeholder="Search products..." id="search-input"/>
+      <button onclick="filterProducts()">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Our Products</h1>
+  <p>Premium natural hair care crafted for Kenya's children</p>
+</div>
+
+<div class="page-wrapper">
+  <div class="products-search">
+    <div class="inner">
+      <input type="text" placeholder="Search products..." id="search-bar" oninput="filterProducts()"/>
+    </div>
+  </div>
+  <div id="categories-container"></div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div id="product-modal">
+  <div id="modal-inner">
+    <button id="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    <div id="modal-gallery">
+      <img id="modal-main-img" src="" alt="Product"/>
+      <div id="modal-thumbs"></div>
+    </div>
+    <div id="modal-info">
+      <div id="modal-cat-badge"></div>
+      <h2 id="modal-name"></h2>
+      <p id="modal-price"></p>
+      <p id="modal-desc"></p>
+      <div id="modal-qty-row" style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <span class="co-label" style="margin:0;">Qty</span>
+        <div class="qty-stepper">
+          <button type="button" onclick="changeModalQty(-1)">−</button>
+          <span id="modal-qty">1</span>
+          <button type="button" onclick="changeModalQty(1)">+</button>
+        </div>
+      </div>
+      <button id="modal-buy"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+      <div id="modal-related-wrap" style="display:none;">
+        <h3>Continue Browsing</h3>
+        <div id="modal-related"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">Added to cart</span></div>
+
+<!-- CART DRAWER -->
+<div id="cart-overlay" onclick="if(event.target===this)closeCart()">
+  <div id="cart-drawer">
+    <div class="cart-head">
+      <h3>Your Cart</h3>
+      <button onclick="closeCart()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="cart-items"></div>
+    <div class="cart-foot" id="cart-foot" style="display:none;">
+      <div class="ct-row"><span>Subtotal</span><span id="cart-subtotal">KES 0</span></div>
+      <div class="ct-row"><span>Delivery</span><span id="cart-delivery">Calculated at checkout</span></div>
+      <div class="ct-total"><span>Total</span><span id="cart-total">KES 0</span></div>
+      <button class="btn-full" onclick="startCheckout()"><i class="fas fa-lock"></i> Proceed to Checkout</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkout-overlay">
+  <div id="checkout-box">
+    <div class="co-head">
+      <h3 id="co-title">Delivery Details</h3>
+      <button onclick="closeCheckout()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="co-steps">
+      <div class="co-step-dot active" id="dot-1"></div>
+      <div class="co-step-dot" id="dot-2"></div>
+      <div class="co-step-dot" id="dot-3"></div>
+    </div>
+    <div class="co-body">
+
+      <!-- STEP 1: DELIVERY DETAILS -->
+      <div class="co-step active" id="step-1">
+        <label class="co-label">Full Name</label>
+        <input type="text" class="co-input" id="co-name" placeholder="e.g. Jane Wanjiru"/>
+        <label class="co-label">Phone Number</label>
+        <input type="tel" class="co-input" id="co-phone" placeholder="07XX XXX XXX"/>
+
+        <label class="co-label">Delivery Location</label>
+        <div class="map-search-wrap">
+          <input type="text" id="map-search" placeholder="Search area, estate, landmark..."/>
+          <button class="locate-btn" type="button" onclick="useMyLocation()" title="Use my current location"><i class="fas fa-location-crosshairs"></i></button>
+          <div id="map-search-results"></div>
+        </div>
+        <div id="map-pick"></div>
+        <div id="picked-address"><i class="fas fa-map-pin"></i><span id="picked-address-text">Search above, tap the map, or drag the pin to set your delivery location.</span></div>
+
+        <label class="co-label">Note for Delivery (optional)</label>
+        <textarea class="co-input" id="co-note" placeholder="e.g. Blue gate, call on arrival, leave with the gatekeeper..."></textarea>
+        <span class="field-err" id="co-step1-err">Please fill your name, phone and pin a delivery location.</span>
+
+        <div class="co-nav">
+          <button class="btn-primary" style="flex:1;" onclick="goToStep2()">Continue to Review &amp; Pay <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- STEP 2: REVIEW + PAYMENT -->
+      <div class="co-step" id="step-2">
+        <div class="order-summary-list" id="order-summary-list"></div>
+
+        <label class="co-label">M-Pesa Number for Payment</label>
+        <input type="tel" class="co-input" id="co-mpesa-phone" placeholder="07XX XXX XXX"/>
+        <span class="field-err" id="co-step2-err">Please enter a valid M-Pesa phone number.</span>
+
+        <div class="co-nav">
+          <button class="btn-secondary" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="btn-primary" id="pay-now-btn" onclick="initiateSTKPush()"><i class="fas fa-mobile-alt"></i> Pay with M-Pesa</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT STATUS / SUCCESS -->
+      <div class="co-step" id="step-3">
+        <div id="pay-status-view" class="pay-status">
+          <div class="spin"></div>
+          <h4>Check your phone</h4>
+          <p>We've sent an M-Pesa prompt to <strong id="pay-status-phone"></strong>. Enter your M-Pesa PIN to complete payment of <strong id="pay-status-amount"></strong>.</p>
+        </div>
+        <div id="pay-success-view" style="display:none;">
+          <div class="success-icon"><i class="fas fa-check"></i></div>
+          <h4 style="text-align:center;font-family:var(--font-display);font-size:1.2rem;color:var(--dark);margin-bottom:6px;">Order Placed!</h4>
+          <p style="text-align:center;font-size:0.85rem;color:var(--subtext);margin-bottom:20px;">Order ref <strong id="order-ref-text"></strong>. Send your order summary to us on WhatsApp so we can confirm and dispatch it.</p>
+          <button class="wa-btn" onclick="sendWhatsAppSummary()"><i class="fab fa-whatsapp"></i> Send Order Summary on WhatsApp</button>
+          <button class="btn-ghost" onclick="finishCheckout()">Continue Shopping</button>
+        </div>
+        <div style="text-align:center;margin-top:14px;" id="manual-confirm-wrap">
+          <button class="btn-ghost" style="margin-top:0;" onclick="confirmPaymentManually()">I've completed the M-Pesa payment</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="page-wrapper">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="logo">Glow &amp; <span>Flowless</span></div>
+        <p id="footer-desc">Premium natural hair care crafted for Kenya's children. Gentle, safe, and effective.</p>
+        <div class="socials">
+          <a href="#" id="footer-ig"><i class="fab fa-instagram"></i></a>
+          <a href="#" id="footer-fb"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" id="footer-tw"><i class="fab fa-twitter"></i></a>
+          <a href="#" id="footer-tt"><i class="fab fa-tiktok"></i></a>
+          <a href="#" id="footer-wa"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="f-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="f-col"><h4>Customer</h4><ul><li><a href="dashboard.html">My Account</a></li><li><a href="dashboard.html">My Orders</a></li><li><a href="policyedu.html">Policy &amp; Education</a></li></ul></div>
+      <div class="f-col"><h4>Contact</h4><ul id="footer-contact"><li><a href="mailto:hello@glowandflowless.co.ke">hello@glowandflowless.co.ke</a></li><li><a href="tel:+254700000000">+254 700 000 000</a></li><li><a href="#" id="footer-address">Nairobi, Kenya</a></li></ul></div>
+    </div>
+    <div class="f-bottom">
+      <p id="footer-copy">&copy; 2025 Glow &amp; Flowless Kids Kenya. All rights reserved.</p>
+      <div class="payment"><span>M-PESA</span><span>Visa</span><span>Mastercard</span></div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,collection,getDocs,doc,getDoc,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+/* ===================== CART / CHECKOUT CONFIG ===================== */
+// TODO: replace with your live Render backend endpoint that performs the
+// PayHero STK Push (Basic Auth + channel_id live server-side, never in this file).
+const STK_PUSH_ENDPOINT='https://YOUR-RENDER-APP.onrender.com/api/stkpush';
+const STK_STATUS_ENDPOINT='https://YOUR-RENDER-APP.onrender.com/api/stkpush/status'; // optional polling endpoint, can be left as-is until ready
+const WHATSAPP_NUMBER='254790332333';
+const DELIVERY_FEE=0; // set a flat fee here if you want one added at checkout, e.g. 150
+
+let currentModalProduct=null;
+let modalQty=1;
+let cart=JSON.parse(localStorage.getItem('gf_cart')||'[]');
+let pickedLocation=null; // {lat,lng,address}
+let map=null,marker=null;
+let currentOrderRef=null;
+let stkPollTimer=null;
+let loggedInUser=null; // set by onAuthStateChanged below — same module scope
+
+// AUTH GUARD — runs inside main module so loggedInUser is always in scope
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='customer.html';return;}
+  loggedInUser=user;
+  const name=user.displayName||user.email.split('@')[0];
+  const firstName=name.split(' ')[0];
+  // Show "Logged in as [Name]" badge
+  const nav2Right=document.querySelector('#nav2 .nav2-right');
+  if(nav2Right&&!document.getElementById('logged-in-badge')){
+    const badge=document.createElement('span');
+    badge.id='logged-in-badge';
+    badge.style.cssText='font-size:0.78rem;font-weight:600;color:#7a3050;background:var(--pink);padding:5px 13px;border-radius:20px;white-space:nowrap;';
+    badge.innerHTML=`<i class="fas fa-user-check" style="margin-right:5px;"></i>Logged in as ${firstName}`;
+    nav2Right.insertBefore(badge,nav2Right.firstChild);
+  }
+  // Change Account link to Dashboard
+  const accLink=document.querySelector('#nav2 .nav2-right a[href="dashboard.html"]');
+  if(accLink)accLink.innerHTML=`<i class="fas fa-tachometer-alt"></i> <span class="lbl">Dashboard</span>`;
+  // Pre-fill checkout from Firestore profile
+  try{
+    const snap=await getDoc(doc(db,'users',user.uid));
+    const profile=snap.exists()?snap.data():{};
+    const coName=document.getElementById('co-name');
+    const coPhone=document.getElementById('co-phone');
+    const coMpesa=document.getElementById('co-mpesa-phone');
+    if(coName&&!coName.value)coName.value=user.displayName||profile.name||'';
+    if(coPhone&&!coPhone.value)coPhone.value=profile.phone||'';
+    if(coMpesa&&!coMpesa.value)coMpesa.value=profile.phone||'';
+  }catch(e){}
+});
+
+function getUnitPrice(p){
+  if(p.priceType==='offer'&&p.priceOffer!=null)return p.priceOffer;
+  if(p.priceType==='range'&&p.priceMin!=null)return p.priceMin;
+  return p.price||0;
+}
+
+function saveCart(){
+  localStorage.setItem('gf_cart',JSON.stringify(cart));
+  renderCartBadge();
+}
+
+function renderCartBadge(){
+  const count=cart.reduce((s,i)=>s+i.qty,0);
+  const el=document.getElementById('cart-count');
+  el.textContent=count;
+  el.classList.toggle('hide',count===0);
+}
+
+window.addToCart=function(p,qty){
+  const unitPrice=getUnitPrice(p);
+  const existing=cart.find(i=>i.id===p.id);
+  if(existing){existing.qty+=qty;}
+  else{
+    cart.push({id:p.id,name:p.name||'Product',price:unitPrice,image:(p.images&&p.images[0])||'',qty:qty});
+  }
+  saveCart();
+  showToast(`${p.name||'Product'} added to cart`);
+  if(document.getElementById('product-modal').classList.contains('open'))closeModal();
+}
+
+window.changeModalQty=function(d){
+  modalQty=Math.max(1,modalQty+d);
+  document.getElementById('modal-qty').textContent=modalQty;
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ===================== CART DRAWER ===================== */
+window.openCart=function(){
+  renderCartDrawer();
+  document.getElementById('cart-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+window.closeCart=function(){
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function renderCartDrawer(){
+  const itemsEl=document.getElementById('cart-items');
+  const footEl=document.getElementById('cart-foot');
+  if(cart.length===0){
+    itemsEl.innerHTML='<div class="cart-empty"><i class="fas fa-shopping-bag"></i><p>Your cart is empty.</p></div>';
+    footEl.style.display='none';
+    return;
+  }
+  footEl.style.display='block';
+  itemsEl.innerHTML='';
+  cart.forEach(item=>{
+    const row=document.createElement('div');row.className='cart-row';
+    const imgHTML=item.image?`<img src="${item.image}" alt="${item.name}"/>`:`<div class="img-placeholder" style="width:64px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--pink);color:#b06080;flex-shrink:0;"><i class="fas fa-image"></i></div>`;
+    row.innerHTML=`${imgHTML}<div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">KES ${item.price.toLocaleString()}</div><div class="qty-stepper"><button data-act="dec">−</button><span>${item.qty}</span><button data-act="inc">+</button></div></div><button class="ci-remove" data-act="rm"><i class="fas fa-trash"></i></button>`;
+    row.querySelector('[data-act="dec"]').addEventListener('click',()=>updateCartQty(item.id,-1));
+    row.querySelector('[data-act="inc"]').addEventListener('click',()=>updateCartQty(item.id,1));
+    row.querySelector('[data-act="rm"]').addEventListener('click',()=>removeFromCart(item.id));
+    itemsEl.appendChild(row);
+  });
+  renderCartTotals();
+}
+
+function updateCartQty(id,d){
+  const item=cart.find(i=>i.id===id);
+  if(!item)return;
+  item.qty+=d;
+  if(item.qty<=0){cart=cart.filter(i=>i.id!==id);}
+  saveCart();
+  renderCartDrawer();
+}
+function removeFromCart(id){
+  cart=cart.filter(i=>i.id!==id);
+  saveCart();
+  renderCartDrawer();
+}
+
+function cartSubtotal(){return cart.reduce((s,i)=>s+i.price*i.qty,0);}
+
+function renderCartTotals(){
+  const sub=cartSubtotal();
+  document.getElementById('cart-subtotal').textContent='KES '+sub.toLocaleString();
+  document.getElementById('cart-delivery').textContent=DELIVERY_FEE>0?'KES '+DELIVERY_FEE.toLocaleString():'Calculated at checkout';
+  document.getElementById('cart-total').textContent='KES '+(sub+DELIVERY_FEE).toLocaleString();
+}
+
+/* ===================== CHECKOUT FLOW ===================== */
+window.startCheckout=function(){
+  if(cart.length===0)return;
+  closeCart();
+  document.getElementById('checkout-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  goToStep(1);
+  initMapIfNeeded();
+}
+window.closeCheckout=function(){
+  document.getElementById('checkout-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  clearInterval(stkPollTimer);
+}
+window.finishCheckout=function(){
+  cart=[];saveCart();
+  closeCheckout();
+  renderAll();
+}
+
+window.goToStep=function(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step-'+i).classList.toggle('active',i===n);
+    document.getElementById('dot-'+i).classList.toggle('active',i===n);
+    document.getElementById('dot-'+i).classList.toggle('done',i<n);
+  });
+  const titles={1:'Delivery Details',2:'Review &amp; Pay',3:'Payment'};
+  document.getElementById('co-title').innerHTML=titles[n];
+  if(n===2)renderOrderSummary();
+  setTimeout(()=>{if(map)map.invalidateSize();},200);
+}
+
+window.goToStep2=function(){
+  const name=document.getElementById('co-name').value.trim();
+  const phone=document.getElementById('co-phone').value.trim();
+  const err=document.getElementById('co-step1-err');
+  if(!name||!phone||!pickedLocation){
+    err.style.display='block';
+    return;
+  }
+  err.style.display='none';
+  document.getElementById('co-mpesa-phone').value=phone;
+  goToStep(2);
+}
+
+function renderOrderSummary(){
+  const sub=cartSubtotal();
+  const total=sub+DELIVERY_FEE;
+  let rows=cart.map(i=>`<div class="osl-row"><span>${i.name} × ${i.qty}</span><span>KES ${(i.price*i.qty).toLocaleString()}</span></div>`).join('');
+  const addr=pickedLocation?pickedLocation.address:'Not set';
+  const note=document.getElementById('co-note').value.trim();
+  rows+=`<div class="osl-divider"></div>
+    <div class="osl-row"><span>Subtotal</span><span>KES ${sub.toLocaleString()}</span></div>
+    <div class="osl-row"><span>Delivery</span><span>${DELIVERY_FEE>0?'KES '+DELIVERY_FEE.toLocaleString():'TBC'}</span></div>
+    <div class="osl-divider"></div>
+    <div class="osl-total"><span>Total</span><span>KES ${total.toLocaleString()}</span></div>
+    <div class="osl-divider"></div>
+    <div class="osl-row muted"><span><i class="fas fa-map-pin"></i> Deliver to</span></div>
+    <div class="osl-row muted" style="margin-top:-4px;"><span>${addr}</span></div>
+    ${note?`<div class="osl-row muted" style="margin-top:6px;"><span><i class="fas fa-sticky-note"></i> Note: ${note}</span></div>`:''}`;
+  document.getElementById('order-summary-list').innerHTML=rows;
+}
+
+/* ===================== MAP (Leaflet + OpenStreetMap, no API key) ===================== */
+function initMapIfNeeded(){
+  if(map)return;
+  map=L.map('map-pick',{zoomControl:true}).setView([-1.286389,36.817223],12); // default Nairobi
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  marker=L.marker([-1.286389,36.817223],{draggable:true}).addTo(map);
+  marker.on('dragend',e=>reverseGeocode(e.target.getLatLng().lat,e.target.getLatLng().lng));
+  map.on('click',e=>{
+    marker.setLatLng(e.latlng);
+    reverseGeocode(e.latlng.lat,e.latlng.lng);
+  });
+
+  const searchInput=document.getElementById('map-search');
+  const resultsBox=document.getElementById('map-search-results');
+  let searchTimer=null;
+  searchInput.addEventListener('input',()=>{
+    clearTimeout(searchTimer);
+    const q=searchInput.value.trim();
+    if(q.length<3){resultsBox.classList.remove('show');return;}
+    searchTimer=setTimeout(()=>geocodeSearch(q),450);
+  });
+}
+
+async function geocodeSearch(q){
+  const resultsBox=document.getElementById('map-search-results');
+  try{
+    const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=ke&q=${encodeURIComponent(q)}`);
+    const data=await res.json();
+    if(!data.length){resultsBox.innerHTML='<div>No matches found</div>';resultsBox.classList.add('show');return;}
+    resultsBox.innerHTML='';
+    data.forEach(place=>{
+      const item=document.createElement('div');
+      item.textContent=place.display_name;
+      item.addEventListener('click',()=>{
+        const lat=parseFloat(place.lat),lng=parseFloat(place.lon);
+        map.setView([lat,lng],16);
+        marker.setLatLng([lat,lng]);
+        setPickedLocation(lat,lng,place.display_name);
+        resultsBox.classList.remove('show');
+        document.getElementById('map-search').value=place.display_name;
+      });
+      resultsBox.appendChild(item);
+    });
+    resultsBox.classList.add('show');
+  }catch(e){
+    resultsBox.innerHTML='<div>Search failed, try again</div>';
+    resultsBox.classList.add('show');
+  }
+}
+
+async function reverseGeocode(lat,lng){
+  setPickedLocation(lat,lng,'Locating address...');
+  try{
+    const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data=await res.json();
+    setPickedLocation(lat,lng,data.display_name||`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+  }catch(e){
+    setPickedLocation(lat,lng,`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+  }
+}
+
+function setPickedLocation(lat,lng,address){
+  pickedLocation={lat,lng,address};
+  document.getElementById('picked-address-text').textContent=address;
+}
+
+window.useMyLocation=function(){
+  if(!navigator.geolocation){showToast('Location not supported on this device');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude,longitude}=pos.coords;
+    initMapIfNeeded();
+    map.setView([latitude,longitude],16);
+    marker.setLatLng([latitude,longitude]);
+    reverseGeocode(latitude,longitude);
+  },()=>{showToast('Could not get your location. Please search or tap the map instead.');});
+}
+
+/* ===================== M-PESA STK PUSH ===================== */
+window.initiateSTKPush=function(){
+  const phone=document.getElementById('co-mpesa-phone').value.trim();
+  const err=document.getElementById('co-step2-err');
+  if(!/^0[71]\d{8}$/.test(phone)&&!/^254[71]\d{8}$/.test(phone)){
+    err.style.display='block';
+    return;
+  }
+  err.style.display='none';
+  const amount=cartSubtotal()+DELIVERY_FEE;
+  const payBtn=document.getElementById('pay-now-btn');
+  payBtn.disabled=true;
+  payBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending prompt...';
+
+  goToStep(3);
+  document.getElementById('pay-status-view').style.display='block';
+  document.getElementById('pay-success-view').style.display='none';
+  document.getElementById('manual-confirm-wrap').style.display='block';
+  document.getElementById('pay-status-phone').textContent=phone;
+  document.getElementById('pay-status-amount').textContent='KES '+amount.toLocaleString();
+
+  const reference='GF-'+Date.now();
+  currentOrderRef=reference;
+
+  fetch(STK_PUSH_ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      phone:phone,
+      amount:amount,
+      reference:reference,
+      channel_id:'YOUR_CHANNEL_ID' // TODO: your backend can also hold this server-side instead
+    })
+  }).then(r=>r.json()).then(data=>{
+    payBtn.disabled=false;
+    payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
+    pollSTKStatus(reference);
+  }).catch(()=>{
+    payBtn.disabled=false;
+    payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
+    // Backend not connected yet — person can still confirm manually below once they've paid
+  });
+}
+
+function pollSTKStatus(reference){
+  let attempts=0;
+  clearInterval(stkPollTimer);
+  stkPollTimer=setInterval(async()=>{
+    attempts++;
+    if(attempts>20){clearInterval(stkPollTimer);return;} // ~60s, then rely on manual confirm
+    try{
+      const res=await fetch(`${STK_STATUS_ENDPOINT}?reference=${reference}`);
+      const data=await res.json();
+      if(data.status==='SUCCESS'||data.status==='COMPLETED'){
+        clearInterval(stkPollTimer);
+        markPaymentSuccess();
+      }else if(data.status==='FAILED'||data.status==='CANCELLED'){
+        clearInterval(stkPollTimer);
+        showToast('Payment was not completed. You can try again.');
+      }
+    }catch(e){/* status endpoint not ready yet — ignore until manual confirm */}
+  },3000);
+}
+
+window.confirmPaymentManually=function(){
+  clearInterval(stkPollTimer);
+  markPaymentSuccess();
+}
+
+async function markPaymentSuccess(){
+  document.getElementById('pay-status-view').style.display='none';
+  document.getElementById('manual-confirm-wrap').style.display='none';
+  document.getElementById('pay-success-view').style.display='block';
+  document.getElementById('order-ref-text').textContent=currentOrderRef;
+  try{
+    await addDoc(collection(db,'orders'),{
+      ref:currentOrderRef,
+      items:cart,
+      subtotal:cartSubtotal(),
+      deliveryFee:DELIVERY_FEE,
+      total:cartSubtotal()+DELIVERY_FEE,
+      customerName:document.getElementById('co-name').value.trim(),
+      customerPhone:document.getElementById('co-phone').value.trim(),
+      customerEmail:loggedInUser?loggedInUser.email:'',
+      uid:loggedInUser?loggedInUser.uid:'',
+      mpesaPhone:document.getElementById('co-mpesa-phone').value.trim(),
+      deliveryLocation:pickedLocation,
+      note:document.getElementById('co-note').value.trim(),
+      status:'paid',
+      createdAt:serverTimestamp()
+    });
+  }catch(e){/* order will still reach the seller via WhatsApp even if this fails */}
+}
+
+window.sendWhatsAppSummary=function(){
+  const sub=cartSubtotal();
+  const total=sub+DELIVERY_FEE;
+  const lines=[
+    `*New Order ${currentOrderRef}*`,
+    '',
+    ...cart.map(i=>`• ${i.name} × ${i.qty} — KES ${(i.price*i.qty).toLocaleString()}`),
+    '',
+    `Subtotal: KES ${sub.toLocaleString()}`,
+    `Delivery: ${DELIVERY_FEE>0?'KES '+DELIVERY_FEE.toLocaleString():'TBC'}`,
+    `*Total: KES ${total.toLocaleString()}*`,
+    '',
+    `Name: ${document.getElementById('co-name').value.trim()}`,
+    `Phone: ${document.getElementById('co-phone').value.trim()}`,
+    `M-Pesa No: ${document.getElementById('co-mpesa-phone').value.trim()}`,
+    '',
+    `Delivery Location: ${pickedLocation?pickedLocation.address:''}`,
+    pickedLocation?`Map: https://www.google.com/maps?q=${pickedLocation.lat},${pickedLocation.lng}`:'',
+    document.getElementById('co-note').value.trim()?`Note: ${document.getElementById('co-note').value.trim()}`:''
+  ].filter(Boolean).join('\n');
+  const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines)}`;
+  window.open(url,'_blank');
+}
+
+renderCartBadge();
+
+
+let allCategories=[];let allProducts=[];
+
+async function loadConfig(){
+  try{
+    const s=await getDoc(doc(db,'config','site'));
+    if(s.exists()){
+      const d=s.data();
+      if(d.nav4Msg)document.getElementById('nav4-msg').textContent=d.nav4Msg;
+      if(d.footerDesc)document.getElementById('footer-desc').textContent=d.footerDesc;
+      if(d.footerCopy)document.getElementById('footer-copy').innerHTML=d.footerCopy;
+      if(d.socialIg)document.getElementById('footer-ig').href=d.socialIg;
+      if(d.socialFb)document.getElementById('footer-fb').href=d.socialFb;
+      if(d.socialTw)document.getElementById('footer-tw').href=d.socialTw;
+      if(d.socialTt)document.getElementById('footer-tt').href=d.socialTt;
+      if(d.socialWa)document.getElementById('footer-wa').href=d.socialWa;
+      if(d.contactEmail){const els=document.querySelectorAll('#footer-contact a[href^="mailto"]');els.forEach(e=>{e.href='mailto:'+d.contactEmail;e.textContent=d.contactEmail;});}
+      if(d.contactPhone){const els=document.querySelectorAll('#footer-contact a[href^="tel"]');els.forEach(e=>{e.href='tel:'+d.contactPhone;e.textContent=d.contactPhone;});}
+      if(d.contactAddress)document.getElementById('footer-address').textContent=d.contactAddress;
+    }
+  }catch(e){}
+}
+
+async function loadData(){
+  const container=document.getElementById('categories-container');
+  container.innerHTML='<div style="padding:40px 0"><div class="loading-grid">'+Array(10).fill('<div class="skeleton skeleton-card"></div>').join('')+'</div></div>';
+  try{
+    const cSnap=await getDocs(collection(db,'categories'));
+    const pSnap=await getDocs(collection(db,'products'));
+    allCategories=[];cSnap.forEach(d=>allCategories.push({id:d.id,...d.data()}));
+    allProducts=[];pSnap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
+    allCategories.sort((a,b)=>(a.order||0)-(b.order||0));
+    renderAll();
+  }catch(e){
+    container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Unable to load products. Please try again.</p></div>';
+  }
+}
+
+function formatPrice(p,forModal=false){
+  const fmt=n=>'KES '+(n||0).toLocaleString();
+  if(p.priceType==='range'&&p.priceMin!=null&&p.priceMax!=null){
+    return forModal
+      ?`<span style="color:#b06080;">${fmt(p.priceMin)} – ${fmt(p.priceMax)}</span>`
+      :`<span class="range">${fmt(p.priceMin)} – ${fmt(p.priceMax)}</span>`;
+  }
+  if(p.priceType==='offer'&&p.priceOffer!=null){
+    return forModal
+      ?`<span style="text-decoration:line-through;color:#bbb;font-size:0.9rem;margin-right:6px;">${fmt(p.price)}</span><span style="color:#c03030;">${fmt(p.priceOffer)}</span>`
+      :`<span class="orig">${fmt(p.price)}</span><span class="offer">${fmt(p.priceOffer)}</span>`;
+  }
+  return forModal?`<span style="color:#b06080;">${fmt(p.price)}</span>`:`<span>${fmt(p.price)}</span>`;
+}
+
+function buildProductCard(p,cat){
+  const card=document.createElement('div');card.className='product-card';
+  const imgHTML=p.images&&p.images.length>0?`<img src="${p.images[0]}" alt="${p.name}" loading="lazy"/>`:`<div class="img-placeholder"><i class="fas fa-image"></i></div>`;
+  card.innerHTML=`<div class="img-wrap">${imgHTML}</div><div class="info"><div class="name">${p.name||'Product'}</div><div class="price">${formatPrice(p)}</div><button class="buy-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button></div>`;
+  card.querySelector('.buy-btn').addEventListener('click',e=>{e.stopPropagation();addToCart(p,1);});
+  card.addEventListener('click',()=>openModal(p,cat));
+  return card;
+}
+
+function renderAll(search=''){
+  const container=document.getElementById('categories-container');
+  container.innerHTML='';
+  const q=search.toLowerCase().trim();
+  let anyShown=false;
+  allCategories.forEach(cat=>{
+    const prods=allProducts.filter(p=>p.categoryId===cat.id&&(!q||(p.name||'').toLowerCase().includes(q)||(p.description||'').toLowerCase().includes(q)));
+    if(prods.length===0)return;
+    anyShown=true;
+    const sec=document.createElement('div');sec.className='category-section';
+    const badgeColor=cat.color||'#FFDDE6';
+    const textColor=cat.textColor||'#5a2040';
+    sec.innerHTML=`<div class="category-header" style="background:${badgeColor};"><h2 style="color:${textColor}">${cat.name}</h2></div><div class="products-grid" id="grid-${cat.id}"></div>`;
+    container.appendChild(sec);
+    const grid=document.getElementById('grid-'+cat.id);
+    prods.forEach(p=>grid.appendChild(buildProductCard(p,cat)));
+  });
+  if(!anyShown){
+    container.innerHTML='<div class="empty-state"><i class="fas fa-search"></i><p>No products found. Check back soon.</p></div>';
+  }
+}
+
+window.filterProducts=function(){
+  const q=document.getElementById('search-bar').value||document.getElementById('search-input').value||'';
+  renderAll(q);
+}
+
+window.openModal=function(p,cat){
+  currentModalProduct=p;
+  modalQty=1;
+  document.getElementById('modal-qty').textContent='1';
+  const badgeColor=cat?cat.color||'#FFDDE6':'#FFDDE6';
+  const badgeText=cat?cat.textColor||'#5a2040':'#5a2040';
+  const badge=document.getElementById('modal-cat-badge');
+  badge.textContent=cat?cat.name:'';
+  badge.style.background=badgeColor;
+  badge.style.color=badgeText;
+  document.getElementById('modal-name').textContent=p.name||'Product';
+  document.getElementById('modal-price').innerHTML=formatPrice(p,true);
+  document.getElementById('modal-desc').textContent=p.description||'No description available.';
+  const imgs=p.images&&p.images.length>0?p.images:[];
+  const mainImg=document.getElementById('modal-main-img');
+  mainImg.src=imgs[0]||'';
+  mainImg.style.display=imgs.length>0?'block':'none';
+  const thumbsEl=document.getElementById('modal-thumbs');
+  thumbsEl.innerHTML='';
+  if(imgs.length>1){
+    imgs.forEach((url,i)=>{
+      const t=document.createElement('img');t.src=url;t.alt='';
+      if(i===0)t.classList.add('active');
+      t.addEventListener('click',()=>{mainImg.src=url;thumbsEl.querySelectorAll('img').forEach(x=>x.classList.remove('active'));t.classList.add('active');});
+      thumbsEl.appendChild(t);
+    });
+  }
+  // Continue Browsing: show other products so the person can keep exploring without closing the modal
+  const relWrap=document.getElementById('modal-related-wrap');
+  const relGrid=document.getElementById('modal-related');
+  relGrid.innerHTML='';
+  const others=allProducts.filter(o=>o.id!==p.id);
+  const sameCat=others.filter(o=>o.categoryId===p.categoryId);
+  const diffCat=others.filter(o=>o.categoryId!==p.categoryId);
+  const toShow=[...sameCat,...diffCat].slice(0,10);
+  if(toShow.length>0){
+    toShow.forEach(o=>{
+      const oCat=allCategories.find(c=>c.id===o.categoryId)||cat;
+      relGrid.appendChild(buildProductCard(o,oCat));
+    });
+    relWrap.style.display='block';
+  }else{
+    relWrap.style.display='none';
+  }
+  document.getElementById('product-modal').classList.add('open');
+  document.getElementById('modal-inner').scrollTop=0;
+  document.body.style.overflow='hidden';
+}
+window.closeModal=function(){
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('product-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.getElementById('modal-buy').addEventListener('click',()=>{if(currentModalProduct)addToCart(currentModalProduct,modalQty);});
+
+function darkenColor(hex){
+  const r=parseInt(hex.slice(1,3),16);const g=parseInt(hex.slice(3,5),16);const b=parseInt(hex.slice(5,7),16);
+  return`rgb(${Math.max(0,r-100)},${Math.max(0,g-100)},${Math.max(0,b-100)})`;
+}
+
+// Check URL search param
+const urlParams=new URLSearchParams(window.location.search);
+const urlSearch=urlParams.get('search');
+if(urlSearch)document.getElementById('search-bar').value=urlSearch;
+
+loadConfig();
+loadData().then(()=>{if(urlSearch)renderAll(urlSearch);});
+</script>
+
+</body>
+</html>
