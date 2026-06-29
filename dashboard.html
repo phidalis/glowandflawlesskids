@@ -166,23 +166,72 @@ textarea.rf-input{resize:vertical;min-height:80px;}
   .dash-layout{grid-template-columns:200px 1fr;}
   .stat-cards{grid-template-columns:repeat(2,1fr);}
 }
+
+/* Tablet */
 @media(max-width:800px){
+  /* Layout */
   .dash-layout{grid-template-columns:1fr;padding:12px;}
   .dash-sidebar{position:static;display:none;}
-  .dash-sidebar.mob-open{display:block;position:fixed;inset:0;z-index:400;border-radius:0;overflow-y:auto;}
-  .stat-cards{grid-template-columns:repeat(2,1fr);}
+  .dash-sidebar.mob-open{display:block;position:fixed;inset:0;z-index:400;border-radius:0;overflow-y:auto;padding-top:16px;}
+  /* Topbar: hide sign-out text, keep icon */
+  .btn-signout .btn-text{display:none;}
+  .btn-signout{padding:7px 10px;}
+  /* Topbar: truncate name */
+  .tb-name{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* Stats */
+  .stat-cards{grid-template-columns:repeat(2,1fr);gap:12px;}
+  /* Reviews */
   .reviews-grid{grid-template-columns:1fr;}
+  /* Messages: show full chat, hide thread sidebar */
   .msg-layout{grid-template-columns:1fr;}
   .msg-sidebar{display:none;}
+  /* Profile */
   .profile-grid{grid-template-columns:1fr;}
+  /* Orders */
+  .order-row{flex-direction:column;align-items:flex-start;gap:8px;}
+  .order-detail-btn{align-self:flex-end;}
 }
+
+/* Small mobile */
+@media(max-width:480px){
+  /* Topbar */
+  #topbar .inner{padding:0 14px;gap:10px;}
+  #topbar .logo{font-size:1.15rem;}
+  .tb-user{gap:7px;}
+  .tb-avatar{width:30px;height:30px;font-size:0.75rem;}
+  .tb-back .tb-back-text{display:none;}/* hide "Shop" label, keep icon */
+  /* Layout */
+  .dash-layout{padding:10px;}
+  /* Stats go single column */
+  .stat-cards{grid-template-columns:1fr 1fr;gap:10px;}
+  .stat-card{padding:14px;}
+  .stat-card .sc-num{font-size:1.4rem;}
+  /* Cards */
+  .card{padding:16px;}
+  .card-title{font-size:1rem;}
+  /* Profile grid */
+  .profile-grid{grid-template-columns:1fr;}
+  /* Review form */
+  .review-form-area{padding:18px 16px;}
+  /* Messages compose */
+  .msg-compose{padding:10px 12px;}
+  /* Order row */
+  .order-row{padding:12px 14px;}
+}
+
+/* Very small screens */
+@media(max-width:360px){
+  .stat-cards{grid-template-columns:1fr;}
+  #topbar .logo{font-size:1rem;}
+}
+
 /* Mobile nav */
-#mob-nav{display:none;background:#fff;border-top:1px solid #f0e8f0;position:fixed;bottom:0;left:0;right:0;z-index:300;padding:8px 0 12px;}
+#mob-nav{display:none;background:#fff;border-top:1px solid #f0e8f0;position:fixed;bottom:0;left:0;right:0;z-index:300;padding:8px 0 env(safe-area-inset-bottom,12px);}
 #mob-nav .inner{display:flex;justify-content:space-around;}
 .mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:0.65rem;font-weight:600;color:var(--subtext);cursor:pointer;padding:4px 10px;border:none;background:none;font-family:var(--font-body);}
 .mob-nav-item i{font-size:1.1rem;}
 .mob-nav-item.active{color:#d4608a;}
-@media(max-width:800px){#mob-nav{display:block;}body{padding-bottom:64px;}}
+@media(max-width:800px){#mob-nav{display:block;}body{padding-bottom:68px;}}
 </style>
 </head>
 <body>
@@ -192,12 +241,12 @@ textarea.rf-input{resize:vertical;min-height:80px;}
   <div class="inner">
     <a href="index.html" class="logo">Glow &amp; <span>Flawless</span></a>
     <div class="tb-right">
-      <a href="products.html" class="tb-back"><i class="fas fa-store"></i> Shop</a>
+      <a href="products.html" class="tb-back"><i class="fas fa-store"></i> <span class="tb-back-text">Shop</span></a>
       <div class="tb-user">
         <div class="tb-avatar" id="tb-av"><i class="fas fa-user"></i></div>
         <span class="tb-name" id="tb-name">Loading...</span>
       </div>
-      <button class="btn-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+      <button class="btn-signout" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Sign out</span></button>
     </div>
   </div>
 </div>
