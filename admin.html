@@ -60,13 +60,14 @@ html,body{height:100%;font-family:var(--font-body);background:#f5f0f7;color:var(
 .panel.active{display:block;}
 
 /* Cards */
-.dash-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.dash-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:28px;}
 .dash-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;}
 .dash-card .dc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
 .dash-card .dc-icon.pink{background:var(--pink);color:#a03060;}
 .dash-card .dc-icon.blue{background:var(--blue);color:#2d5580;}
 .dash-card .dc-icon.mint{background:var(--mint);color:#2d6a4a;}
 .dash-card .dc-icon.lavender{background:var(--lavender);color:#5a4080;}
+.dash-card .dc-icon.gold{background:#fff3cd;color:#8a6a00;}
 .dash-card .dc-num{font-size:1.5rem;font-weight:700;color:var(--dark);}
 .dash-card .dc-lbl{font-size:0.72rem;color:var(--subtext);font-weight:500;}
 
@@ -89,11 +90,23 @@ table tr:hover td{background:#fdf8ff;}
 .tbl-actions{display:flex;gap:6px;}
 .img-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:var(--cream);}
 .img-thumb-placeholder{width:40px;height:40px;border-radius:6px;background:var(--pink);display:flex;align-items:center;justify-content:center;color:#b06080;font-size:0.7rem;}
+
+/* Order detail */
+.od-section{margin-bottom:18px;}
+.od-label{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--subtext);margin-bottom:8px;}
+.od-item-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:7px 0;border-bottom:1px solid #f5eef2;}
+.od-total-row{display:flex;justify-content:space-between;font-size:0.95rem;font-weight:700;color:var(--dark);padding-top:10px;}
+.od-info-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:5px 0;color:var(--text);}
+.od-info-row span:first-child{color:var(--subtext);}
+.od-map-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:0.82rem;text-decoration:none;margin-top:6px;}
+.od-status-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .color-dot{width:16px;height:16px;border-radius:50%;display:inline-block;border:2px solid rgba(0,0,0,0.1);}
 .status-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;}
 .status-badge.new{background:var(--blue);color:#2d5580;}
 .status-badge.approved{background:var(--mint);color:#2d6a4a;}
 .status-badge.pending{background:#fff3cd;color:#856404;}
+.status-badge.dispatched{background:var(--lavender);color:#5a4080;}
+.status-badge.cancelled{background:#fde2e2;color:#c0303a;}
 
 /* Modal */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
@@ -230,6 +243,8 @@ table tr:hover td{background:#fdf8ff;}
     <nav>
       <div class="sb-section">Overview</div>
       <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <div class="sb-section">Sales</div>
+      <a onclick="showPanel('orders')" id="nav-orders"><i class="fas fa-receipt"></i> Orders</a>
       <div class="sb-section">Content</div>
       <a onclick="showPanel('hero')" id="nav-hero"><i class="fas fa-images"></i> Hero Images</a>
       <a onclick="showPanel('articles')" id="nav-articles"><i class="fas fa-newspaper"></i> Home Articles</a>
@@ -269,6 +284,8 @@ table tr:hover td{background:#fdf8ff;}
       <!-- DASHBOARD -->
       <div class="panel active" id="panel-dashboard">
         <div class="dash-cards">
+          <div class="dash-card"><div class="dc-icon gold"><i class="fas fa-receipt"></i></div><div><div class="dc-num" id="dc-orders">-</div><div class="dc-lbl">Orders</div></div></div>
+          <div class="dash-card"><div class="dc-icon mint"><i class="fas fa-coins"></i></div><div><div class="dc-num" id="dc-revenue">-</div><div class="dc-lbl">Total Sales (KES)</div></div></div>
           <div class="dash-card"><div class="dc-icon pink"><i class="fas fa-box-open"></i></div><div><div class="dc-num" id="dc-products">-</div><div class="dc-lbl">Products</div></div></div>
           <div class="dash-card"><div class="dc-icon blue"><i class="fas fa-tags"></i></div><div><div class="dc-num" id="dc-cats">-</div><div class="dc-lbl">Categories</div></div></div>
           <div class="dash-card"><div class="dc-icon mint"><i class="fas fa-star"></i></div><div><div class="dc-num" id="dc-reviews">-</div><div class="dc-lbl">Reviews</div></div></div>
@@ -277,12 +294,37 @@ table tr:hover td{background:#fdf8ff;}
         <div class="admin-card">
           <div class="admin-card-head"><h3>Quick Actions</h3></div>
           <div style="padding:20px;display:flex;flex-wrap:wrap;gap:10px;">
+            <button class="btn-sm pink" onclick="showPanel('orders')"><i class="fas fa-receipt"></i> View Orders</button>
             <button class="btn-sm" onclick="showPanel('products');showAddProduct()"><i class="fas fa-plus"></i> Add Product</button>
             <button class="btn-sm" onclick="showPanel('categories');openCatModal()"><i class="fas fa-plus"></i> Add Category</button>
             <button class="btn-sm pink" onclick="showPanel('hero');openHeroModal()"><i class="fas fa-image"></i> Upload Hero Image</button>
             <button class="btn-sm green" onclick="showPanel('reviews')"><i class="fas fa-star"></i> Manage Reviews</button>
             <button class="btn-sm" onclick="showPanel('config')"><i class="fas fa-cog"></i> Site Settings</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="panel" id="panel-orders">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>Customer Orders</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select id="order-status-filter" onchange="loadOrders()" style="border:1px solid #e0d8e8;border-radius:8px;padding:6px 10px;font-family:var(--font-body);font-size:0.78rem;outline:none;">
+                <option value="">All Statuses</option>
+                <option value="paid">Paid</option>
+                <option value="processing">Processing</option>
+                <option value="dispatched">Dispatched</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <button class="btn-sm" onclick="loadOrders()"><i class="fas fa-rotate"></i> Refresh</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Total (KES)</th><th>Location</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="orders-tbody"><tr class="empty-row"><td colspan="8">Loading...</td></tr></tbody>
+          </table>
         </div>
       </div>
 
@@ -541,7 +583,7 @@ window.showPanel=function(id){
   document.getElementById('panel-'+id).classList.add('active');
   const navEl=document.getElementById('nav-'+id);
   if(navEl)navEl.classList.add('active');
-  const titles={dashboard:'Dashboard',hero:'Hero Images',articles:'Home Articles',categories:'Categories',products:'Products',reviews:'Reviews',contacts:'Messages',config:'Site Config',policies:'Policies',education:'Education',faqs:'FAQs'};
+  const titles={dashboard:'Dashboard',orders:'Customer Orders',hero:'Hero Images',articles:'Home Articles',categories:'Categories',products:'Products',reviews:'Reviews',contacts:'Messages',config:'Site Config',policies:'Policies',education:'Education',faqs:'FAQs'};
   document.getElementById('topbar-title').textContent=titles[id]||id;
   loaders[id]&&loaders[id]();
   // Auto-close sidebar on mobile when a section is selected
@@ -568,6 +610,7 @@ async function initAdmin(){
 // ====== LOADERS MAP ======
 const loaders={
   dashboard:()=>loadDashboard(),
+  orders:()=>loadOrders(),
   hero:()=>loadHero(),
   categories:()=>loadCategories(),
   products:()=>loadProducts(),
@@ -583,11 +626,15 @@ const loaders={
 // ====== DASHBOARD ======
 async function loadDashboard(){
   try{
-    const[pSnap,cSnap,rSnap,mSnap]=await Promise.all([getDocs(collection(db,'products')),getDocs(collection(db,'categories')),getDocs(collection(db,'reviews')),getDocs(collection(db,'contacts'))]);
+    const[pSnap,cSnap,rSnap,mSnap,oSnap]=await Promise.all([getDocs(collection(db,'products')),getDocs(collection(db,'categories')),getDocs(collection(db,'reviews')),getDocs(collection(db,'contacts')),getDocs(collection(db,'orders'))]);
     document.getElementById('dc-products').textContent=pSnap.size;
     document.getElementById('dc-cats').textContent=cSnap.size;
     document.getElementById('dc-reviews').textContent=rSnap.size;
     document.getElementById('dc-msgs').textContent=mSnap.size;
+    document.getElementById('dc-orders').textContent=oSnap.size;
+    let revenue=0;
+    oSnap.forEach(d=>{const o=d.data();if(o.status!=='cancelled')revenue+=(o.total||0);});
+    document.getElementById('dc-revenue').textContent=revenue.toLocaleString();
   }catch(e){}
 }
 
@@ -924,6 +971,88 @@ window.saveProduct=async function(id){
 window.deleteProduct=async function(id){
   if(!confirm('Delete this product?'))return;
   try{await deleteDoc(doc(db,'products',id));notify('Product deleted.');loadProducts();}catch(e){notify('Error.','error');}
+}
+
+// ====== ORDERS ======
+async function loadOrders(){
+  const tbody=document.getElementById('orders-tbody');
+  tbody.innerHTML='<tr class="empty-row"><td colspan="8">Loading...</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'orders'));
+    let orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    const filter=document.getElementById('order-status-filter').value;
+    if(filter)orders=orders.filter(o=>(o.status||'paid')===filter);
+    if(orders.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="8">No orders yet.</td></tr>';return;}
+    tbody.innerHTML=orders.map(o=>{
+      const status=o.status||'paid';
+      const badgeClass=status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':'new';
+      const statusLabel=status.charAt(0).toUpperCase()+status.slice(1);
+      const itemCount=(o.items||[]).reduce((s,i)=>s+(i.qty||0),0);
+      const dateStr=o.createdAt?.seconds?new Date(o.createdAt.seconds*1000).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}):'-';
+      const shortAddr=o.deliveryLocation?.address?(o.deliveryLocation.address.length>30?o.deliveryLocation.address.slice(0,30)+'…':o.deliveryLocation.address):'-';
+      return`<tr>
+        <td style="font-weight:600;">${o.ref||o.id}</td>
+        <td>${o.customerName||'-'}<br/><small style="color:var(--subtext);">${o.customerPhone||''}</small></td>
+        <td>${itemCount} item${itemCount===1?'':'s'}</td>
+        <td style="font-weight:600;">${(o.total||0).toLocaleString()}</td>
+        <td>${shortAddr}</td>
+        <td><span class="status-badge ${badgeClass}">${statusLabel}</span></td>
+        <td>${dateStr}</td>
+        <td><div class="tbl-actions">
+          <button class="btn-sm" onclick="viewOrder('${o.id}')"><i class="fas fa-eye"></i> View</button>
+          <button class="btn-sm red" onclick="deleteOrder('${o.id}')"><i class="fas fa-trash"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML='<tr class="empty-row"><td colspan="8">Error loading orders.</td></tr>';}
+}
+
+window.viewOrder=async function(id){
+  let o={};
+  try{const s=await getDoc(doc(db,'orders',id));if(s.exists())o=s.data();}catch(e){}
+  const status=o.status||'paid';
+  const itemsHTML=(o.items||[]).map(i=>`<div class="od-item-row"><span>${i.name} × ${i.qty}</span><span>KES ${((i.price||0)*(i.qty||0)).toLocaleString()}</span></div>`).join('');
+  const mapLink=o.deliveryLocation?`<a class="od-map-link" href="https://www.google.com/maps?q=${o.deliveryLocation.lat},${o.deliveryLocation.lng}" target="_blank"><i class="fas fa-map-marker-alt"></i> Open in Google Maps</a>`:'';
+  const statuses=['paid','processing','dispatched','delivered','cancelled'];
+  const statusBtns=statuses.filter(s=>s!==status).map(s=>{
+    const cls=s==='cancelled'?'red':s==='delivered'?'green':'pink';
+    return`<button class="btn-sm ${cls}" onclick="updateOrderStatus('${id}','${s}')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`;
+  }).join('');
+  openModal(`Order ${o.ref||id}`,`
+    <div class="od-section">
+      <div class="od-label">Items</div>
+      ${itemsHTML||'<p style="font-size:0.85rem;color:var(--subtext);">No items recorded.</p>'}
+      <div class="od-total-row"><span>Subtotal</span><span>KES ${(o.subtotal||0).toLocaleString()}</span></div>
+      <div class="od-total-row" style="font-weight:400;font-size:0.85rem;color:var(--subtext);"><span>Delivery</span><span>KES ${(o.deliveryFee||0).toLocaleString()}</span></div>
+      <div class="od-total-row"><span>Total</span><span>KES ${(o.total||0).toLocaleString()}</span></div>
+    </div>
+    <div class="od-section">
+      <div class="od-label">Customer</div>
+      <div class="od-info-row"><span>Name</span><span>${o.customerName||'-'}</span></div>
+      <div class="od-info-row"><span>Phone</span><span>${o.customerPhone||'-'}</span></div>
+      <div class="od-info-row"><span>M-Pesa Number</span><span>${o.mpesaPhone||'-'}</span></div>
+    </div>
+    <div class="od-section">
+      <div class="od-label">Delivery</div>
+      <p style="font-size:0.85rem;line-height:1.6;">${o.deliveryLocation?.address||'No location recorded.'}</p>
+      ${mapLink}
+      ${o.note?`<p style="font-size:0.82rem;color:var(--subtext);margin-top:10px;"><i class="fas fa-sticky-note"></i> ${o.note}</p>`:''}
+    </div>
+    <div class="od-section">
+      <div class="od-label">Update Status — currently <span class="status-badge ${status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':'new'}">${status.charAt(0).toUpperCase()+status.slice(1)}</span></div>
+      <div class="od-status-actions">${statusBtns}</div>
+    </div>
+  `,`<button class="btn-sm" onclick="closeModal()">Close</button>`);
+}
+
+window.updateOrderStatus=async function(id,status){
+  try{await updateDoc(doc(db,'orders',id),{status});notify('Order marked as '+status+'.');closeModal();loadOrders();loadDashboard();}catch(e){notify('Error updating order.','error');}
+}
+
+window.deleteOrder=async function(id){
+  if(!confirm('Delete this order? This cannot be undone.'))return;
+  try{await deleteDoc(doc(db,'orders',id));notify('Order deleted.');loadOrders();loadDashboard();}catch(e){notify('Error.','error');}
 }
 
 // ====== REVIEWS ======
