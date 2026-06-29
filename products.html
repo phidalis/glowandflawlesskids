@@ -413,8 +413,15 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
           <button class="wa-btn" onclick="sendWhatsAppSummary()"><i class="fab fa-whatsapp"></i> Send Order Summary on WhatsApp</button>
           <button class="btn-ghost" onclick="finishCheckout()">Continue Shopping</button>
         </div>
+        <div id="pay-failed-view" style="display:none;text-align:center;">
+          <div class="success-icon" style="background:#fee2e2;color:#991b1b;"><i class="fas fa-times"></i></div>
+          <h4 style="text-align:center;font-family:var(--font-display);font-size:1.2rem;color:var(--dark);margin-bottom:6px;">Payment Not Completed</h4>
+          <p style="text-align:center;font-size:0.85rem;color:var(--subtext);margin-bottom:20px;" id="pay-failed-reason">The M-Pesa payment was cancelled or timed out. Your order has been saved — you can try paying again.</p>
+          <button class="btn-primary" style="margin-top:0;" onclick="retryPayment()">Try Payment Again</button>
+          <button class="btn-ghost" onclick="finishCheckout()">Cancel</button>
+        </div>
         <div style="text-align:center;margin-top:14px;" id="manual-confirm-wrap">
-          <button class="btn-ghost" style="margin-top:0;" onclick="confirmPaymentManually()">I've completed the M-Pesa payment</button>
+          <button class="btn-ghost" style="margin-top:0;" onclick="checkPaymentNow()"><i class="fas fa-rotate"></i> Check Payment Status</button>
         </div>
       </div>
 
@@ -450,16 +457,17 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,getDocs,doc,getDoc,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getFirestore,collection,getDocs,doc,getDoc,addDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBNVvc-Ee1AGFUFUq6D_a2kKm0Sf0ONYJo",authDomain:"glowandflowless-5e2e1.firebaseapp.com",projectId:"glowandflowless-5e2e1",storageBucket:"glowandflowless-5e2e1.firebasestorage.app",messagingSenderId:"908346350854",appId:"1:908346350854:web:6d6cf581adcc7943d71287"};
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
 /* ===================== CART / CHECKOUT CONFIG ===================== */
-// TODO: replace with your live Render backend endpoint that performs the
-// PayHero STK Push (Basic Auth + channel_id live server-side, never in this file).
-const STK_PUSH_ENDPOINT='https://YOUR-RENDER-APP.onrender.com/api/stkpush';
-const STK_STATUS_ENDPOINT='https://YOUR-RENDER-APP.onrender.com/api/stkpush/status'; // optional polling endpoint, can be left as-is until ready
+// Set this to your live Render backend URL once deployed, e.g.
+// const API_BASE='https://glowflawless-server.onrender.com';
+const API_BASE='https://YOUR-RENDER-APP.onrender.com';
+const ORDER_PAY_ENDPOINT=API_BASE+'/api/order/pay';
+const ORDER_STATUS_ENDPOINT=API_BASE+'/api/order/status';
 const WHATSAPP_NUMBER='254790332333';
 const DELIVERY_FEE=0; // set a flat fee here if you want one added at checkout, e.g. 150
 
@@ -710,8 +718,17 @@ window.useMyLocation=function(){
   },()=>{showToast('Could not get your location. Please search or tap the map instead.');});
 }
 
-/* ===================== M-PESA STK PUSH ===================== */
-window.initiateSTKPush=function(){
+/* ===================== M-PESA STK PUSH (order-first flow) ===================== */
+// Flow:
+// 1. Create the order doc in Firestore immediately, status:'pending_payment'.
+//    This means the order is never lost even if the tab closes before payment finishes.
+// 2. Call our backend to fire the PayHero STK push, tagged with this order's id.
+// 3. Poll /api/order/status, which itself checks memory → Firestore → PayHero as fallbacks.
+// 4. Backend's /api/callback (PayHero webhook) is the real source of truth and updates
+//    the order doc directly to 'paid' or 'payment_failed' — polling just reflects that.
+let currentOrderId=null;
+
+window.initiateSTKPush=async function(){
   const phone=document.getElementById('co-mpesa-phone').value.trim();
   const err=document.getElementById('co-step2-err');
   if(!/^0[71]\d{8}$/.test(phone)&&!/^254[71]\d{8}$/.test(phone)){
@@ -722,84 +739,115 @@ window.initiateSTKPush=function(){
   const amount=cartSubtotal()+DELIVERY_FEE;
   const payBtn=document.getElementById('pay-now-btn');
   payBtn.disabled=true;
-  payBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending prompt...';
-
-  goToStep(3);
-  document.getElementById('pay-status-view').style.display='block';
-  document.getElementById('pay-success-view').style.display='none';
-  document.getElementById('manual-confirm-wrap').style.display='block';
-  document.getElementById('pay-status-phone').textContent=phone;
-  document.getElementById('pay-status-amount').textContent='KES '+amount.toLocaleString();
+  payBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Placing order...';
 
   const reference='GF-'+Date.now();
   currentOrderRef=reference;
 
-  fetch(STK_PUSH_ENDPOINT,{
+  // Step 1: create the order doc FIRST, before the STK push fires.
+  try{
+    const orderDoc=await addDoc(collection(db,'orders'),{
+      ref:reference,
+      items:cart,
+      subtotal:cartSubtotal(),
+      deliveryFee:DELIVERY_FEE,
+      total:amount,
+      customerName:document.getElementById('co-name').value.trim(),
+      customerPhone:document.getElementById('co-phone').value.trim(),
+      mpesaPhone:phone,
+      deliveryLocation:pickedLocation,
+      note:document.getElementById('co-note').value.trim(),
+      status:'pending_payment',
+      createdAt:serverTimestamp()
+    });
+    currentOrderId=orderDoc.id;
+  }catch(e){
+    payBtn.disabled=false;
+    payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
+    showToast('Could not save your order. Please check your connection and try again.');
+    return;
+  }
+
+  goToStep(3);
+  document.getElementById('pay-status-view').style.display='block';
+  document.getElementById('pay-success-view').style.display='none';
+  document.getElementById('pay-failed-view').style.display='none';
+  document.getElementById('manual-confirm-wrap').style.display='block';
+  document.getElementById('pay-status-phone').textContent=phone;
+  document.getElementById('pay-status-amount').textContent='KES '+amount.toLocaleString();
+
+  // Step 2: trigger the STK push via our backend, tagged to this order.
+  fetch(ORDER_PAY_ENDPOINT,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       phone:phone,
       amount:amount,
-      reference:reference,
-      channel_id:'YOUR_CHANNEL_ID' // TODO: your backend can also hold this server-side instead
+      orderId:currentOrderId
     })
   }).then(r=>r.json()).then(data=>{
     payBtn.disabled=false;
     payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
-    pollSTKStatus(reference);
+    if(data&&data.success===false){
+      showPayFailed(data.error||'Could not send the M-Pesa prompt. Please try again.');
+      return;
+    }
+    pollOrderStatus(currentOrderId);
   }).catch(()=>{
     payBtn.disabled=false;
     payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
-    // Backend not connected yet — person can still confirm manually below once they've paid
+    showToast('Could not reach the payment server. Your order is saved — use "Check Payment Status" once you have paid, or try again.');
   });
 }
 
-function pollSTKStatus(reference){
+function pollOrderStatus(orderId){
   let attempts=0;
   clearInterval(stkPollTimer);
-  stkPollTimer=setInterval(async()=>{
-    attempts++;
-    if(attempts>20){clearInterval(stkPollTimer);return;} // ~60s, then rely on manual confirm
-    try{
-      const res=await fetch(`${STK_STATUS_ENDPOINT}?reference=${reference}`);
-      const data=await res.json();
-      if(data.status==='SUCCESS'||data.status==='COMPLETED'){
-        clearInterval(stkPollTimer);
-        markPaymentSuccess();
-      }else if(data.status==='FAILED'||data.status==='CANCELLED'){
-        clearInterval(stkPollTimer);
-        showToast('Payment was not completed. You can try again.');
-      }
-    }catch(e){/* status endpoint not ready yet — ignore until manual confirm */}
-  },3000);
+  stkPollTimer=setInterval(()=>checkOrderStatus(orderId,++attempts),3000);
 }
 
-window.confirmPaymentManually=function(){
-  clearInterval(stkPollTimer);
-  markPaymentSuccess();
+async function checkOrderStatus(orderId,attempts){
+  if(attempts!==undefined&&attempts>40){clearInterval(stkPollTimer);return;} // ~2min, server-side timeout will resolve it
+  try{
+    const res=await fetch(`${ORDER_STATUS_ENDPOINT}?orderId=${orderId}`);
+    const data=await res.json();
+    if(data.status==='paid'){
+      clearInterval(stkPollTimer);
+      markPaymentSuccess();
+    }else if(data.status==='payment_failed'){
+      clearInterval(stkPollTimer);
+      showPayFailed(data.reason==='timeout'?'The payment timed out. Your order has been saved — you can try paying again.':'The M-Pesa payment was cancelled or declined. Your order has been saved — you can try paying again.');
+    }
+    // status === 'pending_payment' -> keep polling / waiting
+  }catch(e){/* network hiccup — next poll tick will retry */}
+}
+
+window.checkPaymentNow=function(){
+  if(!currentOrderId)return;
+  checkOrderStatus(currentOrderId);
+}
+
+window.retryPayment=function(){
+  document.getElementById('pay-failed-view').style.display='none';
+  goToStep(2);
+}
+
+function showPayFailed(reasonText){
+  document.getElementById('pay-status-view').style.display='none';
+  document.getElementById('manual-confirm-wrap').style.display='none';
+  document.getElementById('pay-success-view').style.display='none';
+  document.getElementById('pay-failed-view').style.display='block';
+  if(reasonText)document.getElementById('pay-failed-reason').textContent=reasonText;
 }
 
 async function markPaymentSuccess(){
   document.getElementById('pay-status-view').style.display='none';
   document.getElementById('manual-confirm-wrap').style.display='none';
+  document.getElementById('pay-failed-view').style.display='none';
   document.getElementById('pay-success-view').style.display='block';
   document.getElementById('order-ref-text').textContent=currentOrderRef;
-  try{
-    await addDoc(collection(db,'orders'),{
-      ref:currentOrderRef,
-      items:cart,
-      subtotal:cartSubtotal(),
-      deliveryFee:DELIVERY_FEE,
-      total:cartSubtotal()+DELIVERY_FEE,
-      customerName:document.getElementById('co-name').value.trim(),
-      customerPhone:document.getElementById('co-phone').value.trim(),
-      mpesaPhone:document.getElementById('co-mpesa-phone').value.trim(),
-      deliveryLocation:pickedLocation,
-      note:document.getElementById('co-note').value.trim(),
-      status:'paid',
-      createdAt:serverTimestamp()
-    });
-  }catch(e){/* order will still reach the seller via WhatsApp even if this fails */}
+  // Order doc is already updated to 'paid' server-side by the PayHero callback —
+  // nothing to write here, this just reflects that state in the UI.
 }
 
 window.sendWhatsAppSummary=function(){

@@ -65,6 +65,7 @@ body{font-family:var(--font-body);background:#f7f2f5;color:var(--text);overflow-
 .status-paid{background:var(--mint);color:#2d6a4a;}
 .status-pending{background:#fff3cd;color:#7a5c00;}
 .status-delivered{background:var(--blue);color:#1a4060;}
+.status-failed{background:#fde2e2;color:#991b1b;}
 .order-items{font-size:0.76rem;color:var(--subtext);margin-top:4px;}
 .order-detail-btn{background:var(--dark);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.74rem;font-weight:600;cursor:pointer;font-family:var(--font-body);}
 .empty-state{text-align:center;padding:48px 20px;color:var(--subtext);}
@@ -522,13 +523,14 @@ function renderOrdersList(orders,containerId){
   if(!orders.length){el.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet.</p><a href="dashboard-products.html"><i class="fas fa-shopping-bag"></i> Shop Now</a></div>';return;}
   el.innerHTML='<div class="orders-list">'+orders.map(o=>{
     const date=o.createdAt?.toDate?o.createdAt.toDate():new Date();
-    const statusClass={'paid':'status-paid','delivered':'status-delivered','pending':'status-pending'}[o.status]||'status-pending';
+    const statusClass={'paid':'status-paid','processing':'status-paid','dispatched':'status-paid','delivered':'status-delivered','pending_payment':'status-pending','payment_failed':'status-failed','cancelled':'status-failed'}[o.status]||'status-pending';
+    const statusLabel={'pending_payment':'Pending Payment','payment_failed':'Payment Failed'}[o.status]||(o.status||'pending_payment');
     const items=(o.items||[]).slice(0,2).map(i=>`${i.name}×${i.qty}`).join(', ')+(o.items?.length>2?` +${o.items.length-2} more`:'');
     return`<div class="order-row">
       <div><div class="order-ref">${o.ref||o.id}</div><div class="order-items">${items}</div><div class="order-date">${date.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'})}</div></div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <span class="order-total">KES ${(o.total||0).toLocaleString()}</span>
-        <span class="order-status ${statusClass}">${o.status||'pending'}</span>
+        <span class="order-status ${statusClass}">${statusLabel}</span>
         <button class="order-detail-btn" onclick="viewOrder('${o.id}')">View</button>
       </div>
     </div>`;
@@ -555,7 +557,9 @@ window.viewOrder=async function(id){
         <p><strong>Phone:</strong> ${o.customerPhone||'—'}</p>
         <p><strong>Delivery:</strong> ${o.deliveryLocation?.address||'—'}</p>
         ${o.note?`<p><strong>Note:</strong> ${o.note}</p>`:''}
-        <p style="margin-top:8px;"><strong>Status:</strong> <span style="font-weight:700;color:#d4608a;">${o.status||'pending'}</span></p>
+        <p style="margin-top:8px;"><strong>Status:</strong> <span style="font-weight:700;color:${o.status==='payment_failed'?'#991b1b':'#d4608a'};">${({'pending_payment':'Pending Payment','payment_failed':'Payment Failed'})[o.status]||(o.status||'Pending Payment')}</span></p>
+        ${(o.status==='pending_payment'||o.status==='payment_failed')?'<p style="margin-top:6px;font-size:0.76rem;color:var(--subtext);">This updates automatically once M-Pesa confirms your payment. If it was declined or timed out, you can place a new order and try again.</p>':''}
+        ${o.mpesaReceipt?`<p style="margin-top:6px;"><strong>M-Pesa Receipt:</strong> ${o.mpesaReceipt}</p>`:''}
       </div>`;
   }catch(e){document.getElementById('om-body').innerHTML='<p>Could not load order.</p>';}
 }
