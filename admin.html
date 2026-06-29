@@ -622,19 +622,18 @@ async function uploadToCloudinary(file){
   throw new Error(data.error?.message||'Upload failed');
 }
 
-// Auth — role-gated admin access
+// Auth — admins collection check
 onAuthStateChanged(auth,async user=>{
   if(user){
     try{
-      const userSnap=await getDoc(doc(db,'users',user.uid));
-      const role=userSnap.exists()?userSnap.data().role:null;
-      if(role==='admin'){
+      const adminSnap=await getDoc(doc(db,'admins',user.uid));
+      if(adminSnap.exists()){
         document.getElementById('login-screen').classList.add('hide');
         document.getElementById('app').classList.remove('hide');
         document.getElementById('admin-email-display').textContent=user.email;
         initAdmin();
       }else{
-        // Signed in but not an admin — reject
+        // Signed in but not in admins collection — reject
         await signOut(auth);
         const errEl=document.getElementById('login-err');
         errEl.textContent='Access denied. This portal is for admins only.';
@@ -645,7 +644,7 @@ onAuthStateChanged(auth,async user=>{
     }catch(e){
       await signOut(auth);
       const errEl=document.getElementById('login-err');
-      errEl.textContent='Could not verify account permissions. Try again.';
+      errEl.textContent='Could not verify permissions. Try again.';
       errEl.style.display='block';
       document.getElementById('login-screen').classList.remove('hide');
       document.getElementById('app').classList.add('hide');
@@ -653,7 +652,6 @@ onAuthStateChanged(auth,async user=>{
   }else{
     document.getElementById('login-screen').classList.remove('hide');
     document.getElementById('app').classList.add('hide');
-    // Reset error to default text on logout
     const errEl=document.getElementById('login-err');
     errEl.textContent='Invalid credentials. Please try again.';
     errEl.style.display='none';
