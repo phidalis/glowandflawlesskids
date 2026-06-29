@@ -182,7 +182,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
 
 <!-- NAV 1 -->
 <div id="nav1">
-  <marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Free Delivery on Orders Over KES 2,500 &nbsp;&nbsp;&nbsp;</marquee>
+  <marquee behavior="scroll" direction="left" scrollamount="3">Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Gentle, Natural &amp; Safe for Your Child's Hair &nbsp;&nbsp;&nbsp; Welcome to Glow &amp; Flowless Kids Kenya &nbsp;&nbsp;&nbsp; Place Order With Us Today &nbsp;&nbsp;&nbsp;</marquee>
 </div>
 
 <!-- NAV 2 -->
@@ -425,15 +425,20 @@ async function loadArticles(){
     const snap=await getDoc(doc(db,'articles','home'));
     if(snap.exists()){
       const d=snap.data();
-      if(d.welcomeImg){
-        document.getElementById('welcome-img-wrap').innerHTML=`<img src="${d.welcomeImg}" alt="Welcome"/>`;
-      }
-      if(d.storyImg){
-        document.getElementById('story-img-wrap').innerHTML=`<img src="${d.storyImg}" alt="Our Story"/>`;
-      }
-      if(d.whyImg){
-        document.getElementById('why-img-wrap').innerHTML=`<img src="${d.whyImg}" alt="Why Parents Love Us"/>`;
-      }
+      // Images
+      if(d.welcomeImg)document.getElementById('welcome-img-wrap').innerHTML=`<img src="${d.welcomeImg}" alt="Welcome"/>`;
+      if(d.storyImg)document.getElementById('story-img-wrap').innerHTML=`<img src="${d.storyImg}" alt="Our Story"/>`;
+      if(d.whyImg)document.getElementById('why-img-wrap').innerHTML=`<img src="${d.whyImg}" alt="Why Parents Love Us"/>`;
+      // Text
+      if(d.welcomeEyebrow)document.getElementById('welcome-eyebrow').textContent=d.welcomeEyebrow;
+      if(d.welcomeTitle)document.getElementById('welcome-title').textContent=d.welcomeTitle;
+      if(d.welcomeBody)document.getElementById('welcome-body').textContent=d.welcomeBody;
+      if(d.storyEyebrow)document.getElementById('story-eyebrow').textContent=d.storyEyebrow;
+      if(d.storyTitle)document.getElementById('story-title').textContent=d.storyTitle;
+      if(d.storyBody)document.getElementById('story-body').textContent=d.storyBody;
+      if(d.whyEyebrow)document.getElementById('why-eyebrow').textContent=d.whyEyebrow;
+      if(d.whyTitle)document.getElementById('why-title').textContent=d.whyTitle;
+      if(d.whyBody)document.getElementById('why-body').textContent=d.whyBody;
     }
   }catch(e){console.log('Articles:',e.message);}
 }

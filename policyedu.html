@@ -176,7 +176,7 @@ footer .f-bottom .payment span{font-size:0.72rem;color:#666;border:1px solid #33
         <h2>Shipping Policy</h2>
         <p>We deliver across Kenya with care and reliability. All orders are processed within 1–2 business days. Delivery within Nairobi takes 1–2 business days; upcountry deliveries take 2–4 business days.</p>
         <ul>
-          <li>Free delivery on orders over KES 2,500</li>
+          <li>Place order with us </li>
           <li>Standard shipping: KES 200 within Nairobi</li>
           <li>Upcountry shipping: from KES 350</li>
           <li>We partner with trusted courier services across Kenya</li>
@@ -338,14 +338,24 @@ try{
   const eduSnap=await getDoc(doc(db,'education','home'));
   if(eduSnap.exists()){
     const d=eduSnap.data();
-    const setEduImg=(elId,url,alt)=>{
-      if(!url)return;
-      const el=document.getElementById(elId);
-      if(el)el.outerHTML=`<img src="${url}" class="edu-img" alt="${alt}" id="${elId}"/>`;
-    };
-    setEduImg('edu-img-basics',d.basicsImg,'Hair Care Basics');
-    setEduImg('edu-img-growth',d.growthImg,'Growth Tips');
-    setEduImg('edu-img-scalp',d.scalpImg,'Scalp Health');
+    const cards={basics:'edu-img-basics',growth:'edu-img-growth',scalp:'edu-img-scalp'};
+    Object.entries(cards).forEach(([k,imgId])=>{
+      // Update image
+      if(d[k+'Img']){
+        const el=document.getElementById(imgId);
+        if(el)el.outerHTML=`<img src="${d[k+'Img']}" class="edu-img" alt="${d[k+'Tag']||k}" id="${imgId}"/>`;
+      }
+      // Update tag, title, text — find the card body next to the image
+      const imgEl=document.getElementById(imgId);
+      if(imgEl){
+        const card=imgEl.closest('.edu-card');
+        if(card){
+          if(d[k+'Tag']){const t=card.querySelector('.edu-tag');if(t)t.textContent=d[k+'Tag'];}
+          if(d[k+'Title']){const t=card.querySelector('.edu-title');if(t)t.textContent=d[k+'Title'];}
+          if(d[k+'Text']){const t=card.querySelector('.edu-text');if(t)t.textContent=d[k+'Text'];}
+        }
+      }
+    });
   }
 }catch(e){}
 try{
