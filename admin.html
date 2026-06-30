@@ -107,8 +107,6 @@ table tr:hover td{background:#fdf8ff;}
 .status-badge.pending{background:#fff3cd;color:#856404;}
 .status-badge.dispatched{background:var(--lavender);color:#5a4080;}
 .status-badge.cancelled{background:#fde2e2;color:#c0303a;}
-.status-badge.pendingpay{background:#fff3cd;color:#856404;border:1px dashed #e0b400;}
-.status-badge.payfailed{background:#fde2e2;color:#991b1b;}
 
 /* Modal */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
@@ -362,8 +360,6 @@ table tr:hover td{background:#fdf8ff;}
             <div style="display:flex;gap:8px;align-items:center;">
               <select id="order-status-filter" onchange="loadOrders()" style="border:1px solid #e0d8e8;border-radius:8px;padding:6px 10px;font-family:var(--font-body);font-size:0.78rem;outline:none;">
                 <option value="">All Statuses</option>
-                <option value="pending_payment">Pending Payment</option>
-                <option value="payment_failed">Payment Failed</option>
                 <option value="paid">Paid</option>
                 <option value="processing">Processing</option>
                 <option value="dispatched">Dispatched</option>
@@ -764,7 +760,7 @@ async function loadDashboard(){
     document.getElementById('dc-msgs').textContent=mSnap.size;
     document.getElementById('dc-orders').textContent=oSnap.size;
     let revenue=0;
-    oSnap.forEach(d=>{const o=d.data();const s=o.status||'pending_payment';if(s!=='pending_payment'&&s!=='payment_failed'&&s!=='cancelled')revenue+=(o.total||0);});
+    oSnap.forEach(d=>{const o=d.data();if(o.status!=='cancelled')revenue+=(o.total||0);});
     document.getElementById('dc-revenue').textContent=revenue.toLocaleString();
   }catch(e){}
 }
@@ -1123,12 +1119,12 @@ async function loadOrders(){
     let orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
     orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     const filter=document.getElementById('order-status-filter').value;
-    if(filter)orders=orders.filter(o=>(o.status||'pending_payment')===filter);
+    if(filter)orders=orders.filter(o=>(o.status||'paid')===filter);
     if(orders.length===0){tbody.innerHTML='<tr class="empty-row"><td colspan="8">No orders yet.</td></tr>';return;}
     tbody.innerHTML=orders.map(o=>{
-      const status=o.status||'pending_payment';
-      const badgeClass=status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':status==='payment_failed'?'payfailed':status==='pending_payment'?'pendingpay':'new';
-      const statusLabel=status==='pending_payment'?'Pending Payment':status==='payment_failed'?'Payment Failed':status.charAt(0).toUpperCase()+status.slice(1);
+      const status=o.status||'paid';
+      const badgeClass=status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':'new';
+      const statusLabel=status.charAt(0).toUpperCase()+status.slice(1);
       const itemCount=(o.items||[]).reduce((s,i)=>s+(i.qty||0),0);
       const dateStr=o.createdAt?.seconds?new Date(o.createdAt.seconds*1000).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}):'-';
       const shortAddr=o.deliveryLocation?.address?(o.deliveryLocation.address.length>30?o.deliveryLocation.address.slice(0,30)+'…':o.deliveryLocation.address):'-';
@@ -1152,21 +1148,14 @@ async function loadOrders(){
 window.viewOrder=async function(id){
   let o={};
   try{const s=await getDoc(doc(db,'orders',id));if(s.exists())o=s.data();}catch(e){}
-  const status=o.status||'pending_payment';
+  const status=o.status||'paid';
   const itemsHTML=(o.items||[]).map(i=>`<div class="od-item-row"><span>${i.name} × ${i.qty}</span><span>KES ${((i.price||0)*(i.qty||0)).toLocaleString()}</span></div>`).join('');
   const mapLink=o.deliveryLocation?`<a class="od-map-link" href="https://www.google.com/maps?q=${o.deliveryLocation.lat},${o.deliveryLocation.lng}" target="_blank"><i class="fas fa-map-marker-alt"></i> Open in Google Maps</a>`:'';
-  // Payment status ('pending_payment' / 'payment_failed' / 'paid') is set automatically by the
-  // M-Pesa callback and should not be hand-edited here — only 'cancelled' is allowed while unpaid.
-  // Once truly paid, the seller manages the fulfillment chain: processing → dispatched → delivered → cancelled.
-  const isUnpaid=status==='pending_payment'||status==='payment_failed';
-  const statuses=isUnpaid?['cancelled']:['paid','processing','dispatched','delivered','cancelled'];
+  const statuses=['paid','processing','dispatched','delivered','cancelled'];
   const statusBtns=statuses.filter(s=>s!==status).map(s=>{
     const cls=s==='cancelled'?'red':s==='delivered'?'green':'pink';
     return`<button class="btn-sm ${cls}" onclick="updateOrderStatus('${id}','${s}')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`;
   }).join('');
-  const statusBadgeClass=status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':status==='payment_failed'?'payfailed':status==='pending_payment'?'pendingpay':'new';
-  const statusLabel=status==='pending_payment'?'Pending Payment':status==='payment_failed'?'Payment Failed':status.charAt(0).toUpperCase()+status.slice(1);
-  const paymentNote=isUnpaid?`<p style="font-size:0.78rem;color:#856404;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px 10px;margin-top:8px;">${status==='payment_failed'?'M-Pesa payment failed or was cancelled by the customer. No money has been received for this order.':'Waiting for M-Pesa payment confirmation. No money has been received yet — this updates automatically once PayHero confirms it.'}</p>`:'';
   openModal(`Order ${o.ref||id}`,`
     <div class="od-section">
       <div class="od-label">Items</div>
@@ -1174,7 +1163,6 @@ window.viewOrder=async function(id){
       <div class="od-total-row"><span>Subtotal</span><span>KES ${(o.subtotal||0).toLocaleString()}</span></div>
       <div class="od-total-row" style="font-weight:400;font-size:0.85rem;color:var(--subtext);"><span>Delivery</span><span>KES ${(o.deliveryFee||0).toLocaleString()}</span></div>
       <div class="od-total-row"><span>Total</span><span>KES ${(o.total||0).toLocaleString()}</span></div>
-      ${o.mpesaReceipt?`<div class="od-info-row"><span>M-Pesa Receipt</span><span>${o.mpesaReceipt}</span></div>`:''}
     </div>
     <div class="od-section">
       <div class="od-label">Customer</div>
@@ -1189,8 +1177,7 @@ window.viewOrder=async function(id){
       ${o.note?`<p style="font-size:0.82rem;color:var(--subtext);margin-top:10px;"><i class="fas fa-sticky-note"></i> ${o.note}</p>`:''}
     </div>
     <div class="od-section">
-      <div class="od-label">Update Status — currently <span class="status-badge ${statusBadgeClass}">${statusLabel}</span></div>
-      ${paymentNote}
+      <div class="od-label">Update Status — currently <span class="status-badge ${status==='delivered'?'approved':status==='cancelled'?'cancelled':status==='dispatched'?'dispatched':status==='processing'?'pending':'new'}">${status.charAt(0).toUpperCase()+status.slice(1)}</span></div>
       <div class="od-status-actions">${statusBtns}</div>
     </div>
   `,`<button class="btn-sm" onclick="closeModal()">Close</button>`);
