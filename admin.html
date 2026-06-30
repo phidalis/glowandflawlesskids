@@ -630,9 +630,8 @@ async function uploadToCloudinary(file){
 onAuthStateChanged(auth,async user=>{
   if(user){
     try{
-      const userSnap=await getDoc(doc(db,'users',user.uid));
-      const role=userSnap.exists()?userSnap.data().role:null;
-      if(role==='admin'){
+      const adminSnap=await getDoc(doc(db,'admins',user.email));
+      if(adminSnap.exists()){
         document.getElementById('login-screen').classList.add('hide');
         document.getElementById('app').classList.remove('hide');
         document.getElementById('admin-email-display').textContent=user.email;
