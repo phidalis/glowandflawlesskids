@@ -55,17 +55,8 @@ const paymentStore = {};
 // Payment timeout: if PENDING for more than 2 minutes → treat as FAILED
 const PAYMENT_TIMEOUT_MS = 120000;
 
-// ── POST /api/order/pay — Initiate STK Push for an existing order ───────────
-// The frontend must create the order doc in Firestore FIRST (status:'pending_payment'),
-// then call this endpoint with that order's Firestore doc id as `orderId`.
-app.post('/api/order/pay', async (req, res) => {
-  const { amount, phone, orderId, userId } = req.body;
-
-  if (!amount || !phone || !orderId) {
-    return res.status(400).json({ error: 'amount, phone and orderId are required' });
-  }
-
-  // Normalize phone → 254XXXXXXXXX
+// ── Shared: normalize a Kenyan phone number to 254XXXXXXXXX ─────────────────
+function normalizePhone(phone) {
   let p = String(phone).replace(/\D/g, '');
   if (p.startsWith('254') && p.length === 12) {
     // already correct
@@ -74,8 +65,14 @@ app.post('/api/order/pay', async (req, res) => {
   } else if (!p.startsWith('254')) {
     p = '254' + p;
   }
+  return p;
+}
 
-  // Our own external reference ties this payment attempt back to the Firestore order doc.
+// ── Shared: fire the PayHero STK push and record it in paymentStore + Firestore.
+// Used by both /api/order/pay (legacy two-step) and /api/order/create-and-pay
+// (new one-step flow). Returns a plain object — never throws.
+async function sendStkPush(amount, phone, orderId, userId) {
+  const p = normalizePhone(phone);
   const usedExtRef = 'ORD_' + orderId + '_' + Date.now();
   console.log('[Pay] KES', amount, 'to', p, 'orderId:', orderId, 'extRef:', usedExtRef);
 
@@ -106,10 +103,10 @@ app.post('/api/order/pay', async (req, res) => {
 
     if (respData.success === false) {
       console.warn('[Pay] PayHero rejected STK:', respData);
-      return res.status(400).json({
+      return {
         success: false,
         error: respData.error_message || respData.message || 'STK push was rejected. Check the phone number and try again.',
-      });
+      };
     }
 
     const reference = respData.reference
@@ -148,20 +145,115 @@ app.post('/api/order/pay', async (req, res) => {
       }).catch(e => console.warn('[Pay] order stamp failed:', e.message));
     }
 
-    return res.json({
+    return {
       success:   true,
       reference: reference,
       extRef:    usedExtRef,
       message:   'STK push sent. Check your phone.',
-    });
+    };
 
   } catch (err) {
     const errData = err.response ? err.response.data : err.message;
     console.error('[Pay] Error:', errData);
-    return res.status(500).json({
+    return {
+      success: false,
       error: (errData && (errData.error_message || errData.message)) || 'Payment initiation failed',
+    };
+  }
+}
+
+// ── POST /api/order/create-and-pay — ONE-STEP checkout ───────────────────────
+// Creates the order doc in Firestore using the Admin SDK (bypasses client-side
+// security rules entirely — this is what fixes "could not save your order"
+// errors caused by Firestore rules rejecting an unauthenticated browser write),
+// then immediately fires the PayHero STK push. Tapping "Pay" makes exactly one
+// request and both things happen together server-side.
+app.post('/api/order/create-and-pay', async (req, res) => {
+  const {
+    items, subtotal, deliveryFee, total,
+    customerName, customerPhone, mpesaPhone,
+    customerEmail, uid,
+    deliveryLocation, note, userId,
+  } = req.body;
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ success: false, error: 'Cart is empty.' });
+  }
+  if (!total || !mpesaPhone) {
+    return res.status(400).json({ success: false, error: 'total and mpesaPhone are required' });
+  }
+  if (!db) {
+    return res.status(503).json({ success: false, error: 'Server is not connected to the database right now. Please try again shortly.' });
+  }
+
+  const reference = 'GF-' + Date.now();
+  let orderId;
+
+  // Step 1: create the order doc FIRST, via Admin SDK — cannot be blocked by rules.
+  try {
+    const orderRef = await db.collection('orders').add({
+      ref:             reference,
+      items,
+      subtotal:        Number(subtotal) || 0,
+      deliveryFee:     Number(deliveryFee) || 0,
+      total:           Number(total),
+      customerName:    customerName || '',
+      customerPhone:   customerPhone || '',
+      customerEmail:   customerEmail || '',
+      uid:             uid || '',
+      mpesaPhone,
+      deliveryLocation: deliveryLocation || null,
+      note:            note || '',
+      status:          'pending_payment',
+      createdAt:       admin.firestore.FieldValue.serverTimestamp(),
+    });
+    orderId = orderRef.id;
+  } catch (e) {
+    console.error('[CreateOrder] Firestore write failed:', e.message);
+    return res.status(500).json({ success: false, error: 'Could not save your order. Please check your connection and try again.' });
+  }
+
+  // Step 2: fire the STK push, tagged to the order we just created.
+  const stkResult = await sendStkPush(total, mpesaPhone, orderId, userId);
+
+  if (stkResult.success === false) {
+    // Order is saved either way — customer can retry payment without re-entering the cart.
+    return res.status(200).json({
+      success: false,
+      orderId,
+      reference,
+      error: stkResult.error,
     });
   }
+
+  return res.json({
+    success:   true,
+    orderId,
+    reference,
+    payheroReference: stkResult.reference,
+    extRef:    stkResult.extRef,
+    message:   'Order saved. STK push sent — check your phone.',
+  });
+});
+
+// ── POST /api/order/pay — Initiate STK Push for an existing order ───────────
+// Legacy two-step endpoint (kept for backward compatibility). The frontend
+// must create the order doc in Firestore FIRST, then call this with that
+// order's Firestore doc id as `orderId`. New checkouts should use
+// /api/order/create-and-pay above instead, which avoids the client-side
+// Firestore write (and the security-rule failures that come with it).
+app.post('/api/order/pay', async (req, res) => {
+  const { amount, phone, orderId, userId } = req.body;
+
+  if (!amount || !phone || !orderId) {
+    return res.status(400).json({ error: 'amount, phone and orderId are required' });
+  }
+
+  const result = await sendStkPush(amount, phone, orderId, userId);
+  if (result.success === false) {
+    return res.status(400).json(result);
+  }
+  return res.json(result);
 });
 
 // ── GET /api/order/status — Frontend polling endpoint ────────────────────────

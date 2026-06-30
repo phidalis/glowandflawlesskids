@@ -469,6 +469,7 @@ const auth=getAuth(app);
 // const API_BASE='https://glowflawless-server.onrender.com';
 const API_BASE='https://glowandflawlesskids.onrender.com';
 const ORDER_PAY_ENDPOINT=API_BASE+'/api/order/pay';
+const ORDER_CREATE_AND_PAY_ENDPOINT=API_BASE+'/api/order/create-and-pay';
 const ORDER_STATUS_ENDPOINT=API_BASE+'/api/order/status';
 const WHATSAPP_NUMBER='254790332333';
 const DELIVERY_FEE=0; // set a flat fee here if you want one added at checkout, e.g. 150
@@ -757,9 +758,13 @@ window.useMyLocation=function(){
 // Flow:
 // 1. Create the order doc in Firestore immediately, status:'pending_payment',
 //    tagged with uid/customerEmail so it shows up in this customer's "My Orders".
-// 2. Call our backend to fire the PayHero STK push, tagged with this order's id.
-// 3. Poll /api/order/status, which itself checks memory → Firestore → PayHero as fallbacks.
-// 4. Backend's /api/callback (PayHero webhook) is the real source of truth and updates
+// 1. The moment "Pay" is tapped, send the full order + phone in ONE request to our
+//    backend's /api/order/create-and-pay. The backend creates the Firestore order doc
+//    using its Admin SDK (which bypasses client-side security rules — this is what fixes
+//    "could not save your order" errors caused by Firestore rules rejecting an
+//    unauthenticated browser write) and fires the PayHero STK push in the same request.
+// 2. Poll /api/order/status, which itself checks memory → Firestore → PayHero as fallbacks.
+// 3. Backend's /api/callback (PayHero webhook) is the real source of truth and updates
 //    the order doc directly to 'paid' or 'payment_failed' — polling just reflects that.
 let currentOrderId=null;
 
@@ -776,34 +781,48 @@ window.initiateSTKPush=async function(){
   payBtn.disabled=true;
   payBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Placing order...';
 
-  const reference='GF-'+Date.now();
-  currentOrderRef=reference;
+  const orderPayload={
+    items:cart,
+    subtotal:cartSubtotal(),
+    deliveryFee:DELIVERY_FEE,
+    total:amount,
+    customerName:document.getElementById('co-name').value.trim(),
+    customerPhone:document.getElementById('co-phone').value.trim(),
+    customerEmail:loggedInUser?loggedInUser.email:'',
+    uid:loggedInUser?loggedInUser.uid:'',
+    mpesaPhone:phone,
+    deliveryLocation:pickedLocation,
+    note:document.getElementById('co-note').value.trim(),
+    userId:loggedInUser?loggedInUser.uid:null
+  };
 
-  // Step 1: create the order doc FIRST, before the STK push fires.
+  let data;
   try{
-    const orderDoc=await addDoc(collection(db,'orders'),{
-      ref:reference,
-      items:cart,
-      subtotal:cartSubtotal(),
-      deliveryFee:DELIVERY_FEE,
-      total:amount,
-      customerName:document.getElementById('co-name').value.trim(),
-      customerPhone:document.getElementById('co-phone').value.trim(),
-      customerEmail:loggedInUser?loggedInUser.email:'',
-      uid:loggedInUser?loggedInUser.uid:'',
-      mpesaPhone:phone,
-      deliveryLocation:pickedLocation,
-      note:document.getElementById('co-note').value.trim(),
-      status:'pending_payment',
-      createdAt:serverTimestamp()
+    const res=await fetch(ORDER_CREATE_AND_PAY_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(orderPayload)
     });
-    currentOrderId=orderDoc.id;
+    data=await res.json();
   }catch(e){
     payBtn.disabled=false;
     payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
-    showToast('Could not save your order. Please check your connection and try again.');
+    showToast('Could not reach the payment server. Please check your connection and try again.');
     return;
   }
+
+  payBtn.disabled=false;
+  payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
+
+  if(!data||!data.orderId){
+    // Backend couldn't even save the order (e.g. database unreachable) — nothing to retry against.
+    showToast(data&&data.error?data.error:'Could not save your order. Please check your connection and try again.');
+    return;
+  }
+
+  // Order is saved from this point on, regardless of payment outcome below.
+  currentOrderId=data.orderId;
+  currentOrderRef=data.reference||currentOrderId;
 
   goToStep(3);
   document.getElementById('pay-status-view').style.display='block';
@@ -813,29 +832,12 @@ window.initiateSTKPush=async function(){
   document.getElementById('pay-status-phone').textContent=phone;
   document.getElementById('pay-status-amount').textContent='KES '+amount.toLocaleString();
 
-  // Step 2: trigger the STK push via our backend, tagged to this order.
-  fetch(ORDER_PAY_ENDPOINT,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      phone:phone,
-      amount:amount,
-      orderId:currentOrderId,
-      userId:loggedInUser?loggedInUser.uid:null
-    })
-  }).then(r=>r.json()).then(data=>{
-    payBtn.disabled=false;
-    payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
-    if(data&&data.success===false){
-      showPayFailed(data.error||'Could not send the M-Pesa prompt. Please try again.');
-      return;
-    }
-    pollOrderStatus(currentOrderId);
-  }).catch(()=>{
-    payBtn.disabled=false;
-    payBtn.innerHTML='<i class="fas fa-mobile-alt"></i> Pay with M-Pesa';
-    showToast('Could not reach the payment server. Your order is saved — use "Check Payment Status" once you have paid, or try again.');
-  });
+  if(data.success===false){
+    showPayFailed(data.error||'Could not send the M-Pesa prompt. Your order is saved — use "Check Payment Status" once you have paid, or try again.');
+    return;
+  }
+
+  pollOrderStatus(currentOrderId);
 }
 
 function pollOrderStatus(orderId){
