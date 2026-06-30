@@ -32,8 +32,19 @@ try {
 // PAYHERO_AUTH_TOKEN must be the ALREADY base64-encoded string from the PayHero
 // dashboard → API Keys → copy the full Basic Auth token (without the word "Basic")
 // e.g. if PayHero shows:  Basic dXNlcjpwYXNz  →  store only:  dXNlcjpwYXNz
-const PAYHERO_AUTH_TOKEN = process.env.PAYHERO_AUTH_TOKEN;
-const PAYHERO_CHANNEL    = process.env.PAYHERO_CHANNEL_ID;
+// The cleaning below protects against common copy-paste mistakes (extra "Basic ",
+// stray whitespace, accidental quotes) so a slightly-off paste doesn't silently break auth.
+function cleanAuthToken(raw) {
+  if (!raw) return '';
+  let t = String(raw).trim();
+  t = t.replace(/^["']|["']$/g, '');       // strip surrounding quotes if pasted with them
+  t = t.replace(/^Basic\s+/i, '');         // strip an accidentally-included "Basic " prefix
+  return t.trim();
+}
+
+const PAYHERO_AUTH_TOKEN = cleanAuthToken(process.env.PAYHERO_AUTH_TOKEN);
+const PAYHERO_CHANNEL_RAW = (process.env.PAYHERO_CHANNEL_ID || '').trim();
+const PAYHERO_CHANNEL    = Number(PAYHERO_CHANNEL_RAW);
 const PAYHERO_PROVIDER   = process.env.PAYHERO_PROVIDER || 'm-pesa';
 const PAYHERO_BASE_URL   = 'https://backend.payhero.co.ke/api/v2';
 const CALLBACK_URL       = process.env.CALLBACK_URL; // e.g. https://your-app.onrender.com/api/callback
@@ -42,8 +53,8 @@ function getAuthHeader() {
   return 'Basic ' + PAYHERO_AUTH_TOKEN;
 }
 
-console.log('[PayHero] Channel ID:', PAYHERO_CHANNEL || 'MISSING');
-console.log('[PayHero] Auth Token set:', PAYHERO_AUTH_TOKEN ? 'YES' : 'NO');
+console.log('[PayHero] Channel ID:', Number.isFinite(PAYHERO_CHANNEL) ? PAYHERO_CHANNEL : 'INVALID — raw value was: ' + JSON.stringify(PAYHERO_CHANNEL_RAW));
+console.log('[PayHero] Auth Token set:', PAYHERO_AUTH_TOKEN ? 'YES (' + PAYHERO_AUTH_TOKEN.length + ' chars)' : 'NO');
 console.log('[PayHero] Callback URL:', CALLBACK_URL || 'MISSING — set CALLBACK_URL env var');
 
 // ── In-memory payment store ──────────────────────────────────────────────────
@@ -76,13 +87,24 @@ async function sendStkPush(amount, phone, orderId, userId) {
   const usedExtRef = 'ORD_' + orderId + '_' + Date.now();
   console.log('[Pay] KES', amount, 'to', p, 'orderId:', orderId, 'extRef:', usedExtRef);
 
+  if (!Number.isFinite(PAYHERO_CHANNEL)) {
+    console.error('[Pay] ABORTED — PAYHERO_CHANNEL_ID is not a valid number. Raw env value:', JSON.stringify(PAYHERO_CHANNEL_RAW));
+    return { success: false, error: 'Payment channel is not configured correctly on the server.' };
+  }
+  if (!PAYHERO_AUTH_TOKEN) {
+    console.error('[Pay] ABORTED — PAYHERO_AUTH_TOKEN is empty.');
+    return { success: false, error: 'Payment credentials are not configured correctly on the server.' };
+  }
+
+  console.log('[Pay] DEBUG — sending to PayHero: channel_id=' + PAYHERO_CHANNEL + ', provider=' + PAYHERO_PROVIDER + ', auth_token_len=' + PAYHERO_AUTH_TOKEN.length);
+
   try {
     const response = await axios.post(
       PAYHERO_BASE_URL + '/payments',
       {
         amount:             Number(amount),
         phone_number:       p,
-        channel_id:         Number(PAYHERO_CHANNEL),
+        channel_id:         PAYHERO_CHANNEL,
         provider:           PAYHERO_PROVIDER,
         external_reference: usedExtRef,
         callback_url:       CALLBACK_URL,
