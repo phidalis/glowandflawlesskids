@@ -630,7 +630,7 @@ async function uploadToCloudinary(file){
 onAuthStateChanged(auth,async user=>{
   if(user){
     try{
-      const adminSnap=await getDoc(doc(db,'admins',user.email));
+      const adminSnap=await getDoc(doc(db,'admins',user.uid));
       if(adminSnap.exists()){
         document.getElementById('login-screen').classList.add('hide');
         document.getElementById('app').classList.remove('hide');
